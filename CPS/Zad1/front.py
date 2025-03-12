@@ -9,12 +9,13 @@ import constant
 # Funkcja do generowania wykresu w aplikacji
 def generate_signal():
     A = float(amplitude_entry.get())
-    T = float(period_entry.get())
+    T = float(duty_cycle_entry_t.get()) if signal_type.get() != "ones" else None
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
 
     # Pobranie wartości tylko jeśli kw jest widoczne
     kw = float(duty_cycle_entry.get()) if signal_type.get() == "squareSymmetric" or signal_type.get() == "square" or signal_type.get() == "triangle" else None
+    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() == "ones" else None
 
     if signal_type.get() == "sinusoidal":
         time, signal = constant.sinusoidal(A, T, t1, d)
@@ -28,8 +29,8 @@ def generate_signal():
         time, signal = constant.square(A, T, t1, d, kw)
     elif signal_type.get() == 'triangle':
         time, signal = constant.triangle(A, T, t1, d, kw)
-    # elif signal_type.get() == 'ones':
-    #     time, signal = constant.ones(A, T, t1, d, kw)
+    elif signal_type.get() == 'ones':
+        time, signal = constant.ones(A, t1, d, ts)
 
     plot_signal(time, signal, signal_type.get())
 
@@ -58,13 +59,24 @@ def plot_signal(time, signal, signal_type):
 
 
 # Funkcja do pokazywania/ukrywania pola dla współczynnika wypełnienia
-def toggle_duty_cycle():
-    if signal_type.get() == "squareSymmetric" or signal_type.get() == "triangle" or signal_type.get() == "square":
+def toggle_fields():
+    if signal_type.get() in ["squareSymmetric", "square", "triangle"]:
         duty_cycle_label.grid(row=5, column=0, padx=5, pady=5)
         duty_cycle_entry.grid(row=5, column=1, padx=5, pady=5)
     else:
         duty_cycle_label.grid_remove()
         duty_cycle_entry.grid_remove()
+
+    if signal_type.get() == "ones":
+        duty_cycle_label_ts.grid(row=5, column=0, padx=5, pady=5)
+        duty_cycle_entry_ts.grid(row=5, column=1, padx=5, pady=5)
+        duty_cycle_label_t.grid_remove()
+        duty_cycle_entry_t.grid_remove()
+    else:
+        duty_cycle_label_ts.grid_remove()
+        duty_cycle_entry_ts.grid_remove()
+        duty_cycle_label_t.grid(row=1, column=0, padx=5, pady=5)
+        duty_cycle_entry_t.grid(row=1, column=1, padx=5, pady=5)
 
 
 # Tworzenie głównego okna aplikacji
@@ -76,9 +88,9 @@ ttk.Label(root, text="Amplituda (A):").grid(row=0, column=0, padx=5, pady=5)
 amplitude_entry = ttk.Entry(root)
 amplitude_entry.grid(row=0, column=1, padx=5, pady=5)
 
-ttk.Label(root, text="Okres (T):").grid(row=1, column=0, padx=5, pady=5)
-period_entry = ttk.Entry(root)
-period_entry.grid(row=1, column=1, padx=5, pady=5)
+# ttk.Label(root, text="Okres (T):").grid(row=1, column=0, padx=5, pady=5)
+# period_entry = ttk.Entry(root)
+# period_entry.grid(row=1, column=1, padx=5, pady=5)
 
 ttk.Label(root, text="Czas początkowy (t1):").grid(row=2, column=0, padx=5, pady=5)
 start_time_entry = ttk.Entry(root)
@@ -94,11 +106,17 @@ signal_type = tk.StringVar(value="sinusoidal")
 signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["sinusoidal", "squareSymmetric", "halfWaveSinusoidal", "halfSinusoidal", "square", "triangle", "ones"],
                                state="readonly")
 signal_dropdown.grid(row=4, column=1, padx=5, pady=5)
-signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_duty_cycle())  # Aktualizacja przy zmianie wyboru
+signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())  # Aktualizacja przy zmianie wyboru
 
-# Pole dla współczynnika wypełnienia (tylko dla squareSymmetric)
+# Pola dla współczynnika wypełnienia i czasu skoku (ukryte domyślnie)
 duty_cycle_label = ttk.Label(root, text="Współczynnik wypełnienia (kw):")
 duty_cycle_entry = ttk.Entry(root)
+
+duty_cycle_label_ts = ttk.Label(root, text="Czas skoku (ts):")
+duty_cycle_entry_ts = ttk.Entry(root)
+
+duty_cycle_label_t = ttk.Label(root, text="Okres (T):")
+duty_cycle_entry_t = ttk.Entry(root)
 
 # Przycisk do generowania wykresu
 generate_button = ttk.Button(root, text="Generuj sygnał", command=generate_signal)
@@ -109,7 +127,7 @@ plot_frame = ttk.Frame(root)
 plot_frame.grid(row=7, column=0, columnspan=2, padx=10, pady=10)
 
 # Ukrycie pola na starcie (bo domyślnie jest sinusoidal)
-toggle_duty_cycle()
+toggle_fields()
 
 # Uruchomienie pętli głównej
 root.mainloop()
