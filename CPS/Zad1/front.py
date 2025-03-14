@@ -21,23 +21,23 @@ def generate_signal():
     time = np.arange(t1, d, 1 / sample_rate)
 
     if signal_type.get() == "sinusoidal":
-        signal = constant.sinusoidal(A, T, t1, d, time)
+        signal = continousSignal.sinusoidal(A, T, t1, d, time)
     elif signal_type.get() == "squareSymmetric":
-        signal = constant.squareSymetric(A, T, t1, d, kw, time)
+        signal = continousSignal.squareSymetric(A, T, t1, d, kw, time)
     elif signal_type.get() == 'halfWaveSinusoidal':
-        signal = constant.halfWaveSinusoidal(A, T, t1, d, time)
+        signal = continousSignal.halfWaveSinusoidal(A, T, t1, d, time)
     elif signal_type.get() == 'halfSinusoidal':
-        signal = constant.halfSinusoidal(A, T, t1, d, time)
+        signal = continousSignal.halfSinusoidal(A, T, t1, d, time)
     elif signal_type.get() == 'square':
-        signal = constant.square(A, T, t1, d, kw, time)
+        signal = continousSignal.square(A, T, t1, d, kw, time)
     elif signal_type.get() == 'triangle':
-        signal = constant.triangle(A, T, t1, d, kw, time)
+        signal = continousSignal.triangle(A, T, t1, d, kw, time)
     elif signal_type.get() == 'ones':
-        signal = constant.ones(A, t1, d, ts, time)
+        signal = continousSignal.ones(A, t1, d, ts, time)
     elif signal_type.get() == 'random_uniform_signal':
-        signal = constant.random_uniform_signal(A, t1, d, time)
+        signal = continousSignal.random_uniform_signal(A, t1, d, time)
     elif signal_type.get() == 'gaussian_noise':
-        signal = constant.gaussian_noise(A, t1, d, time)
+        signal = continousSignal.gaussian_noise(A, t1, d, time)
 
     plot_signal(time, signal, signal_type.get())
 
