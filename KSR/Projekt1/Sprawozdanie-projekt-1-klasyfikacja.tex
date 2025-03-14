@@ -1,0 +1,201 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+%{Informatyka stosowana 2020, I st., semestr VI}
+
+
+\author{
+	{Dominik Gałkowski, 247659} \\
+	{Jan Śladowski, 247806}\\ 
+{Prowadzący: dr inż. Marcin Kacprowicz}
+}
+
+\title{Komputerowe systemy rozpoznawania 2024/2025\\Projekt 1. Klasyfikacja dokumentów tekstowych}
+\begin{document}
+\maketitle
+
+Opis projektu ma formę artykułu naukowego lub raportu z zadania
+badawczego (doświadczalnego/obliczeniowego0 (wg indywidualnych potrzeb związanych np. z
+pracą inżynierską/naukową/zawodową). Kolejne sekcje muszą być numerowane i
+zatytułowane. Wzory są numerowane, tablice są numerowane i podpisane nad
+tablicą, rysunki są numerowane i podpisane pod rysunkiem. Podpis rysunku i
+tabeli musi być wyczerpujący (nie ogólnikowy), aby czytelnik nie musiał sięgać do tekstu, aby go
+zrozumieć.\\
+\indent {\bf Limit stron sprawozdania: 20. Nie zmieniać parametrów tekstu
+(czcionki, marginesów, interlinii, itp.). Istotne dla sprawozdania rysunki,
+tabele, informacje, kody itp. można umieścić w załącznikach, które nie wliczają
+się do limitu stron.}\\
+\indent {\bf Wybrane sekcje (rozdziały sprawozdania) są uzupełniane wg wymagań w
+opisie Projektu 1. i Harmonogramie Zajęć na WIKAMP KSR jako efekty zadań w~poszczególnych tygodniach}. 
+
+\section{Cel projektu}
+\indent Celem projektu jest przygotowanie aplikacji, która będzie dokonywała klasyfikacji zbioru dokumentów tekstowych metodą k-NN. W trakcie działania programu konieczne będzie dokonanie ekstrakcji wektorów cech z artykułów dostępnych pod linkiem: 
+\url{https://archive.ics.uci.edu/dataset/137/reuters+21578+text+categorization+collection}. \\
+\indent Zwięzły (2-3 zdania) opis
+problemu badawczego/obliczeniowego,  uwzględniający część badawczą i
+implementacyjną. {\bf Nie przepisuj literatury ani teorii -- napisz krótko jak
+rozumiesz to co masz wykonać: jakie działania, na jakim zbiorze danych (link lub
+przypis), jaki jest spodziewany efekt}.\\
+\indent Zamieszczony opis (własny, nie skopiowany) zawiera
+przypisy do literatury (bibliografii) zamieszczonej na końcu raportu/sprawozdania
+zgodnie z~Polską Normą cytowania bibliografii (zob. materiały BG PŁ pt. ,,Bibliografia
+załącznikowa'').\\
+\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 02 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+
+\section{Klasyfikacja nadzorowana metodą $k$-NN.  Ekstrakcja cech, wektory cech}
+Metoda k-NN (k-Nearest Neighbors) jest algorytmem leniwym, co oznacza, że nie tworzy wewnętrznej reprezentacji danych uczących, tylko przechowuje wszystkie wzorce uczące. Dopiero po pojawieniu się wzorca testowego, dla którego wyznaczana jest odległość względem wszystkich wzorców uczących, algorytm poszukuje rozwiązania. \cite{knn}. Algorytm k-NN wymaga dwóch kluczowych parametrów, metryki, za pomocą, której wyznacza odległości obiektu testującego od wszystkich wzorców uczących oraz liczby sąsiadów k, czyli elementów do których badany element ma najbliżej. Decyzja klasyfikacyjna opiera się na najczęstszej klasie wśród k najbliższych sąsiadów. W przypadku naszego projektu odległość pomiędzy obiektami oznacza skalę podobieństwa tekstów.
+
+W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez stworzenie wektora cech, opisanego na podstawie następujących cech:
+\begin{enumerate}
+    \item Długość tekstu - cecha ta oznacza liczbę słów, z których składa się dany artykuł, co pozwala na porównanie długości różnych tekstów.
+        \begin{equation}
+            len = \sum_{i=0}^{n} x_i
+        \end{equation}
+        gdzie \( x_i \) = liczba liter \( \geq 3 \).
+    \item Dominująca waluta - cecha ta reprezentowana jest poprzez nazwę waluty, ze zbioru walut kluczowych, która pojawia się najczęściej w badanym artykule. Na przykład w przypadku, gdy w badanym tekście pojawi się dwukrotnie słowo "U.S. Dollar" i tylko raz "Japanese Yen" to dla tej cechy zostanie zwrócona wartość tekstowa "U.S. Dollar".
+    \item Nazwy miast - cecha ta jest reprezentacją tekstową wszystkich miast pojawiających się ze zbioru miast kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie zbiór \( M' = \{ \text{New York} \} \). 
+        \begin{equation}
+            M' =  x \in M 
+        \end{equation}
+        gdzie M - zbiór miast kluczowych
+    \item Liczba unikalnych słów - cecha oznaczająca wystąpienia słów unikalnych, czyli takich, które nie pojawiąją się więcej niż jeden raz w tekście.
+        \begin{equation}
+            uk = \mid x \in T \land f(x) = 1 \mid
+        \end{equation}
+        gdzie T - zbiór słów znajdujących się w tekście, f(x) - funkcja zwracająca liczbę wystąpień słowa x w tekście.
+    \item Średnia długość słowa - cecha opisująca średnią długość słów w badanym tekście.
+     \begin{equation}
+            al = \frac{\sum_{i=0}^{n} a_i}{\sum_{i=0}^{n} x_i}
+        \end{equation}
+        gdzie \( a_i \) = litera, \( x_i \) = liczba liter \( \geq 3 \).
+    \item Liczba  słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
+        \begin{equation}
+            rw = \ \mid x : x \in K \wedge x \in t_{\text{y}} \}
+        \end{equation}
+        gdzie K - zbiór słów kluczowych, \( T_y \) - zbiór słów znajdujący się w pierwszych trzech zdaniach tekstu.
+    \item Liczba słów zaczynających się wielką literą - cecha ta oznaczą liczbę wystąpień słów zaczynających się wielką literą, nie uzwlędniając przy tym słów rozpoczynających nowe zdanie.
+        \begin{equation}
+            bw = \sum_{i=0}^{n} x_i
+        \end{equation}
+        gdzie \( x_i \) = słowo zaczynające się wielką literą.
+    \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie zbiór \(x_{first} = New York \).
+       \begin{equation}
+            x_{first} = \min \{ x \in K \}
+        \end{equation}
+        gdzie K - zbiór słów kluczowych
+    \item Liczba słów kluczowych - cecha ta oznacza bezwzględną liczbę wystąpień słów ze zbioru słów kluczowych. 
+        \begin{equation}
+            kw = \ \mid x : x \in K \mid
+        \end{equation}
+        gdzie K - zbiór słów kluczowych,
+    \item Względna liczba słów kluczowych - cecha która reprezentuje stosunek słów kluczowych do długości całego tekstu. 
+        \begin{equation}
+            rw = \frac{ \mid x : x \in K \mid}{ \sum_{i=0}^{n} x_i}
+        \end{equation}
+       gdzie K - zbiór słów kluczowych, \( x_i \) = liczba liter \( \geq 3 \).
+    \item Nazwiska - cecha ta jest reprezentacją tekstową wszystkich nazwisk pojawiających się ze zbioru nazwisk kluczowych. Przykład: "Wallis was quoted as saying the Reagan Administration wants Japanese cooperation so the White House can ensure any U.S." wynikiem dla tego cytatu będzie zbiór \( N' = \{ \text{Reagan} \} \).
+    \begin{equation}
+            N' =  x \in N 
+        \end{equation}
+        gdzie N - zbiór nazwisk kluczowych
+\end{enumerate}
+
+Wektor cech będzie miał postać: 
+        \begin{equation}
+          v = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11]
+        \end{equation}
+
+Krótki opis metody $k$-NN: zasada działania, wymagane parametry wejściowe, format
+i~znaczenie wyników/rezultatów. Opis własny z przypisami do literatury -- minimum
+teorii potrzebnej do zadania, tak by inżynier innej specjalności zrozumiał dalszy
+opis \cite{tadeusiewicz90}. {\bf Nie przepisuj literatury ani teorii -- napisz krótko jak
+rozumiesz to co masz wykonać w tym konkretnym przypadku}.\\
+
+Wyekstrahowane cechy liczbowe i tekstowe dokumentów, min. 10 cech, w tym min. 2
+o wartościach tekstowych, wszystkie
+opisane słownie oraz wzorami, z objaśnieniem oznaczeń i przykładami użycia, do
+tego precyzyjny opis możliwych wartości, które przyjmuje dana cecha (ułatwiający
+czytelnikowi zrozumienie znaczenia w zadaniu klasyfikacji). Pamiętaj, że wybrane
+cechy muszą reprezentować obiekt niezależnie od innych tekstów w tym samym lub w
+innym zbiorze. Podaj postać wektora wartości cech po procesie ekstrakcji. Użyte oznaczenia są jednolite w całym
+raporcie/sprawozdaniu. \\ 
+\indent Nadmiarowe rysunki i wzory mogą być podane w załącznikach. \\
+\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 02 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+\section{Miary jakości klasyfikacji} 
+Miary jakości klasyfikacji (Accuracy, Precision,
+Recall, F1). We wprowadzeniu zaprezentować minimum teorii potrzebnej do realizacji
+zadania, tak by inżynier innej specjalności zrozumiał dalszy opis. Należy podać {\bf konkretne wzory miar użyte w tym eksperymencie oraz krótko
+opisać ich znaczenie i zakresy przyjmowanych wartości. Należy podać przykładowe
+wartości każdej miary. Nie przepisuj
+teorii, ale podaj link/przypis i opisz jak rozumiesz jej zastosowanie w tym konkretnym
+zadaniu}. \\
+\indent Stosowane wzory, oznaczenia z objaśnieniami znaczenia symboli użytych w
+doświadczeniu. Oznaczenia jednolite w obrębie całego sprawozdania.  Opis zawiera przypisy do bibliografii zgodnie z
+Polską Normą, (zob. materiały BG PŁ).\\
+\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 03 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+
+\section{Metryki i miary podobieństwa tekstów w klasyfikacji}
+Wzory, znaczenia i opisy symboli zastosowanych metryk z
+przykładami. Wzory, opisy i znaczenia miar
+podobieństwa tekstów zastosowanych w obliczaniu metryk dla wektorów cech z
+przykładami dla każdej miary \cite{niewiadomski08}.  Oznaczenia jednolite w obrębie całego sprawozdania.  {\bf Podaj metryki i miary
+podobieństwa nie z literatury (te wystarczy zacytować linkiem), ale konkretne ich
+postaci stosowane w zadaniu. Jakie zakresy wartości przyjmują te miary i
+metryki, co oznaczają ich wartości? Podaj przykładowe wartości dla przykładowych wektorów cech}. \\ 
+\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 04 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+\section{Wyniki klasyfikacji dla różnych parametrów wejściowych}
+Wstępne wyniki miary Accuracy dla próbnych klasyfikacji na ograniczonym zbiorze tekstów (podać parametry i kryteria
+wyboru wg punktów 3.-8. z opisu Projektu 1.). 
+\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 05 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+
+\section{Dyskusja, wnioski, sprawozdanie końcowe}
+
+Wyniki kolejnych eksperymentów wg punktów 2.-8. opisu projektu 1.  Każdorazowo
+podane parametry, dla których przeprowadzana eksperyment. 
+Wykresy (np. słupowe) i tabele wyników
+obowiązkowe, dokładnie opisane w ,,captions'' (tytułach), konieczny opis osi i
+jednostek wykresów oraz kolumn i wierszy tabel.\\ 
+
+{**Ewentualne wyniki realizacji punktu 9. opisu Projektu 1., czyli ,,na ocenę 5.0'' i ich porównanie do wyników z
+części obowiązkowej**.Dokładne interpretacje uzyskanych wyników w zależności od parametrów klasyfikacji
+opisanych w punktach 3.-8 opisu Projektu 1. 
+Omówić i wyjaśnić napotkane problemy (jeśli były). Każdy wniosek/problem powinien mieć poparcie
+w przeprowadzonych eksperymentach (odwołania do konkretnych wyników: wykresów,
+tabel). \\
+\underline{Dla końcowej oceny jest to najważniejsza sekcja} sprawozdania, gdyż prezentuje poziom
+zrozumienia rozwiązywanego problemu.\\
+
+** Możliwości kontynuacji prac w obszarze systemów rozpoznawania, zwłaszcza w kontekście pracy inżynierskiej,
+magisterskiej, naukowej, itp. **\\
+
+\noindent {\bf Sekcja uzupełniona jako efekt zadań Tydzień 05 i Tydzień 06 wg Harmonogramu Zajęć
+na WIKAMP KSR.}
+
+
+\section{Braki w realizacji projektu 1.}
+Wymienić wg opisu Projektu 1. wszystkie niezrealizowane obowiązkowe elementy projektu, ewentualnie
+podać merytoryczne (ale nie czasowe) przyczyny tych braków. 
+
+
+\begin{thebibliography}{0}
+\bibitem{tadeusiewicz90} R. Tadeusiewicz: Rozpoznawanie obrazów, PWN, Warszawa, 1991.  
+\bibitem{niewiadomski08} A. Niewiadomski, Methods for the Linguistic Summarization of Data: Applications of Fuzzy Sets and Their Extensions, Akademicka Oficyna Wydawnicza EXIT, Warszawa, 2008.
+\bibitem{knn} https://home.agh.edu.pl/~horzyk/lectures/miw/KNN.pdf
+\end{thebibliography}
+
+Literatura zawiera wyłącznie źródła recenzowane i/lub o potwierdzonej wiarygodności,
+możliwe do weryfikacji i cytowane w sprawozdaniu. 
+\end{document}
