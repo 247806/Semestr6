@@ -1,0 +1,13 @@
+U.S. Dollar
+dlrs
+dlr
+Canadian Dollar
+can
+D-Mark
+dmk
+Japanese Yen
+yen
+French Franc
+ffr
+Sterling
+stg

@@ -59,16 +59,5 @@ public class Load {
         }
         return places;
     }
-
-    public static void main(String[] args) {
-        String datasetPath = "src/main/resources/articles"; // <- Ustaw swoją ścieżkę
-        try {
-            List<Article> articles = loadReutersArticles(datasetPath);
-            System.out.println("Załadowano " + articles.size() + " artykułów.");
-            articles.stream().limit(5).forEach(System.out::println); // Wyświetl 5 pierwszych
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 

@@ -1,0 +1,107 @@
+New York
+Washington
+Los Angeles
+Chicago
+Houston
+Philadelphia
+Phoenix
+San Antonio
+San Diego
+Dallas
+San Francisco
+Denver
+Boston
+North America
+California
+Texas
+Alaska
+Florida
+Colorado
+Arizona
+USA
+US
+Japan
+Tokyo
+Yokohama
+Osaka
+Nagoya
+Kyoto
+Sapporo
+Kobe
+Fukuoka
+Kawasaki
+Hiroshima
+Kanto
+Tohoku
+Chubu
+Kansai
+Hokkaido
+Canada
+Toronto
+Montreal
+Calgary
+Ottawa
+Edmonton
+Winnipeg
+Vancouver
+Quebec City
+Mississauga
+Brampton
+Hamilton
+Ontario
+Quebec
+Nova Scotia
+British Columbia
+France
+Paris
+Lyon
+Marseille
+Toulouse
+Nice
+Lille
+Nantes
+Montpellier
+Strasbourg
+Bordeaux
+Rennes
+Reims
+Normandy
+Île-de-France
+Auvergne-Rhône-Alpes
+Hauts-de-France
+Nouvelle-Aquitaine
+Occitanie
+UK
+London
+Birmingham
+Liverpool
+Manchester
+Sheffield
+Leeds
+Teesside
+Bristol
+Leicester
+Edinburgh
+England
+Wales
+Scotland
+Ireland
+west-germany
+Berlin
+Hamburg
+Munich
+Cologne
+Essen
+Düsseldorf
+Frankfurt
+Dortmund
+Leipzig
+Bremen
+Dresden
+Hanover
+Bavaria
+Hesse
+Saxony
+Thuringia
+Baden-Württemberg
+Brandenburg

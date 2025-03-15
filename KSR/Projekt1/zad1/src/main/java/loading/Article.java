@@ -1,8 +1,11 @@
 package loading;
 
+import lombok.Getter;
+
 import java.util.List;
 import java.util.ArrayList;
 
+@Getter
 public class Article {
     String title;
     String body;
@@ -13,6 +16,8 @@ public class Article {
         this.body = body;
         this.place = place;
     }
+
+
 
     @Override
     public String toString() {
