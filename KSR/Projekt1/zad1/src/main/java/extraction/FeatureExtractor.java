@@ -1,8 +1,6 @@
 package extraction;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import opennlp.tools.tokenize.SimpleTokenizer;
 
 import java.util.*;
 import java.util.regex.*;
@@ -32,7 +30,6 @@ public class FeatureExtractor {
 
         // 1. Długość tekstu (liczba słów o długości >= 3)
         String[] words = text.split("\\s+");
-
         int wordCount = (int) Arrays.stream(words).filter(w -> w.length() >= 3).count();
         features.put("length", wordCount);
 
@@ -54,12 +51,11 @@ public class FeatureExtractor {
         features.put("avg_word_length", avgWordLength);
 
         // 6. Liczba słów kluczowych w pierwszych 3 zdaniach
-        String[] sentences = text.split("[.!?]\\s+");
-        int firstThreeSentences = getFirstNSentences(sentences, 3, keywords);
+        int firstThreeSentences = countKeywordsInFirstSentences(text, 3, keywords);
         features.put("keywords_in_first_3_sentences", firstThreeSentences);
 
         // 7. Liczba słów zaczynających się wielką literą (nie licząc początku zdania)
-        int capitalizedWordCount = countCapitalizedWords(sentences);
+        int capitalizedWordCount = countCapitalizedWords(text);
         features.put("capitalized_word_count", capitalizedWordCount);
 
         // 8. Pierwsze słowo kluczowe w tekście
@@ -95,8 +91,8 @@ public class FeatureExtractor {
 
         return frequency.entrySet().stream()
                 .sorted((e1, e2) -> {
-                    int cmp = e2.getValue().compareTo(e1.getValue()); // Najpierw sortowanie po liczbie wystąpień (malejąco)
-                    if (cmp == 0) { // Jeśli liczby są równe, sortujemy po pierwszej pozycji w tekście (rosnąco)
+                    int cmp = e2.getValue().compareTo(e1.getValue());
+                    if (cmp == 0) {
                         return Integer.compare(firstPosition.get(e1.getKey()), firstPosition.get(e2.getKey()));
                     }
                     return cmp;
@@ -124,17 +120,13 @@ public class FeatureExtractor {
         return found;
     }
 
-    private int getFirstNSentences(String[] text, int n, Set<String> keywords) {
+    private int countKeywordsInFirstSentences(String text, int n, Set<String> keywords) {
+        String[] sentences = text.split("[.!?]\\s+");
         int count = 0;
-        int sentences = n;
-        if (text.length < 3) {
-            sentences = text.length;
-        }
-        for (int i = 0; i < sentences; i++) {
+        for (int i = 0; i < Math.min(n, sentences.length); i++) {
             for (String key : keywords) {
-                Matcher matcher = Pattern.compile("\\b" + Pattern.quote(key) + "\\b", Pattern.CASE_INSENSITIVE).matcher(text[i]);
-                if (matcher.find()) {
-                    count+=1;
+                if (Pattern.compile("\\b" + Pattern.quote(key) + "\\b", Pattern.CASE_INSENSITIVE).matcher(sentences[i]).find()) {
+                    count++;
                 }
             }
         }
@@ -144,13 +136,13 @@ public class FeatureExtractor {
     private int countKeywordOccurrences(String text, Set<String> keywords) {
         int count = 0;
         for (String key : keywords) {
-            int tempCount = countOccurrences(text, key);
-            count += tempCount;
+            count += countOccurrences(text, key);
         }
         return count;
     }
 
-    private int countCapitalizedWords(String[] sentences) {
+    private int countCapitalizedWords(String text) {
+        String[] sentences = text.split("[.!?]\\s+");
         int count = 0;
         for (String sentence : sentences) {
             String[] words = sentence.split("\\s+");
@@ -164,14 +156,17 @@ public class FeatureExtractor {
     }
 
     private String findFirstKeyword(String text, Set<String> keywords) {
-        String found;
+        int minIndex = Integer.MAX_VALUE;
+        String firstKeyword = "None";
+
         for (String key : keywords) {
-            if (text.contains(key)) {
-                found = key;
-                return found;
+            int index = text.indexOf(key);
+            if (index != -1 && index < minIndex) {
+                minIndex = index;
+                firstKeyword = key;
             }
         }
-        return "None";
+        return firstKeyword;
     }
 
 }

@@ -22,7 +22,7 @@ public class Main {
 
         Set<String> stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
 
-        Stemmer stemmer = new Stemmer();
+//        Stemmer stemmer = new Stemmer();
         FeatureExtractor featureExtractor = new FeatureExtractor(filePaths);
         List<Map<String, Object>> features = new ArrayList<>();
 
