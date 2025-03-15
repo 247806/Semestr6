@@ -1,9 +1,9 @@
 import extraction.FeatureExtractor;
+import extraction.Stemmer;
 import loading.Article;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +16,26 @@ public class Main {
         filePaths.add("src/main/resources/keywords/places.txt");
         filePaths.add("src/main/resources/keywords/currency.txt");
         filePaths.add("src/main/resources/keywords/names.txt");
+
+        Stemmer stemmer = new Stemmer();
+        FeatureExtractor featureExtractor = new FeatureExtractor(filePaths);
+        List<Map<String, Object>> features = new ArrayList<>();
+
         try {
-            FeatureExtractor featureExtractor = new FeatureExtractor(filePaths);
             List<Article> articles = loadReutersArticles(datasetPath);
             System.out.println("Załadowano " + articles.size() + " artykułów.");
+
+//            String result = stemmer.stem("I'm testing word Japanese");
+//            System.out.println(result);
+            int counter = 0;
+            for (Article article : articles) {
+                System.out.println(counter++ + " / " + articles.size());
+                features.add(featureExtractor.extractFeatures(article.getBody()));
+            }
+//            features.add(featureExtractor.extractFeatures(result));
             articles.stream().limit(1).forEach(System.out::println);
-            Map<String, Object> features = new HashMap<>();
-            features = featureExtractor.extractFeatures("Pierwsze zdanie New York. Drugie zdanie dlrs.");
-            System.out.println(features);
+//            System.out.println(result);
+            features.stream().limit(1).forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }

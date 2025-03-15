@@ -129,7 +129,6 @@ public class FeatureExtractor {
         int sentences = n;
         if (text.length < 3) {
             sentences = text.length;
-            System.out.println(sentences);
         }
         for (int i = 0; i < sentences; i++) {
             for (String key : keywords) {
@@ -143,7 +142,6 @@ public class FeatureExtractor {
     }
 
     private int countKeywordOccurrences(String text, Set<String> keywords) {
-        String[] words = text.split("\\s+");
         int count = 0;
         for (String key : keywords) {
             int tempCount = countOccurrences(text, key);

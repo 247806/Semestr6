@@ -20,7 +20,9 @@ Colorado
 Arizona
 USA
 US
+American
 Japan
+Japanese
 Tokyo
 Yokohama
 Osaka
@@ -37,6 +39,7 @@ Chubu
 Kansai
 Hokkaido
 Canada
+Canadian
 Toronto
 Montreal
 Calgary
@@ -72,6 +75,7 @@ Hauts-de-France
 Nouvelle-Aquitaine
 Occitanie
 UK
+United Kingdom
 London
 Birmingham
 Liverpool
@@ -86,6 +90,7 @@ England
 Wales
 Scotland
 Ireland
+British
 west-germany
 Berlin
 Hamburg
