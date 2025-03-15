@@ -103,9 +103,11 @@ public class FeatureExtractor {
     }
 
     private int countOccurrences(String text, String word) {
-        Matcher matcher = Pattern.compile("\\b" + Pattern.quote(word) + "\\b", Pattern.CASE_INSENSITIVE).matcher(text);
+        Matcher matcher = Pattern.compile("(?i)(?<!\\w)" + Pattern.quote(word) + "(?!\\w)", Pattern.CASE_INSENSITIVE).matcher(text);
         int count = 0;
-        while (matcher.find()) count++;
+        while (matcher.find()) {
+            count++;
+        }
         return count;
     }
 

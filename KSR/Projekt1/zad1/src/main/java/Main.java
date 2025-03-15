@@ -24,33 +24,38 @@ public class Main {
 
 //        Stemmer stemmer = new Stemmer();
         FeatureExtractor featureExtractor = new FeatureExtractor(filePaths);
-        List<Map<String, Object>> features = new ArrayList<>();
+        List<Map<String, Object>> trainFeatures = new ArrayList<>();
+        List<Map<String, Object>> testFeatures = new ArrayList<>();
 
         try {
-            List<Article> articles = loadReutersArticles(datasetPath);
-            System.out.println("Załadowano " + articles.size() + " artykułów.");
-
+            List<Article> trainArticles = loadReutersArticles(datasetPath, "TRAIN");
+            System.out.println("Załadowano " + trainArticles.size() + " artykułów trenujących.");
+            List<Article> testArticles = loadReutersArticles(datasetPath, "TEST");
+            System.out.println("Załadowano " + testArticles.size() + " artykułów testowych.");
 //            String result = stemmer.stem("I'm testing word Japanese");
 //            System.out.println(result);
             int counter = 0;
-//            for (Article article : articles) {
-//                System.out.println(counter++ + " / " + articles.size());
-//                removeStopWords(article.getBody(), stopWords);
-//                features.add(featureExtractor.extractFeatures(article.getBody()));
-//            }
-
-            for (int i = 0; i < 3; i++) {
-                System.out.println(articles.get(i).getBody());
-                String article = removeStopWords(articles.get(i).getBody(), stopWords);
-                System.out.println(article);
-                features.add(featureExtractor.extractFeatures(article));
-                System.out.println(features.get(i));
+            for (Article article : trainArticles) {
+                System.out.println(counter++ + " / " + trainArticles.size());
+                removeStopWords(article.getBody(), stopWords);
+                trainFeatures.add(featureExtractor.extractFeatures(article.getBody()));
             }
 
-//            features.add(featureExtractor.extractFeatures(result));
-//            articles.stream().limit(1).forEach(System.out::println);
-//            System.out.println(result);
-//            features.stream().limit(1).forEach(System.out::println);
+            for (Article article : testArticles) {
+                System.out.println(counter++ + " / " + testArticles.size());
+                removeStopWords(article.getBody(), stopWords);
+                testFeatures.add(featureExtractor.extractFeatures(article.getBody()));
+            }
+//            for (int i = 0; i < 3; i++) {
+//                System.out.println(testArticles.get(i).getBody());
+//                String article = removeStopWords("U.S. Dollar, dmk, yen", stopWords);
+//                System.out.println(article);
+//                features.add(featureExtractor.extractFeatures(article));
+//                System.out.println(features.get(i));
+//            }
+
+            trainFeatures.stream().limit(1).forEach(System.out::println);
+            testArticles.stream().limit(1).forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
