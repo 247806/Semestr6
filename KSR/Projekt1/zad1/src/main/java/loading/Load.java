@@ -8,9 +8,7 @@ import java.util.regex.*;
 
 public class Load {
 
-    // Wzorce dla artykułów, tytułów, treści i miejsc
     private static final Pattern REUTERS_PATTERN = Pattern.compile("<REUTERS(.*?)>(.*?)</REUTERS>", Pattern.DOTALL);
-    private static final Pattern TITLE_PATTERN = Pattern.compile("<TITLE>(.*?)</TITLE>", Pattern.DOTALL);
     private static final Pattern BODY_PATTERN = Pattern.compile("<BODY>(.*?)</BODY>", Pattern.DOTALL);
     private static final Pattern PLACES_PATTERN = Pattern.compile("<PLACES>(.*?)</PLACES>", Pattern.DOTALL);
     private static final Pattern PLACE_PATTERN = Pattern.compile("<D>(.*?)</D>");
@@ -36,12 +34,11 @@ public class Load {
                         }
                     }
 
-                    String title = extractTagContent(articleContent, TITLE_PATTERN);
                     String body = extractTagContent(articleContent, BODY_PATTERN);
                     List<String> places = extractPlaces(articleContent);
 
                     if (body != null && !body.isEmpty() && places.size() == 1) {
-                        articles.add(new Article(title != null ? title : "No Title", body, places.getFirst()));
+                        articles.add(new Article(body, places.getFirst()));
                     }
                 }
             }

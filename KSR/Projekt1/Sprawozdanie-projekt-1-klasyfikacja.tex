@@ -17,35 +17,10 @@
 \begin{document}
 \maketitle
 
-Opis projektu ma formę artykułu naukowego lub raportu z zadania
-badawczego (doświadczalnego/obliczeniowego0 (wg indywidualnych potrzeb związanych np. z
-pracą inżynierską/naukową/zawodową). Kolejne sekcje muszą być numerowane i
-zatytułowane. Wzory są numerowane, tablice są numerowane i podpisane nad
-tablicą, rysunki są numerowane i podpisane pod rysunkiem. Podpis rysunku i
-tabeli musi być wyczerpujący (nie ogólnikowy), aby czytelnik nie musiał sięgać do tekstu, aby go
-zrozumieć.\\
-\indent {\bf Limit stron sprawozdania: 20. Nie zmieniać parametrów tekstu
-(czcionki, marginesów, interlinii, itp.). Istotne dla sprawozdania rysunki,
-tabele, informacje, kody itp. można umieścić w załącznikach, które nie wliczają
-się do limitu stron.}\\
-\indent {\bf Wybrane sekcje (rozdziały sprawozdania) są uzupełniane wg wymagań w
-opisie Projektu 1. i Harmonogramie Zajęć na WIKAMP KSR jako efekty zadań w~poszczególnych tygodniach}. 
 
 \section{Cel projektu}
-\indent Celem projektu jest przygotowanie aplikacji, która będzie dokonywała klasyfikacji zbioru dokumentów tekstowych metodą k-NN. W trakcie działania programu konieczne będzie dokonanie ekstrakcji wektorów cech z artykułów dostępnych pod linkiem: 
+\indent Celem projektu jest przygotowanie aplikacji, która będzie dokonywała klasyfikacji zbioru dokumentów tekstowych metodą k-NN. Jej zadaniem będzie przydzielenie obiektu do odpowiedniej klasy. W trakcie działania programu konieczne będzie dokonanie ekstrakcji wektorów cech z artykułów dostępnych pod linkiem: 
 \url{https://archive.ics.uci.edu/dataset/137/reuters+21578+text+categorization+collection}. \\
-\indent Zwięzły (2-3 zdania) opis
-problemu badawczego/obliczeniowego,  uwzględniający część badawczą i
-implementacyjną. {\bf Nie przepisuj literatury ani teorii -- napisz krótko jak
-rozumiesz to co masz wykonać: jakie działania, na jakim zbiorze danych (link lub
-przypis), jaki jest spodziewany efekt}.\\
-\indent Zamieszczony opis (własny, nie skopiowany) zawiera
-przypisy do literatury (bibliografii) zamieszczonej na końcu raportu/sprawozdania
-zgodnie z~Polską Normą cytowania bibliografii (zob. materiały BG PŁ pt. ,,Bibliografia
-załącznikowa'').\\
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 02 wg Harmonogramu Zajęć
-na WIKAMP KSR.}
-
 
 \section{Klasyfikacja nadzorowana metodą $k$-NN.  Ekstrakcja cech, wektory cech}
 Metoda k-NN (k-Nearest Neighbors) jest algorytmem leniwym, co oznacza, że nie tworzy wewnętrznej reprezentacji danych uczących, tylko przechowuje wszystkie wzorce uczące. Dopiero po pojawieniu się wzorca testowego, dla którego wyznaczana jest odległość względem wszystkich wzorców uczących, algorytm poszukuje rozwiązania. \cite{knn}. Algorytm k-NN wymaga dwóch kluczowych parametrów, metryki, za pomocą, której wyznacza odległości obiektu testującego od wszystkich wzorców uczących oraz liczby sąsiadów k, czyli elementów do których badany element ma najbliżej. Decyzja klasyfikacyjna opiera się na najczęstszej klasie wśród k najbliższych sąsiadów. W przypadku naszego projektu odległość pomiędzy obiektami oznacza skalę podobieństwa tekstów.
@@ -61,22 +36,22 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             w = \arg\max_{w \in W} f(w)
         \end{equation}
-        gdzie W - zbiór walut kluczowych, f(w) - liczba wystąpień waluty \( w \) w tekście,
+        gdzie W - zbiór walut kluczowych, f(w) - liczba wystąpień waluty \( w \) w tekście.
     \item Nazwy miejsca - cecha ta jest reprezentacją tekstową wszystkich miejsc, np. nazw miast lub regionów pojawiających się ze zbioru miejsc kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie zbiór \( M' = \{ \text{New York} \} \). 
         \begin{equation}
             M' =  x \in M  \land x \in T
         \end{equation}
         gdzie M - zbiór miejsc kluczowych, T - zbiór słów znajdujących się w tekście
-    \item Liczba unikalnych słów - cecha oznaczająca wystąpienia słów unikalnych, czyli takich, które nie pojawiąją się więcej niż jeden raz w tekście.
+    \item Liczba unikalnych słów - cecha oznaczająca wystąpienia słów unikalnych, czyli takich, które nie pojawiąją się więcej niż jeden raz w tekście. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said. And the next week also in New York", słowa "New York" nie zostaną zliczone.
         \begin{equation}
-            uk = \mid x \in T \land f(x) = 1 \mid
+            uk = \mid x : x \in T \land f(x) = 1 \mid
         \end{equation}
         gdzie T - zbiór słów znajdujących się w tekście, f(x) - funkcja zwracająca liczbę wystąpień słowa x w tekście.
     \item Średnia długość słowa - cecha opisująca średnią długość słów w badanym tekście.
      \begin{equation}
             al = \frac{\sum_{i=0}^{n} a_i}{\sum_{i=0}^{n} x_i}
         \end{equation}
-        gdzie \( a_i \) = litera, \( x_i \) = liczba liter \( \geq 3 \).
+        gdzie \( a_i \) - litera, \( x_i \) - liczba liter \( \geq 3 \).
     \item Liczba  słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
         \begin{equation}
             rw = \ \mid x : x \in K \wedge x \in T_{\text{y}} \}
@@ -87,7 +62,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
             bw = \sum_{i=0}^{n} x_i
         \end{equation}
         gdzie \( x_i \) = słowo zaczynające się wielką literą.
-    \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie zbiór \(x_{first} = New York \).
+    \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie \(x_{first} = New York \).
        \begin{equation}
             x_{first} = \min \{x: x \in K \land x \in T \}
         \end{equation}
@@ -113,24 +88,6 @@ Wektor cech będzie miał postać:
         \begin{equation}
           v = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11]
         \end{equation}
-
-Krótki opis metody $k$-NN: zasada działania, wymagane parametry wejściowe, format
-i~znaczenie wyników/rezultatów. Opis własny z przypisami do literatury -- minimum
-teorii potrzebnej do zadania, tak by inżynier innej specjalności zrozumiał dalszy
-opis \cite{tadeusiewicz90}. {\bf Nie przepisuj literatury ani teorii -- napisz krótko jak
-rozumiesz to co masz wykonać w tym konkretnym przypadku}.\\
-
-Wyekstrahowane cechy liczbowe i tekstowe dokumentów, min. 10 cech, w tym min. 2
-o wartościach tekstowych, wszystkie
-opisane słownie oraz wzorami, z objaśnieniem oznaczeń i przykładami użycia, do
-tego precyzyjny opis możliwych wartości, które przyjmuje dana cecha (ułatwiający
-czytelnikowi zrozumienie znaczenia w zadaniu klasyfikacji). Pamiętaj, że wybrane
-cechy muszą reprezentować obiekt niezależnie od innych tekstów w tym samym lub w
-innym zbiorze. Podaj postać wektora wartości cech po procesie ekstrakcji. Użyte oznaczenia są jednolite w całym
-raporcie/sprawozdaniu. \\ 
-\indent Nadmiarowe rysunki i wzory mogą być podane w załącznikach. \\
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 02 wg Harmonogramu Zajęć
-na WIKAMP KSR.}
 
 \section{Miary jakości klasyfikacji} 
 Miary jakości klasyfikacji (Accuracy, Precision,

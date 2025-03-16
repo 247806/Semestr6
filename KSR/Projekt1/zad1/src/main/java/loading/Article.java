@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 @Getter
 public class Article {
-    String title;
     String body;
     String place;
 
-    public Article(String title, String body, String place) {
-        this.title = title;
+    public Article(String body, String place) {
         this.body = body;
         this.place = place;
     }
@@ -21,8 +19,7 @@ public class Article {
 
     @Override
     public String toString() {
-        return "Title: " + title +
-                "\nPlace: " + place +
+        return "\nPlace: " + place +
                 "\nBody: " + body;
     }
 }
