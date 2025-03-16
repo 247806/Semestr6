@@ -79,7 +79,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
        gdzie K - zbiór słów kluczowych, \( x_i \) = liczba liter \( \geq 3 \), T - zbiór słów znajdujących się w tekście.
     \item Nazwiska - cecha ta jest reprezentacją tekstową wszystkich nazwisk pojawiających się ze zbioru nazwisk kluczowych. Przykład: "Wallis was quoted as saying the Reagan Administration wants Japanese cooperation so the White House can ensure any U.S." wynikiem dla tego cytatu będzie zbiór \( N' = \{ \text{Reagan} \} \).
     \begin{equation}
-            N' =  \mid x : x \in N \land x \in T \mid
+            N' =  x \in N \land x \in T
         \end{equation}
         gdzie N - zbiór nazwisk kluczowych, T - zbiór słów znajdujących się w tekście.
 \end{enumerate}
@@ -88,6 +88,7 @@ Wektor cech będzie miał postać:
         \begin{equation}
           v = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11]
         \end{equation}
+
 
 \section{Miary jakości klasyfikacji} 
 Miary jakości klasyfikacji (Accuracy, Precision,
