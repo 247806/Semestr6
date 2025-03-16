@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.regex.*;
+import edu.stanford.nlp.simple.*;
 
 import static extraction.KeyWordsLoader.allKeyWords;
 import static extraction.KeyWordsLoader.loadWords;
@@ -29,7 +30,8 @@ public class FeatureExtractor {
 //        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
 
         // 1. Długość tekstu (liczba słów o długości >= 3)
-        String[] words = text.split("\\s+");
+//        String[] words = text.split("\\s+");
+        String[] words = tokenize(text);
         int wordCount = (int) Arrays.stream(words).filter(w -> w.length() >= 3).count();
         features.put("length", wordCount);
 
@@ -42,20 +44,20 @@ public class FeatureExtractor {
         features.put("cities", foundCities);
 
         // 4. Liczba unikalnych słów
-        String[] wordsWithoutDots = text.replaceAll("[.,!?:;]", "").split("\\s+");
-        Set<String> uniqueWords = new HashSet<>(Arrays.stream(wordsWithoutDots).filter(w -> w.length() >= 3).toList());
+//        String[] wordsWithoutDots = text.replaceAll("[.,!?:;]", "").split("\\s+");
+        Set<String> uniqueWords = new HashSet<>(Arrays.stream(words).filter(w -> w.length() >= 3).toList());
         features.put("unique_word_count", uniqueWords.size());
 
         // 5. Średnia długość słowa
-        double avgWordLength = Arrays.stream(wordsWithoutDots).mapToInt(String::length).average().orElse(0);
+        double avgWordLength = Arrays.stream(words).filter(w -> w.length() >= 3).mapToInt(String::length).average().orElse(0);
         features.put("avg_word_length", avgWordLength);
 
         // 6. Liczba słów kluczowych w pierwszych 3 zdaniach
-        int firstThreeSentences = countKeywordsInFirstSentences(text, 3, keywords);
+        int firstThreeSentences = countKeywordsInFirstSentences(words, 3, keywords);
         features.put("keywords_in_first_3_sentences", firstThreeSentences);
 
         // 7. Liczba słów zaczynających się wielką literą (nie licząc początku zdania)
-        int capitalizedWordCount = countCapitalizedWords(text);
+        int capitalizedWordCount = countCapitalizedWords(words);
         features.put("capitalized_word_count", capitalizedWordCount);
 
         // 8. Pierwsze słowo kluczowe w tekście
@@ -122,17 +124,20 @@ public class FeatureExtractor {
         return found;
     }
 
-    private int countKeywordsInFirstSentences(String text, int n, Set<String> keywords) {
-        String[] sentences = text.split("[.!?]\\s+");
-        int count = 0;
-        for (int i = 0; i < Math.min(n, sentences.length); i++) {
-            for (String key : keywords) {
-                if (Pattern.compile("\\b" + Pattern.quote(key) + "\\b", Pattern.CASE_INSENSITIVE).matcher(sentences[i]).find()) {
-                    count++;
-                }
+    private int countKeywordsInFirstSentences(String[] words, int n, Set<String> keywords) {
+        StringBuilder sb = new StringBuilder();
+        int senctences = 1;
+        for (String word : words) {
+            if (senctences == n) {
+                break;
             }
+            if (Objects.equals(word, ".")) {
+                senctences++;
+            }
+            sb.append(word).append(" ");
         }
-        return count;
+        List <String> found = findEntities(sb.toString(), keywords);
+        return found.size();
     }
 
     private int countKeywordOccurrences(String text, Set<String> keywords) {
@@ -143,15 +148,11 @@ public class FeatureExtractor {
         return count;
     }
 
-    private int countCapitalizedWords(String text) {
-        String[] sentences = text.split("[.!?]\\s+");
+    private int countCapitalizedWords(String[] words) {
         int count = 0;
-        for (String sentence : sentences) {
-            String[] words = sentence.split("\\s+");
-            for (int i = 1; i < words.length; i++) {
-                if (Character.isUpperCase(words[i].charAt(0))) {
+        for (int i = 1; i < words.length; i++) {
+            if (Character.isUpperCase(words[i].charAt(0)) && !Objects.equals(words[i - 1], ".") && words[i].length() >= 3) {
                 count++;
-                }
             }
         }
         return count;
@@ -171,5 +172,9 @@ public class FeatureExtractor {
         return firstKeyword;
     }
 
+    public String[] tokenize(String text) {
+        Sentence sentence = new Sentence(text);
+        return sentence.words().toArray(new String[0]);
+    }
 }
 

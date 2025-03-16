@@ -3,10 +3,7 @@ import extraction.Stemmer;
 import loading.Article;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static extraction.StopListFilter.loadStopList;
 import static extraction.StopListFilter.removeStopWords;
@@ -34,13 +31,13 @@ public class Main {
             System.out.println("Załadowano " + testArticles.size() + " artykułów testowych.");
 //            String result = stemmer.stem("I'm testing word Japanese");
 //            System.out.println(result);
-            int counter = 0;
+            int counter = 1;
             for (Article article : trainArticles) {
                 System.out.println(counter++ + " / " + trainArticles.size());
                 removeStopWords(article.getBody(), stopWords);
                 trainFeatures.add(featureExtractor.extractFeatures(article.getBody()));
             }
-
+            counter = 1;
             for (Article article : testArticles) {
                 System.out.println(counter++ + " / " + testArticles.size());
                 removeStopWords(article.getBody(), stopWords);
@@ -53,9 +50,12 @@ public class Main {
 //                features.add(featureExtractor.extractFeatures(article));
 //                System.out.println(features.get(i));
 //            }
-
-            trainFeatures.stream().limit(1).forEach(System.out::println);
-            testArticles.stream().limit(1).forEach(System.out::println);
+//            System.out.println(Arrays.toString(testArticles.getFirst().getBody().split("\\s+")));
+//            System.out.println(Arrays.toString(featureExtractor.tokenize(testArticles.getFirst().getBody())));
+//            String article = removeStopWords(testArticles.getFirst().getBody(), stopWords);
+//            testFeatures.add(featureExtractor.extractFeatures(article));
+            trainFeatures.stream().limit(3).forEach(System.out::println);
+            testFeatures.stream().limit(3).forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
