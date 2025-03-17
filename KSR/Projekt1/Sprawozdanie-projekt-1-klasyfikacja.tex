@@ -90,7 +90,58 @@ Wektor cech będzie miał postać:
         \end{equation}
 
 
-\section{Miary jakości klasyfikacji} 
+\section{Miary jakości klasyfikacji}
+\begin{flushleft}
+\( T \) - liczba poprawnie zaakwalifikowanych tekstów \\
+\( N \) - liczba niepoprawnie zaakwalifikowanych tekstów \\
+\( C \) - Kanada \\
+\( J \) - Japonia \\
+\( U \) - USA \\
+\( F \) - Francja \\
+\( W \) - Niemcy Zachodnie \\
+\( UK \) - Wielka Brytania \\
+\end{flushleft}
+
+\begin{equation}
+    ACC = \frac {TC + TJ + TU + TF + TW + TUK}{T + N}
+\end{equation}
+\begin{equation}
+    CPPV = \frac {TC}{TC + FC}
+\end{equation}
+\begin{equation}
+    CTPR = \frac {TC}{C}
+\end{equation}
+\begin{equation}
+    JPPV = \frac {TJ}{TJ + FJ}
+\end{equation}
+\begin{equation}
+    JTPR = \frac {TJ}{J}
+\end{equation}
+\begin{equation}
+    UPPV = \frac {TU}{TU + FU}
+\end{equation}
+\begin{equation}
+    UTPR = \frac {TU}{U}
+\end{equation}
+\begin{equation}
+    FPPV = \frac {TF}{TF + FF}
+\end{equation}
+\begin{equation}
+    FTPR = \frac {TF}{F}
+\end{equation}
+\begin{equation}
+    WPPV = \frac {TW}{TW + FW}
+\end{equation}
+\begin{equation}
+    WTPR = \frac {TW}{W}
+\end{equation}
+\begin{equation}
+    UKPPV = \frac {TUK}{TUK + FUK}
+\end{equation}
+\begin{equation}
+    UKTPR = \frac {TUK}{UK}
+\end{equation}
+
 Miary jakości klasyfikacji (Accuracy, Precision,
 Recall, F1). We wprowadzeniu zaprezentować minimum teorii potrzebnej do realizacji
 zadania, tak by inżynier innej specjalności zrozumiał dalszy opis. Należy podać {\bf konkretne wzory miar użyte w tym eksperymencie oraz krótko
@@ -106,6 +157,7 @@ na WIKAMP KSR.}
 
 
 \section{Metryki i miary podobieństwa tekstów w klasyfikacji}
+
 Wzory, znaczenia i opisy symboli zastosowanych metryk z
 przykładami. Wzory, opisy i znaczenia miar
 podobieństwa tekstów zastosowanych w obliczaniu metryk dla wektorów cech z
