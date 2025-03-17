@@ -36,7 +36,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             w = \arg\max_{w \in W} f(w)
         \end{equation}
-        gdzie W - zbiór walut kluczowych, f(w) - liczba wystąpień waluty \( w \) w tekście.
+        gdzie W - zbiór walut kluczowych, \( f(w) \)  - liczba wystąpień waluty \( w \) w tekście.
     \item Nazwy miejsca - cecha ta jest reprezentacją tekstową wszystkich miejsc, np. nazw miast lub regionów pojawiających się ze zbioru miejsc kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie zbiór \( M' = \{ \text{New York} \} \). 
         \begin{equation}
             M' =  x \in M  \land x \in T
@@ -46,7 +46,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             uk = \mid x : x \in T \land f(x) = 1 \mid
         \end{equation}
-        gdzie T - zbiór słów znajdujących się w tekście, f(x) - funkcja zwracająca liczbę wystąpień słowa x w tekście.
+        gdzie T - zbiór słów znajdujących się w tekście, \( f(x)\)  - funkcja zwracająca liczbę wystąpień słowa x w tekście.
     \item Średnia długość słowa - cecha opisująca średnią długość słów w badanym tekście.
      \begin{equation}
             al = \frac{\sum_{i=0}^{n} a_i}{\sum_{i=0}^{n} x_i}
@@ -54,7 +54,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         gdzie \( a_i \) - litera, \( x_i \) - liczba liter \( \geq 3 \).
     \item Liczba  słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
         \begin{equation}
-            rw = \ \mid x : x \in K \wedge x \in T_{\text{y}} \mid
+            fw = \ \mid x : x \in K \wedge x \in T_{\text{y}} \mid
         \end{equation}
         gdzie K - zbiór słów kluczowych, \( T_y \) - zbiór słów znajdujący się w pierwszych trzech zdaniach tekstu.
     \item Liczba słów zaczynających się wielką literą - cecha ta oznaczą liczbę wystąpień słów zaczynających się wielką literą, nie uzwlędniając przy tym słów rozpoczynających nowe zdanie.
@@ -62,7 +62,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
             bw = \sum_{i=0}^{n} x_i
         \end{equation}
         gdzie \( x_i \) = słowo zaczynające się wielką literą.
-    \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie \(x_{first} = New York \).
+    \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie \(x_{first} \) = New York.
        \begin{equation}
             x_{first} = \min \{x: x \in K \land x \in T \}
         \end{equation}
