@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 def random_uniform_signal(A, t1, d, time):
     signal = np.random.uniform(-A, A, size=len(time))

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import continousSignal
+import discretSignal
 
 
 # Funkcja do generowania wykresu w aplikacji
@@ -38,6 +39,8 @@ def generate_signal():
         signal = continousSignal.random_uniform_signal(A, t1, d, time)
     elif signal_type.get() == 'gaussian_noise':
         signal = continousSignal.gaussian_noise(A, t1, d, time)
+    #elif signal_type.get() == 'delta_diraca':
+        #signal == discretSignal.delta_diraca(A, t1, ts, )
 
     plot_signal(time, signal, signal_type.get())
 
