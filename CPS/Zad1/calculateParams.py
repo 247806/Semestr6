@@ -7,7 +7,8 @@ def avg_cont(signal, time):
 
 def avg_dis(signal, n):
     amount = np.sum(signal)
-    return amount / (n[-1] - n[0] + 1)
+    print(amount)
+    return amount / len(signal)
 
 def abs_avg_cont(signal, time):
     abs_signal = np.abs(signal)
@@ -17,7 +18,7 @@ def abs_avg_cont(signal, time):
 def abs_avg_dis(signal, n):
     abs_signal = np.abs(signal)
     amount = np.sum(abs_signal)
-    return amount / (n[-1] - n[0] + 1)
+    return amount / len(signal)
 
 def power_cont(signal, time):
     signal_sq = signal ** 2
@@ -27,7 +28,7 @@ def power_cont(signal, time):
 def power_dis(signal, n):
     signal_sq = signal ** 2
     amount = np.sum(signal_sq)
-    return amount / (n[-1] - n[0] + 1)
+    return amount / len(signal)
 
 def dev_cont(signal, time):
     mean_signal = np.mean(signal)
@@ -39,7 +40,7 @@ def dev_dis(signal, n):
     mean_signal = np.mean(signal)
     signal_sq = (signal - mean_signal) ** 2
     amount = np.sum(signal_sq)
-    return amount / (n[-1] - n[0] + 1)
+    return amount / len(signal)
 
 def eff_power_cont(signal, time):
     signal_sq = signal ** 2
@@ -49,4 +50,4 @@ def eff_power_cont(signal, time):
 def eff_power_dis(signal, n):
     signal_sq = signal ** 2
     amount = np.sum(signal_sq)
-    return np.sqrt(amount / (n[-1] - n[0] + 1))
+    return np.sqrt(amount / len(signal))

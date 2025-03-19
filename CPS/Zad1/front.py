@@ -9,18 +9,8 @@ import calculateParams as cp
 signal = None
 time = None
 
-# Funkcja do generowania wykresu w aplikacji
-def generate_signal():
+def function_type(A, T, t1, d, kw, ts, p):
     global signal, time
-    A = float(amplitude_entry.get())
-    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
-    t1 = float(start_time_entry.get())
-    d = float(duration_entry.get())
-
-    # Pobranie wartości tylko jeśli kw jest widoczne
-    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["squareSymmetric", "square", "triangle"] else None
-    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["ones", "delta_diraca"] else None
-    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "impuls_noise" else None
 
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, d, 1 / sample_rate)
@@ -48,16 +38,39 @@ def generate_signal():
     elif signal_type.get() == 'impuls_noise':
         time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
+
+# Funkcja do generowania wykresu w aplikacji
+def generate_signal():
+    global signal, time
+    A = float(amplitude_entry.get())
+    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
+    t1 = float(start_time_entry.get())
+    d = float(duration_entry.get())
+
+    # Pobranie wartości tylko jeśli kw jest widoczne
+    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["squareSymmetric", "square", "triangle"] else None
+    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["ones", "delta_diraca"] else None
+    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "impuls_noise" else None
+
+
+    function_type(A, T, t1, d, kw, ts, p)
+
     plot_signal(time, signal, signal_type.get())
+
+    if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] and d % T != 0:
+        print("okres")
+        full_periods = int(d // T)
+        d = full_periods * T
+        function_type(A, T, t1, d, kw, ts, p)
+
+
+    plot_histogram()
     create_parameters_tab()
-    print(cp.avg_dis(signal, time))
-    return signal
 
 # Funkcja rysująca wykres w aplikacji
 def plot_signal(time, signal, signal_type):
     global canvas
 
-    # Usunięcie poprzedniego wykresu (jeśli istnieje)
     for widget in plot_frame.winfo_children():
         widget.destroy()
 
@@ -65,7 +78,6 @@ def plot_signal(time, signal, signal_type):
         widget.destroy()
 
     if signal_type in ["delta_diraca", "impuls_noise"]:
-    # Tworzenie nowej figury matplotlib
         fig, ax = plt.subplots(figsize=(5, 3))
         ax.scatter(time, signal, label=f"{signal_type.capitalize()} Signal")
         ax.set_xlabel("Time [s]")
@@ -74,7 +86,6 @@ def plot_signal(time, signal, signal_type):
         ax.grid()
         ax.legend()
     else:
-        # Tworzenie nowej figury matplotlib
         fig, ax = plt.subplots(figsize=(5, 3))
         ax.plot(time, signal, label=f"{signal_type.capitalize()} Signal")
         ax.set_xlabel("Time [s]")
@@ -82,7 +93,6 @@ def plot_signal(time, signal, signal_type):
         ax.set_title(f"{signal_type.capitalize()} Signal")
         ax.grid()
         ax.legend()
-    # Osadzenie wykresu w oknie Tkinter
     canvas = FigureCanvasTkAgg(fig, master=plot_frame)
     canvas.draw()
     canvas.get_tk_widget().pack()
@@ -104,7 +114,6 @@ def plot_histogram():
     canvas.get_tk_widget().pack()
 
 
-# Funkcja do pokazywania/ukrywania pola dla współczynnika wypełnienia
 def toggle_fields():
     if signal_type.get() in ["squareSymmetric", "square", "triangle"]:
         duty_cycle_label.grid(row=6, column=0, padx=5, pady=5)
@@ -139,7 +148,6 @@ def toggle_fields():
 def create_parameters_tab():
     global signal, time
 
-    # Obliczenia parametrów (np. średnia, odchylenie standardowe)
     if time is not None and signal is not None and signal_type.get() not in ["delta_diraca", "impuls_noise"]:
         avg_label = ttk.Label(param_frame, text=f"Średnia: {cp.avg_cont(signal, time):.2f}")
         avg_label.grid(row=0, column=0, padx=5, pady=5)
@@ -173,23 +181,20 @@ def create_parameters_tab():
 
     return param_frame
 
-# Tworzenie głównego okna aplikacji
 root = tk.Tk()
 root.title("Generator sygnałów")
 
-# Etykiety i pola do wprowadzania danych
-# Opcja wyboru typu sygnału
 ttk.Label(root, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
 signal_type = tk.StringVar(value="sinusoidal")
 signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["random_uniform_signal", "gaussian_noise", "sinusoidal", "squareSymmetric", "halfWaveSinusoidal", "halfSinusoidal", "square", "triangle",  "ones", "delta_diraca", "impuls_noise"],
                                state="readonly")
 signal_dropdown.grid(row=0, column=1, padx=5, pady=5)
-signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())  # Aktualizacja przy zmianie wyboru
+signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())
 
-sample_rate_var = tk.StringVar(value="1000")  # Ustaw domyślną wartość np. 1000 Hz
+sample_rate_var = tk.StringVar(value="1000")
 
 ttk.Label(root, text="Częstotliwość próbkowania").grid(row=1, column=0, padx=5, pady=5)
-sample_rate_entry = ttk.Entry(root, textvariable=sample_rate_var)  # Przypisanie zmiennej
+sample_rate_entry = ttk.Entry(root, textvariable=sample_rate_var)
 sample_rate_entry.grid(row=1, column=1, padx=5, pady=5)
 
 ttk.Label(root, text="Amplituda (A):").grid(row=2, column=0, padx=5, pady=5)
@@ -204,7 +209,6 @@ ttk.Label(root, text="Czas trwania (d):").grid(row=5, column=0, padx=5, pady=5)
 duration_entry = ttk.Entry(root)
 duration_entry.grid(row=5, column=1, padx=5, pady=5)
 
-# Pola dla współczynnika wypełnienia i czasu skoku (ukryte domyślnie)
 duty_cycle_label = ttk.Label(root, text="Współczynnik wypełnienia (kw):")
 duty_cycle_entry = ttk.Entry(root)
 
@@ -217,24 +221,19 @@ duty_cycle_entry_t = ttk.Entry(root)
 duty_cycle_label_p = ttk.Label(root, text="Prawdopodobieństwo (p):")
 duty_cycle_entry_p = ttk.Entry(root)
 
-# Slider do ustawienia liczby przedziałów histogramu
 bin_slider = tk.Scale(root, from_=5, to=20, orient=tk.HORIZONTAL, label="Liczba przedziałów histogramu")
 bin_slider.set(10)
-bin_slider.grid(row=6, column=0, columnspan=2, pady=5)
+bin_slider.grid(row=7, column=0, columnspan=2, pady=5)
 
-# Przycisk do generowania wykresu
 generate_button = ttk.Button(root, text="Generuj sygnał", command=generate_signal)
-generate_button.grid(row=7, column=0, padx=5, pady=5)
+generate_button.grid(row=8, column=0, padx=5, pady=5)
 
 generate_button = ttk.Button(root, text="Generuj histogram", command=plot_histogram)
-generate_button.grid(row=7, column=1, padx=5, pady=5)
+generate_button.grid(row=8, column=1, padx=5, pady=5)
 
-
-# Ramka dla zakładek
 notebook = ttk.Notebook(root)
-notebook.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+notebook.grid(row=9, column=0, columnspan=2, padx=10, pady=10)
 
-# Ramki dla wykresów i histogramu
 plot_frame = ttk.Frame(notebook)
 histogram_frame = ttk.Frame(notebook)
 param_frame = ttk.Frame(notebook)
@@ -243,8 +242,6 @@ notebook.add(plot_frame, text="Wykres")
 notebook.add(histogram_frame, text="Histogram")
 notebook.add(param_frame, text="Parametry")
 
-# Ukrycie pola na starcie (bo domyślnie jest sinusoidal)
 toggle_fields()
 
-# Uruchomienie pętli głównej
 root.mainloop()
