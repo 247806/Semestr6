@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import continousSignal
 import discretSignal
+import calculateParams as cp
 signal = None
 
 # Funkcja do generowania wykresu w aplikacji
@@ -22,7 +23,7 @@ def generate_signal():
 
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, d, 1 / sample_rate)
-    print(p)
+
     if signal_type.get() == "sinusoidal":
         signal = continousSignal.sinusoidal(A, T, t1, d, time)
     elif signal_type.get() == "squareSymmetric":
@@ -46,9 +47,8 @@ def generate_signal():
     elif signal_type.get() == 'impuls_noise':
         time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
-    #print(time)
-    print(signal)
     plot_signal(time, signal, signal_type.get())
+    print(cp.avg_dis(signal, time))
     return signal
 
 # Funkcja rysująca wykres w aplikacji
@@ -61,7 +61,7 @@ def plot_signal(time, signal, signal_type):
 
     for widget in histogram_frame.winfo_children():
         widget.destroy()
-        
+
     if signal_type in ["delta_diraca", "impuls_noise"]:
     # Tworzenie nowej figury matplotlib
         fig, ax = plt.subplots(figsize=(5, 3))
