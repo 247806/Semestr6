@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+
+import numpy as np
 import pandas as pd
 from docx import Document
 from docx.shared import Cm
@@ -42,30 +44,49 @@ def create_docx(headers, data, output_file, add_page):
     width = section.page_width.mm - section.left_margin.mm - section.right_margin.mm
     print(f"Szerokość strony: {width} punktów")
 
-    max_col = 4
+    print(data)
 
-    header_parts = [headers[i:i + max_col] for i in range(0, len(headers), max_col)]
-    data_parts = [[row[i:i + max_col] for row in data] for i in range(0, len(headers), max_col)]
-    print(header_parts)
-    print(data_parts)
+    sizes = []
+    for i in range (len(data[0])):
+        while len(sizes) <= i:  # Upewniamy się, że istnieje odpowiedni wiersz
+            sizes.append([])
 
-    for i, element in enumerate(header_parts):
-        print("Nowa tabela")
-        if i > 0:
-            doc.add_paragraph()
-        table = doc.add_table(rows=1, cols=len(element), style='Table Grid')
-        # # Nagłówki
-        hdr_cells = table.rows[0].cells
-        for a, header in enumerate(element):
-            hdr_cells[a].text = header
+        for j, row in enumerate(data):
+            while len(sizes[i]) <= j:  # Upewniamy się, że istnieje odpowiednia kolumna
+                sizes[i].append(0)
+            sizes[i][j] = len(str(data[j][i])) * 0.381 #Średni rozmiar litery w cm
+    print(sizes)
 
-        print(len(data_parts))
-        # Dane
-        for j, row in enumerate(data_parts[i]):
-            print(data_parts[i])
-            row_cells = table.add_row().cells
-            for k, cell in enumerate(row):
-                row_cells[k].text = str(cell) if cell else ""
+    max_col_size = 7.62
+    min_col_size = 1.5
+    page_width_cm = 2 * max_col_size
+
+    column_widths = []
+    for i in range(len(sizes)):
+        max_width = max(sizes[i])
+        # Ogranicz szerokość kolumny do zakresu [min_col_size, max_col_size]
+        column_width = min(max_col_size, max(min_col_size, max_width))
+        column_widths.append(column_width)
+
+    print("Szerokości kolumn:", column_widths)
+
+
+    current_width = 0
+    start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
+
+    for i in range(len(column_widths)):
+        # Jeśli dodanie kolejnej kolumny przekroczy dostępną szerokość strony, utwórz nową tabelę
+        if current_width + column_widths[i] > page_width_cm:
+            # Utwórz tabelę dla kolumn od start_col do i-1
+            create_table(doc, headers[start_col:i], [row[start_col:i] for row in data], column_widths[start_col:i])
+            start_col = i
+            current_width = 0
+
+        current_width += column_widths[i]
+
+    # Utwórz tabelę dla pozostałych kolumn
+    if start_col < len(column_widths):
+        create_table(doc, headers[start_col:], [row[start_col:] for row in data], column_widths[start_col:])
 
     if add_page:
         for i, section in enumerate(doc.sections):
@@ -82,6 +103,25 @@ def create_docx(headers, data, output_file, add_page):
 
     doc.save(output_file)
     print(f"Plik DOCX zapisany: {output_file}")
+
+def create_table(doc, headers, data, column_widths):
+    doc.add_paragraph()
+    table = doc.add_table(rows=1, cols=len(headers), style='Table Grid')
+
+    # Ustaw szerokość kolumn
+    for i, width in enumerate(column_widths):
+        table.columns[i].width = Cm(width)
+
+    # Nagłówki
+    hdr_cells = table.rows[0].cells
+    for i, header in enumerate(headers):
+        hdr_cells[i].text = header
+
+    # Dane
+    for row in data:
+        row_cells = table.add_row().cells
+        for i, cell in enumerate(row):
+            row_cells[i].text = str(cell) if cell else ""
 
 # Tworzenie GUI
 root = tk.Tk()
