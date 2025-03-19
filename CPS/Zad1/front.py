@@ -10,17 +10,18 @@ import discretSignal
 # Funkcja do generowania wykresu w aplikacji
 def generate_signal():
     A = float(amplitude_entry.get())
-    T = float(duty_cycle_entry_t.get()) if signal_type.get() != "ones" and signal_type.get() != "random_uniform_signal" and signal_type.get() != "gaussian_noise" else None
+    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
 
     # Pobranie wartości tylko jeśli kw jest widoczne
-    kw = float(duty_cycle_entry.get()) if signal_type.get() == "squareSymmetric" or signal_type.get() == "square" or signal_type.get() == "triangle" else None
-    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() == "ones" else None
+    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["squareSymmetric", "square", "triangle"] else None
+    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["ones", "delta_diraca"] else None
+    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "impuls_noise" else None
 
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, d, 1 / sample_rate)
-
+    print(p)
     if signal_type.get() == "sinusoidal":
         signal = continousSignal.sinusoidal(A, T, t1, d, time)
     elif signal_type.get() == "squareSymmetric":
@@ -39,9 +40,12 @@ def generate_signal():
         signal = continousSignal.random_uniform_signal(A, t1, d, time)
     elif signal_type.get() == 'gaussian_noise':
         signal = continousSignal.gaussian_noise(A, t1, d, time)
-    #elif signal_type.get() == 'delta_diraca':
-        #signal == discretSignal.delta_diraca(A, t1, ts, )
+    elif signal_type.get() == 'delta_diraca':
+        time, signal = discretSignal.delta_diraca(A, t1, ts, d, sample_rate)
+    elif signal_type.get() == 'impuls_noise':
+        time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
+    #print(time)
     plot_signal(time, signal, signal_type.get())
 
 
@@ -52,16 +56,24 @@ def plot_signal(time, signal, signal_type):
     # Usunięcie poprzedniego wykresu (jeśli istnieje)
     for widget in plot_frame.winfo_children():
         widget.destroy()
-
+    if signal_type in ["delta_diraca", "impuls_noise"]:
     # Tworzenie nowej figury matplotlib
-    fig, ax = plt.subplots(figsize=(5, 3))
-    ax.plot(time, signal, label=f"{signal_type.capitalize()} Signal")
-    ax.set_xlabel("Time [s]")
-    ax.set_ylabel("Amplitude")
-    ax.set_title(f"{signal_type.capitalize()} Signal")
-    ax.grid()
-    ax.legend()
-
+        fig, ax = plt.subplots(figsize=(5, 3))
+        ax.scatter(time, signal, label=f"{signal_type.capitalize()} Signal")
+        ax.set_xlabel("Time [s]")
+        ax.set_ylabel("Amplitude")
+        ax.set_title(f"{signal_type.capitalize()} Signal")
+        ax.grid()
+        ax.legend()
+    else:
+        # Tworzenie nowej figury matplotlib
+        fig, ax = plt.subplots(figsize=(5, 3))
+        ax.plot(time, signal, label=f"{signal_type.capitalize()} Signal")
+        ax.set_xlabel("Time [s]")
+        ax.set_ylabel("Amplitude")
+        ax.set_title(f"{signal_type.capitalize()} Signal")
+        ax.grid()
+        ax.legend()
     # Osadzenie wykresu w oknie Tkinter
     canvas = FigureCanvasTkAgg(fig, master=plot_frame)
     canvas.draw()
@@ -77,15 +89,22 @@ def toggle_fields():
         duty_cycle_label.grid_remove()
         duty_cycle_entry.grid_remove()
 
-    if signal_type.get() == "ones":
+    if signal_type.get() in ["ones","delta_diraca"]:
         duty_cycle_label_ts.grid(row=6, column=0, padx=5, pady=5)
         duty_cycle_entry_ts.grid(row=6, column=1, padx=5, pady=5)
     else:
         duty_cycle_label_ts.grid_remove()
         duty_cycle_entry_ts.grid_remove()
 
+    if signal_type.get() == "impuls_noise":
+        duty_cycle_label_p.grid(row=6, column=0, padx=5, pady=5)
+        duty_cycle_entry_p.grid(row=6, column=1, padx=5, pady=5)
+    else:
+        duty_cycle_label_p.grid_remove()
+        duty_cycle_entry_p.grid_remove()
 
-    if signal_type.get() == "random_uniform_signal" or signal_type.get() == "ones" or signal_type.get() == "gaussian_noise":
+
+    if signal_type.get() in ["random_uniform_signal", "ones", "gaussian_noise", "delta_diraca", "impuls_noise"]:
         duty_cycle_label_t.grid_remove()
         duty_cycle_entry_t.grid_remove()
     else:
@@ -100,7 +119,7 @@ root.title("Generator sygnałów")
 # Opcja wyboru typu sygnału
 ttk.Label(root, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
 signal_type = tk.StringVar(value="sinusoidal")
-signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["random_uniform_signal", "gaussian_noise", "sinusoidal", "squareSymmetric", "halfWaveSinusoidal", "halfSinusoidal", "square", "triangle",  "ones"],
+signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["random_uniform_signal", "gaussian_noise", "sinusoidal", "squareSymmetric", "halfWaveSinusoidal", "halfSinusoidal", "square", "triangle",  "ones", "delta_diraca", "impuls_noise"],
                                state="readonly")
 signal_dropdown.grid(row=0, column=1, padx=5, pady=5)
 signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())  # Aktualizacja przy zmianie wyboru
@@ -115,10 +134,6 @@ ttk.Label(root, text="Amplituda (A):").grid(row=2, column=0, padx=5, pady=5)
 amplitude_entry = ttk.Entry(root)
 amplitude_entry.grid(row=2, column=1, padx=5, pady=5)
 
-# ttk.Label(root, text="Okres (T):").grid(row=1, column=0, padx=5, pady=5)
-# period_entry = ttk.Entry(root)
-# period_entry.grid(row=1, column=1, padx=5, pady=5)
-
 ttk.Label(root, text="Czas początkowy (t1):").grid(row=4, column=0, padx=5, pady=5)
 start_time_entry = ttk.Entry(root)
 start_time_entry.grid(row=4, column=1, padx=5, pady=5)
@@ -126,8 +141,6 @@ start_time_entry.grid(row=4, column=1, padx=5, pady=5)
 ttk.Label(root, text="Czas trwania (d):").grid(row=5, column=0, padx=5, pady=5)
 duration_entry = ttk.Entry(root)
 duration_entry.grid(row=5, column=1, padx=5, pady=5)
-
-
 
 # Pola dla współczynnika wypełnienia i czasu skoku (ukryte domyślnie)
 duty_cycle_label = ttk.Label(root, text="Współczynnik wypełnienia (kw):")
@@ -138,6 +151,9 @@ duty_cycle_entry_ts = ttk.Entry(root)
 
 duty_cycle_label_t = ttk.Label(root, text="Okres (T):")
 duty_cycle_entry_t = ttk.Entry(root)
+
+duty_cycle_label_p = ttk.Label(root, text="Prawdopodobieństwo (p):")
+duty_cycle_entry_p = ttk.Entry(root)
 
 # Przycisk do generowania wykresu
 generate_button = ttk.Button(root, text="Generuj sygnał", command=generate_signal)
