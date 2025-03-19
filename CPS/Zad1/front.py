@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import continousSignal
 import discretSignal
-
+signal = None
 
 # Funkcja do generowania wykresu w aplikacji
 def generate_signal():
+    global signal
     A = float(amplitude_entry.get())
     T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
     t1 = float(start_time_entry.get())
@@ -46,8 +47,9 @@ def generate_signal():
         time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
     #print(time)
+    print(signal)
     plot_signal(time, signal, signal_type.get())
-
+    return signal
 
 # Funkcja rysująca wykres w aplikacji
 def plot_signal(time, signal, signal_type):
@@ -56,6 +58,10 @@ def plot_signal(time, signal, signal_type):
     # Usunięcie poprzedniego wykresu (jeśli istnieje)
     for widget in plot_frame.winfo_children():
         widget.destroy()
+
+    for widget in histogram_frame.winfo_children():
+        widget.destroy()
+        
     if signal_type in ["delta_diraca", "impuls_noise"]:
     # Tworzenie nowej figury matplotlib
         fig, ax = plt.subplots(figsize=(5, 3))
@@ -76,6 +82,22 @@ def plot_signal(time, signal, signal_type):
         ax.legend()
     # Osadzenie wykresu w oknie Tkinter
     canvas = FigureCanvasTkAgg(fig, master=plot_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
+
+
+def plot_histogram():
+    print(signal)
+    for widget in histogram_frame.winfo_children():
+        widget.destroy()
+
+    fig, ax = plt.subplots(figsize=(5, 3))
+    ax.hist(signal, bins=int(bin_slider.get()), alpha=0.7, color='blue', edgecolor='black')
+    ax.set_xlabel("Amplitude")
+    ax.set_ylabel("Frequency")
+    ax.set_title(f"Histogram - {signal_type.get().capitalize()} Signal")
+
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame)
     canvas.draw()
     canvas.get_tk_widget().pack()
 
@@ -155,13 +177,24 @@ duty_cycle_entry_t = ttk.Entry(root)
 duty_cycle_label_p = ttk.Label(root, text="Prawdopodobieństwo (p):")
 duty_cycle_entry_p = ttk.Entry(root)
 
+# Slider do ustawienia liczby przedziałów histogramu
+bin_slider = tk.Scale(root, from_=5, to=20, orient=tk.HORIZONTAL, label="Liczba przedziałów histogramu")
+bin_slider.set(10)
+bin_slider.grid(row=6, column=0, columnspan=2, pady=5)
+
 # Przycisk do generowania wykresu
 generate_button = ttk.Button(root, text="Generuj sygnał", command=generate_signal)
-generate_button.grid(row=7, column=0, columnspan=2, pady=10)
+generate_button.grid(row=7, column=0, padx=5, pady=5)
+
+generate_button = ttk.Button(root, text="Generuj histogram", command=plot_histogram)
+generate_button.grid(row=7, column=1, padx=5, pady=5)
 
 # Ramka do osadzenia wykresu
 plot_frame = ttk.Frame(root)
 plot_frame.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+
+histogram_frame = ttk.Frame(root)
+histogram_frame.grid(row=9, column=0, columnspan=2, padx=10, pady=10)
 
 # Ukrycie pola na starcie (bo domyślnie jest sinusoidal)
 toggle_fields()
