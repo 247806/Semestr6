@@ -7,10 +7,11 @@ import continousSignal
 import discretSignal
 import calculateParams as cp
 signal = None
+time = None
 
 # Funkcja do generowania wykresu w aplikacji
 def generate_signal():
-    global signal
+    global signal, time
     A = float(amplitude_entry.get())
     T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
     t1 = float(start_time_entry.get())
@@ -48,6 +49,7 @@ def generate_signal():
         time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
     plot_signal(time, signal, signal_type.get())
+    create_parameters_tab()
     print(cp.avg_dis(signal, time))
     return signal
 
@@ -133,6 +135,44 @@ def toggle_fields():
         duty_cycle_label_t.grid(row=3, column=0, padx=5, pady=5)
         duty_cycle_entry_t.grid(row=3, column=1, padx=5, pady=5)
 
+
+def create_parameters_tab():
+    global signal, time
+
+    # Obliczenia parametrów (np. średnia, odchylenie standardowe)
+    if time is not None and signal is not None and signal_type.get() not in ["delta_diraca", "impuls_noise"]:
+        avg_label = ttk.Label(param_frame, text=f"Średnia: {cp.avg_cont(signal, time):.2f}")
+        avg_label.grid(row=0, column=0, padx=5, pady=5)
+
+        abs_avg_label = ttk.Label(param_frame, text=f"Średnia bezwzględna: {cp.abs_avg_cont(signal, time):.2f}")
+        abs_avg_label.grid(row=1, column=0, padx=5, pady=5)
+
+        power_label = ttk.Label(param_frame, text=f"Moc: {cp.power_cont(signal, time):.2f}")
+        power_label.grid(row=2, column=0, padx=5, pady=5)
+
+        dev_label = ttk.Label(param_frame, text=f"Wariancja: {cp.dev_cont(signal, time):.2f}")
+        dev_label.grid(row=3, column=0, padx=5, pady=5)
+
+        eff_power_label = ttk.Label(param_frame, text=f"Wartość skuteczna: {cp.eff_power_cont(signal, time):.2f}")
+        eff_power_label.grid(row=4, column=0, padx=5, pady=5)
+    elif time is not None and signal is not None :
+        avg_label = ttk.Label(param_frame, text=f"Średnia: {cp.avg_dis(signal, time):.2f}")
+        avg_label.grid(row=0, column=0, padx=5, pady=5)
+
+        abs_avg_label = ttk.Label(param_frame, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal, time):.2f}")
+        abs_avg_label.grid(row=1, column=0, padx=5, pady=5)
+
+        power_label = ttk.Label(param_frame, text=f"Moc: {cp.power_dis(signal, time):.2f}")
+        power_label.grid(row=2, column=0, padx=5, pady=5)
+
+        dev_label = ttk.Label(param_frame, text=f"Wariancja: {cp.dev_dis(signal, time):.2f}")
+        dev_label.grid(row=3, column=0, padx=5, pady=5)
+
+        eff_power_label = ttk.Label(param_frame, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.2f}")
+        eff_power_label.grid(row=4, column=0, padx=5, pady=5)
+
+    return param_frame
+
 # Tworzenie głównego okna aplikacji
 root = tk.Tk()
 root.title("Generator sygnałów")
@@ -189,12 +229,19 @@ generate_button.grid(row=7, column=0, padx=5, pady=5)
 generate_button = ttk.Button(root, text="Generuj histogram", command=plot_histogram)
 generate_button.grid(row=7, column=1, padx=5, pady=5)
 
-# Ramka do osadzenia wykresu
-plot_frame = ttk.Frame(root)
-plot_frame.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
 
-histogram_frame = ttk.Frame(root)
-histogram_frame.grid(row=9, column=0, columnspan=2, padx=10, pady=10)
+# Ramka dla zakładek
+notebook = ttk.Notebook(root)
+notebook.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+
+# Ramki dla wykresów i histogramu
+plot_frame = ttk.Frame(notebook)
+histogram_frame = ttk.Frame(notebook)
+param_frame = ttk.Frame(notebook)
+
+notebook.add(plot_frame, text="Wykres")
+notebook.add(histogram_frame, text="Histogram")
+notebook.add(param_frame, text="Parametry")
 
 # Ukrycie pola na starcie (bo domyślnie jest sinusoidal)
 toggle_fields()

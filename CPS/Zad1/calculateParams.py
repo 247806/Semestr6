@@ -29,13 +29,13 @@ def power_dis(signal, n):
     amount = np.sum(signal_sq)
     return amount / (n[-1] - n[0] + 1)
 
-def vari_cont(signal, time):
+def dev_cont(signal, time):
     mean_signal = np.mean(signal)
     signal_sq = (signal - mean_signal) ** 2
     integral = simpson(signal_sq, time)
     return integral / (time[-1] - time[0])
 
-def vari_dis(signal, n):
+def dev_dis(signal, n):
     mean_signal = np.mean(signal)
     signal_sq = (signal - mean_signal) ** 2
     amount = np.sum(signal_sq)
