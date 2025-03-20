@@ -6,139 +6,142 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import continousSignal
 import discretSignal
 import calculateParams as cp
+import signalOperation as so
 signal_1 = None
 time_1 = None
-signal_type_2 = None
 signal_2 = None
 time_2 = None
 signal_3 = None
 time_3 = None
 
-def function_type(A, T, t1, d, kw, ts, p):
-    global signal_1, time_1
-
+def function_type(A, T, t1, d, kw, ts, p, signal, time):
     sample_rate = float(sample_rate_entry.get())
-    time_1 = np.arange(t1, d, 1 / sample_rate)
+    time = np.arange(t1, d, 1 / sample_rate)
 
-    if signal_type.get() == "sinusoidal":
-        signal_1 = continousSignal.sinusoidal(A, T, t1, d, time_1)
-    elif signal_type.get() == "squareSymmetric":
-        signal_1 = continousSignal.squareSymetric(A, T, t1, d, kw, time_1)
-    elif signal_type.get() == 'halfWaveSinusoidal':
-        signal_1 = continousSignal.halfWaveSinusoidal(A, T, t1, d, time_1)
-    elif signal_type.get() == 'halfSinusoidal':
-        signal_1 = continousSignal.halfSinusoidal(A, T, t1, d, time_1)
-    elif signal_type.get() == 'square':
-        signal_1 = continousSignal.square(A, T, t1, d, kw, time_1)
-    elif signal_type.get() == 'triangle':
-        signal_1 = continousSignal.triangle(A, T, t1, d, kw, time_1)
-    elif signal_type.get() == 'ones':
-        signal_1 = continousSignal.ones(A, t1, d, ts, time_1)
-    elif signal_type.get() == 'random_uniform_signal':
-        signal_1 = continousSignal.random_uniform_signal(A, t1, d, time_1)
-    elif signal_type.get() == 'gaussian_noise':
-        signal_1 = continousSignal.gaussian_noise(A, t1, d, time_1)
-    elif signal_type.get() == 'delta_diraca':
-        time_1, signal_1 = discretSignal.delta_diraca(A, t1, ts, d, sample_rate)
-    elif signal_type.get() == 'impuls_noise':
-        time_1, signal_1 = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
+    if signal_type.get() == "Sygnał sinusoidalny":
+        signal = continousSignal.sinusoidal(A, T, t1, d, time)
+    elif signal_type.get() == "Sygnał prostokątny symetryczny":
+        signal = continousSignal.squareSymetric(A, T, t1, d, kw, time)
+    elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany jednopołówkowo':
+        signal = continousSignal.halfWaveSinusoidal(A, T, t1, d, time)
+    elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany dwupołówkowo ':
+        signal = continousSignal.halfSinusoidal(A, T, t1, d, time)
+    elif signal_type.get() == 'Sygnał prostokątny':
+        signal = continousSignal.square(A, T, t1, d, kw, time)
+    elif signal_type.get() == 'Sygnał trójkątny':
+        signal = continousSignal.triangle(A, T, t1, d, kw, time)
+    elif signal_type.get() == 'Skok jednostkowy':
+        signal = continousSignal.ones(A, t1, d, ts, time)
+    elif signal_type.get() == 'Szum o rozkładzie jednostajnym':
+        signal = continousSignal.random_uniform_signal(A, t1, d, time)
+    elif signal_type.get() == 'Szum gaussowski':
+        signal = continousSignal.gaussian_noise(A, t1, d, time)
+    elif signal_type.get() == 'Impuls jednostkowy':
+        time, signal = discretSignal.delta_diraca(A, t1, ts, d, sample_rate)
+    elif signal_type.get() == 'Szum impulsowy':
+        time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
+
+    return time, signal
 
 
 # Funkcja do generowania wykresu w aplikacji
 def generate_signal():
-    global signal_1, time_1, signal_2, time_2, signal_type_2
+    global signal_1, time_1, signal_2, time_2, signal_type_2, d_2, t_2, kw_2, ts_2, p_2, a_2, t1_2
+
     A = float(amplitude_entry.get())
-    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] else None
+    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] else None
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
-
-    # Pobranie wartości tylko jeśli kw jest widoczne
-    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["squareSymmetric", "square", "triangle"] else None
-    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["ones", "delta_diraca"] else None
-    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "impuls_noise" else None
-
-    if signal_1 is not None and time_1 is not None:
-        signal_2 = signal_1
-        time_2 = time_1
-        update_plot(time_2, signal_2, signal_type_2)
-    signal_type_2 = signal_type.get()
-
-    function_type(A, T, t1, d, kw, ts, p)
-
-    plot_signal(time_1, signal_1, signal_type.get())
+    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"] else None
+    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["Skok jednostkowy", "Impuls jednostkowy"] else None
+    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "Szum impulsowy" else None
 
 
-    # if signal_type.get() not in ["ones", "random_uniform_signal", "gaussian_noise", "delta_diraca", "impuls_noise"] and d % T != 0:
-    #     print("okres")
-    #     full_periods = int(d // T)
-    #     d = full_periods * T
-    #     function_type(A, T, t1, d, kw, ts, p)
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2, time_2)
+        plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
+        create_parameters_tab(param_frame_2, signal_2, time_2)
+
+    else:
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, time_1)
+        plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
+        create_parameters_tab(param_frame_1, signal_1, time_1)
+
+
+    if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
+        full_periods = int(d // T)
+        d = full_periods * T
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, time_1)
 
 
     plot_histogram()
-    create_parameters_tab()
+
+
 
 # Funkcja rysująca wykres w aplikacji
-def plot_signal(time, signal, signal_type):
+def plot_signal(time, signal, signal_type, plot, histogram):
 
-    for widget in plot_frame_1.winfo_children():
+    for widget in plot.winfo_children():
         widget.destroy()
 
-    for widget in histogram_frame_1.winfo_children():
+    for widget in histogram.winfo_children():
         widget.destroy()
 
-    if signal_type in ["delta_diraca", "impuls_noise"]:
-        fig, ax = plt.subplots()
-        ax.scatter(time, signal, label=f"{signal_type.capitalize()} Signal")
-        ax.set_xlabel("Time [s]")
-        ax.set_ylabel("Amplitude")
-        ax.set_title(f"{signal_type.capitalize()} Signal")
-        ax.grid()
-        ax.legend()
+    fig, ax = plt.subplots()
+    if signal_type in ["Impuls jednostkowy", "Szum impulsowy"]:
+        ax.scatter(time, signal)
     else:
-        fig, ax = plt.subplots()
-        ax.plot(time, signal, label=f"{signal_type.capitalize()} Signal")
-        ax.set_xlabel("Time [s]")
-        ax.set_ylabel("Amplitude")
-        ax.set_title(f"{signal_type.capitalize()} Signal")
-        ax.grid()
-        ax.legend()
-    canvas = FigureCanvasTkAgg(fig, master=plot_frame_1)
+        ax.plot(time, signal)
+    ax.set_title("Wykres sygnału")
+    ax.set_xlabel("Czas [s]")
+    ax.set_ylabel("Amplituda")
+    ax.grid()
+    ax.legend()
+    canvas = FigureCanvasTkAgg(fig, master=plot)
     canvas.draw()
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
 
 
 def plot_histogram():
-    for widget in histogram_frame_1.winfo_children():
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        frame = histogram_frame_2
+        signal = signal_2
+    elif signal_notebook.index(signal_notebook.select()) == 0:
+        frame = histogram_frame_1
+        signal = signal_1
+    else:
+        frame = histogram_frame_3
+        signal = signal_3
+
+    for widget in frame.winfo_children():
         widget.destroy()
 
     fig, ax = plt.subplots()
-    ax.hist(signal_1, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
-    ax.set_xlabel("Amplitude")
-    ax.set_ylabel("Frequency")
-    ax.set_title(f"Histogram - {signal_type.get().capitalize()} Signal")
+    ax.hist(signal, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
+    ax.set_ylabel("Amplituda")
+    ax.set_title("Histogram")
+    ax.set_xlabel("Częstotliwość")
 
-    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1)
+    canvas = FigureCanvasTkAgg(fig, master=frame)
     canvas.draw()
     canvas.get_tk_widget().pack()
 
-
 def toggle_fields():
-    if signal_type.get() in ["squareSymmetric", "square", "triangle"]:
+    if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"]:
         duty_cycle_label.grid(row=6, column=0, padx=5, pady=5)
         duty_cycle_entry.grid(row=6, column=1, padx=5, pady=5)
     else:
         duty_cycle_label.grid_remove()
         duty_cycle_entry.grid_remove()
 
-    if signal_type.get() in ["ones","delta_diraca"]:
+    if signal_type.get() in ["Skok jednostkowy","Impuls jednostkowy"]:
         duty_cycle_label_ts.grid(row=6, column=0, padx=5, pady=5)
         duty_cycle_entry_ts.grid(row=6, column=1, padx=5, pady=5)
     else:
         duty_cycle_label_ts.grid_remove()
         duty_cycle_entry_ts.grid_remove()
 
-    if signal_type.get() == "impuls_noise":
+    if signal_type.get() == "Szum impulsowy":
         duty_cycle_label_p.grid(row=6, column=0, padx=5, pady=5)
         duty_cycle_entry_p.grid(row=6, column=1, padx=5, pady=5)
     else:
@@ -146,48 +149,46 @@ def toggle_fields():
         duty_cycle_entry_p.grid_remove()
 
 
-    if signal_type.get() in ["random_uniform_signal", "ones", "gaussian_noise", "delta_diraca", "impuls_noise"]:
+    if signal_type.get() in ["Szum o rozkładzie jednostajnym", "Skok jednostkowy", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"]:
         duty_cycle_label_t.grid_remove()
         duty_cycle_entry_t.grid_remove()
     else:
         duty_cycle_label_t.grid(row=3, column=0, padx=5, pady=5)
         duty_cycle_entry_t.grid(row=3, column=1, padx=5, pady=5)
 
-def create_parameters_tab():
-    global signal_1, time_1
-
-    if time_1 is not None and signal_1 is not None and signal_type.get() not in ["delta_diraca", "impuls_noise"]:
-        avg_label = ttk.Label(param_frame_1, text=f"Średnia: {cp.avg_cont(signal_1, time_1):.2f}")
+def create_parameters_tab(param, signal, time):
+    if signal_type.get() not in ["Impuls jednostkowy", "Szum impulsowy"]:
+        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_cont(signal, time):.2f}")
         avg_label.grid(row=0, column=0, padx=5, pady=5)
 
-        abs_avg_label = ttk.Label(param_frame_1, text=f"Średnia bezwzględna: {cp.abs_avg_cont(signal_1, time_1):.2f}")
+        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_cont(signal, time):.2f}")
         abs_avg_label.grid(row=1, column=0, padx=5, pady=5)
 
-        power_label = ttk.Label(param_frame_1, text=f"Moc: {cp.power_cont(signal_1, time_1):.2f}")
+        power_label = ttk.Label(param, text=f"Moc: {cp.power_cont(signal, time):.2f}")
         power_label.grid(row=2, column=0, padx=5, pady=5)
 
-        dev_label = ttk.Label(param_frame_1, text=f"Wariancja: {cp.dev_cont(signal_1, time_1):.2f}")
+        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_cont(signal, time):.2f}")
         dev_label.grid(row=3, column=0, padx=5, pady=5)
 
-        eff_power_label = ttk.Label(param_frame_1, text=f"Wartość skuteczna: {cp.eff_power_cont(signal_1, time_1):.2f}")
+        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_cont(signal, time):.2f}")
         eff_power_label.grid(row=4, column=0, padx=5, pady=5)
-    elif time_1 is not None and signal_1 is not None :
-        avg_label = ttk.Label(param_frame_1, text=f"Średnia: {cp.avg_dis(signal_1, time_1):.2f}")
+
+    else:
+        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_dis(signal, time):.2f}")
         avg_label.grid(row=0, column=0, padx=5, pady=5)
 
-        abs_avg_label = ttk.Label(param_frame_1, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal_1, time_1):.2f}")
+        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal, time):.2f}")
         abs_avg_label.grid(row=1, column=0, padx=5, pady=5)
 
-        power_label = ttk.Label(param_frame_1, text=f"Moc: {cp.power_dis(signal_1, time_1):.2f}")
+        power_label = ttk.Label(param, text=f"Moc: {cp.power_dis(signal, time):.2f}")
         power_label.grid(row=2, column=0, padx=5, pady=5)
 
-        dev_label = ttk.Label(param_frame_1, text=f"Wariancja: {cp.dev_dis(signal_1, time_1):.2f}")
+        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_dis(signal, time):.2f}")
         dev_label.grid(row=3, column=0, padx=5, pady=5)
 
-        eff_power_label = ttk.Label(param_frame_1, text=f"Wartość skuteczna: {cp.eff_power_dis(signal_1, time_1):.2f}")
+        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.2f}")
         eff_power_label.grid(row=4, column=0, padx=5, pady=5)
 
-    return param_frame_1
 
 def plot_empty_chart():
     fig, ax = plt.subplots()
@@ -226,58 +227,38 @@ def increase_bins():
 def decrease_bins():
     bins_var.set(max(bins_var.get() - 1, 5))
 
-def update_plot(time, signal, signal_type):
-
-    for widget in plot_frame_2.winfo_children():
-        widget.destroy()
-
-    for widget in histogram_frame_2.winfo_children():
-        widget.destroy()
-
-    if signal_type in ["delta_diraca", "impuls_noise"]:
-        fig, ax = plt.subplots()
-        ax.scatter(time, signal, label=f"{signal_type.capitalize()} Signal")
-        ax.set_xlabel("Time [s]")
-        ax.set_ylabel("Amplitude")
-        ax.set_title(f"{signal_type.capitalize()} Signal")
-        ax.grid()
-        ax.legend()
-    else:
-        fig, ax = plt.subplots()
-        ax.plot(time, signal, label=f"{signal_type.capitalize()} Signal")
-        ax.set_xlabel("Time [s]")
-        ax.set_ylabel("Amplitude")
-        ax.set_title(f"{signal_type.capitalize()} Signal")
-        ax.grid()
-        ax.legend()
-    canvas = FigureCanvasTkAgg(fig, master=plot_frame_2)
-    canvas.draw()
-    canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
-
-    for widget in histogram_frame_2.winfo_children():
+def update_histogram(signal, signal_type, histogram):
+    for widget in histogram.winfo_children():
         widget.destroy()
 
     fig, ax = plt.subplots()
-    ax.hist(signal_1, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
+    ax.hist(signal, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
     ax.set_xlabel("Amplitude")
     ax.set_ylabel("Frequency")
     ax.set_title(f"Histogram - {signal_type.capitalize()} Signal")
 
-    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2)
+    canvas = FigureCanvasTkAgg(fig, master=histogram)
     canvas.draw()
     canvas.get_tk_widget().pack()
+
+def operate_signals(operation):
+    global signal_1, time_1, signal_2, time_2, signal_3, time_3
+    signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
+    plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
+    update_histogram(signal_3, "Wynik", histogram_frame_3)
+    create_parameters_tab(param_frame_3, signal_3, time_3)
 
 
 root = tk.Tk()
 root.title("Generator sygnałów")
-root.geometry("1050x550")  # Stałe wymiary okna
-root.resizable(False, False)  # Blokada zmiany rozmiaru
+root.geometry("1170x550")
+root.resizable(False, False)
 
 ttk.Label(root, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
-signal_type = tk.StringVar(value="sinusoidal")
-signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["random_uniform_signal", "gaussian_noise", "sinusoidal", "squareSymmetric", "halfWaveSinusoidal", "halfSinusoidal", "square", "triangle",  "ones", "delta_diraca", "impuls_noise"],
-                               state="readonly")
-signal_dropdown.grid(row=0, column=1, padx=5, pady=5)
+signal_type = tk.StringVar(value="Sygnał sinusoidalny")
+signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["Szum o rozkładzie jednostajnym", "Szum gaussowski", "Sygnał sinusoidalny", "Sygnał prostokątny symetryczny", "Sygnał sinusoidalny wyprostowany jednopołówkowo", "Sygnał sinusoidalny wyprostowany dwupołówkowo ", "Sygnał prostokątny", "Sygnał trójkątny",  "Skok jednostkowy", "Impuls jednostkowy", "Szum impulsowy"],
+                               state="readonly",  width=50)
+signal_dropdown.grid(row=0, column=1, columnspan=1, padx=5, pady=5)
 signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())
 
 sample_rate_var = tk.StringVar(value="1000")
@@ -334,15 +315,15 @@ generate_button.grid(row=8, column=1, padx=5, pady=5)
 signal_notebook = ttk.Notebook(root)
 signal_notebook.grid(row=0, column=2, rowspan=10, columnspan=10, padx=10, pady=10)
 
-signal_1 = ttk.Frame(signal_notebook)
-signal_2 = ttk.Frame(signal_notebook)
-signal_3 = ttk.Frame(signal_notebook)
+signal_frame_1 = ttk.Frame(signal_notebook)
+signal_frame_2 = ttk.Frame(signal_notebook)
+signal_frame_3 = ttk.Frame(signal_notebook)
 
-signal_notebook.add(signal_1, text="Sygnał 1")
-signal_notebook.add(signal_2, text="Sygnał 2")
-signal_notebook.add(signal_3, text="Wynik")
+signal_notebook.add(signal_frame_1, text="Sygnał 1")
+signal_notebook.add(signal_frame_2, text="Sygnał 2")
+signal_notebook.add(signal_frame_3, text="Wynik")
 
-notebook = ttk.Notebook(signal_1)
+notebook = ttk.Notebook(signal_frame_1)
 notebook.pack(expand=True, fill='both')
 plot_frame_1 = ttk.Frame(notebook)
 histogram_frame_1 = ttk.Frame(notebook)
@@ -352,7 +333,7 @@ notebook.add(histogram_frame_1, text="Histogram")
 notebook.add(param_frame_1, text="Parametry")
 
 
-notebook = ttk.Notebook(signal_2)
+notebook = ttk.Notebook(signal_frame_2)
 notebook.pack(expand=True, fill='both')
 plot_frame_2 = ttk.Frame(notebook)
 histogram_frame_2 = ttk.Frame(notebook)
@@ -362,7 +343,7 @@ notebook.add(histogram_frame_2, text="Histogram")
 notebook.add(param_frame_2, text="Parametry")
 
 
-notebook = ttk.Notebook(signal_3)
+notebook = ttk.Notebook(signal_frame_3)
 notebook.pack(expand=True, fill='both')
 plot_frame_3 = ttk.Frame(notebook)
 histogram_frame_3 = ttk.Frame(notebook)
@@ -372,8 +353,14 @@ notebook.add(histogram_frame_3, text="Histogram")
 notebook.add(param_frame_3, text="Parametry")
 plot_empty_chart()
 
-toggle_fields()
+operations_frame = ttk.Frame(root)
+operations_frame.grid(row=9, column=0, columnspan=2, pady=10)
 
-#plot_empty_chart()
+ttk.Button(operations_frame, text="Dodaj", command=lambda: operate_signals("add")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Odejmij", command=lambda: operate_signals("subtract")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Pomnóż", command=lambda: operate_signals("multiply")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Podziel", command=lambda: operate_signals("divide")).pack(side=tk.LEFT, padx=5)
+
+toggle_fields()
 
 root.mainloop()
