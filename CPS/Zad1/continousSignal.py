@@ -1,28 +1,26 @@
 import numpy as np
 
-
-def random_uniform_signal(A, t1, d, time):
+def random_uniform_signal(A, time):
     signal = np.random.uniform(-A, A, size=len(time))
     return signal
 
-def gaussian_noise(A, t1, d, time):
+def gaussian_noise(A, time):
     signal = A * np.random.normal(loc=0, scale=1, size=len(time))
     return signal
 
-def sinusoidal(A, T, t1, d, time):
+def sinusoidal(A, T, time):
     signal = A * np.sin((2 * np.pi / T) * time)
     return signal
 
-def halfWaveSinusoidal(A, T, t1, d, time):
+def halfWaveSinusoidal(A, T, time):
     signal = 0.5 * A * (np.sin((2 * np.pi / T) * time) + np.abs(np.sin((2 * np.pi / T) * time)))
     return signal
 
-def halfSinusoidal(A, T, t1, d, time):
+def halfSinusoidal(A, T, time):
     signal = A * np.abs(np.sin((2 * np.pi / T) * time))
     return signal
 
-
-def square(A, T, t1, d, kw, time):
+def square(A, T, t1, kw, time):
     signal = np.zeros(len(time))
     k = 0
     i = 0
@@ -37,7 +35,7 @@ def square(A, T, t1, d, kw, time):
 
     return signal
 
-def squareSymetric(A, T, t1, d, kw, time):
+def squareSymetric(A, T, t1, kw, time):
     signal = np.zeros(len(time))
     k = 0
     i = 0
@@ -52,7 +50,7 @@ def squareSymetric(A, T, t1, d, kw, time):
 
     return signal
 
-def triangle(A, T, t1, d, kw, time):
+def triangle(A, T, t1, kw, time):
     signal = np.zeros(len(time))
     k = 0
     i = 0
@@ -67,7 +65,7 @@ def triangle(A, T, t1, d, kw, time):
 
     return signal
 
-def ones(A, t1, d, ts, time):
+def ones(A, ts, time):
     signal = np.zeros(len(time))
     i = 0
     for times in time:

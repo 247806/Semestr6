@@ -19,30 +19,29 @@ def function_type(A, T, t1, d, kw, ts, p, signal):
     time = np.arange(t1, d, 1 / sample_rate)
 
     if signal_type.get() == "Sygnał sinusoidalny":
-        signal = continousSignal.sinusoidal(A, T, t1, d, time)
+        signal = continousSignal.sinusoidal(A, T, time)
     elif signal_type.get() == "Sygnał prostokątny symetryczny":
-        signal = continousSignal.squareSymetric(A, T, t1, d, kw, time)
+        signal = continousSignal.squareSymetric(A, T, t1, kw, time)
     elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany jednopołówkowo':
-        signal = continousSignal.halfWaveSinusoidal(A, T, t1, d, time)
+        signal = continousSignal.halfWaveSinusoidal(A, T, time)
     elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany dwupołówkowo ':
-        signal = continousSignal.halfSinusoidal(A, T, t1, d, time)
+        signal = continousSignal.halfSinusoidal(A, T, time)
     elif signal_type.get() == 'Sygnał prostokątny':
-        signal = continousSignal.square(A, T, t1, d, kw, time)
+        signal = continousSignal.square(A, T, t1, kw, time)
     elif signal_type.get() == 'Sygnał trójkątny':
-        signal = continousSignal.triangle(A, T, t1, d, kw, time)
+        signal = continousSignal.triangle(A, T, t1, kw, time)
     elif signal_type.get() == 'Skok jednostkowy':
-        signal = continousSignal.ones(A, t1, d, ts, time)
+        signal = continousSignal.ones(A, ts, time)
     elif signal_type.get() == 'Szum o rozkładzie jednostajnym':
-        signal = continousSignal.random_uniform_signal(A, t1, d, time)
+        signal = continousSignal.random_uniform_signal(A, time)
     elif signal_type.get() == 'Szum gaussowski':
-        signal = continousSignal.gaussian_noise(A, t1, d, time)
+        signal = continousSignal.gaussian_noise(A, time)
     elif signal_type.get() == 'Impuls jednostkowy':
         time, signal = discretSignal.delta_diraca(A, t1, ts, d, sample_rate)
     elif signal_type.get() == 'Szum impulsowy':
         time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
 
     return time, signal
-
 
 def generate_signal():
     global signal_1, time_1, signal_2, time_2
@@ -94,7 +93,6 @@ def plot_signal(time, signal, signal_type, plot, histogram):
     canvas = FigureCanvasTkAgg(fig, master=plot)
     canvas.draw()
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
-
 
 def plot_histogram(frame, signal):
     for widget in frame.winfo_children():
@@ -173,7 +171,6 @@ def create_parameters_tab(param, signal, time):
         eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.2f}")
         eff_power_label.grid(row=4, column=0, padx=5, pady=5)
 
-
 def plot_empty_chart():
     fig, ax = plt.subplots()
     ax.set_title("Wykres sygnału")
@@ -217,7 +214,6 @@ def operate_signals(operation):
     plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
     plot_histogram(histogram_frame_3, signal_3)
     create_parameters_tab(param_frame_3, signal_3, time_3)
-
 
 root = tk.Tk()
 root.title("Generator sygnałów")
