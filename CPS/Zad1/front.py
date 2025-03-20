@@ -14,7 +14,7 @@ time_2 = None
 signal_3 = None
 time_3 = None
 
-def function_type(A, T, t1, d, kw, ts, p, signal, time):
+def function_type(A, T, t1, d, kw, ts, p, signal):
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, d, 1 / sample_rate)
 
@@ -44,9 +44,8 @@ def function_type(A, T, t1, d, kw, ts, p, signal, time):
     return time, signal
 
 
-# Funkcja do generowania wykresu w aplikacji
 def generate_signal():
-    global signal_1, time_1, signal_2, time_2, signal_type_2, d_2, t_2, kw_2, ts_2, p_2, a_2, t1_2
+    global signal_1, time_1, signal_2, time_2
 
     A = float(amplitude_entry.get())
     T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] else None
@@ -58,27 +57,23 @@ def generate_signal():
 
 
     if signal_notebook.index(signal_notebook.select()) == 1:
-        time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2, time_2)
+        time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2)
         plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2)
+        plot_histogram(histogram_frame_2, signal_2)
 
     else:
-        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, time_1)
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
         plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
         create_parameters_tab(param_frame_1, signal_1, time_1)
+        plot_histogram(histogram_frame_1, signal_1)
 
 
     if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
         full_periods = int(d // T)
         d = full_periods * T
-        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, time_1)
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
-
-    plot_histogram()
-
-
-
-# Funkcja rysująca wykres w aplikacji
 def plot_signal(time, signal, signal_type, plot, histogram):
 
     for widget in plot.winfo_children():
@@ -96,23 +91,12 @@ def plot_signal(time, signal, signal_type, plot, histogram):
     ax.set_xlabel("Czas [s]")
     ax.set_ylabel("Amplituda")
     ax.grid()
-    ax.legend()
     canvas = FigureCanvasTkAgg(fig, master=plot)
     canvas.draw()
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
 
 
-def plot_histogram():
-    if signal_notebook.index(signal_notebook.select()) == 1:
-        frame = histogram_frame_2
-        signal = signal_2
-    elif signal_notebook.index(signal_notebook.select()) == 0:
-        frame = histogram_frame_1
-        signal = signal_1
-    else:
-        frame = histogram_frame_3
-        signal = signal_3
-
+def plot_histogram(frame, signal):
     for widget in frame.winfo_children():
         widget.destroy()
 
@@ -227,25 +211,11 @@ def increase_bins():
 def decrease_bins():
     bins_var.set(max(bins_var.get() - 1, 5))
 
-def update_histogram(signal, signal_type, histogram):
-    for widget in histogram.winfo_children():
-        widget.destroy()
-
-    fig, ax = plt.subplots()
-    ax.hist(signal, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
-    ax.set_xlabel("Amplitude")
-    ax.set_ylabel("Frequency")
-    ax.set_title(f"Histogram - {signal_type.capitalize()} Signal")
-
-    canvas = FigureCanvasTkAgg(fig, master=histogram)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
-
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
     signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
     plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-    update_histogram(signal_3, "Wynik", histogram_frame_3)
+    plot_histogram(histogram_frame_3, signal_3)
     create_parameters_tab(param_frame_3, signal_3, time_3)
 
 
