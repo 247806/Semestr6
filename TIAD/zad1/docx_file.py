@@ -4,6 +4,38 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
+def prepare_data(headers, data, widths):
+    page_width_cm = 15.24
+    current_width = 0
+    start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
+    data1 = []
+    data2 = []
+    data3 = []
+
+    for i in range(len(widths)):
+        if current_width + widths[i] > page_width_cm:
+            data1.append(headers[start_col:i])
+            data2.append([row[start_col:i] for row in data])
+            data3.append(widths[start_col:i])
+            # create_table(doc, data1, data2, data3, align)
+            start_col = i
+            current_width = 0
+
+        current_width += widths[i]
+
+    # Utwórz tabelę dla pozostałych kolumn
+    if start_col < len(widths):
+        data1.append(headers[start_col:])
+        data2.append([row[start_col:] for row in data])
+        data3.append(widths[start_col:])
+        # create_table(doc, data1, data2, data3, align)
+
+    print("CHECK")
+    print(data1)
+    print(data2)
+    print(data3)
+    return data1, data2, data3
+
 def create_docx(headers, data, output_file, add_page, column_widths, align):
     doc = Document()
     doc.add_heading('Tabela danych', level=1)
@@ -11,23 +43,9 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
     width = section.page_width.mm - section.left_margin.mm - section.right_margin.mm
     print(f"Szerokość strony: {width} punktów")
 
-    page_width_cm = 15.24
-    current_width = 0
-    start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
-
-    for i in range(len(column_widths)):
-        # Jeśli dodanie kolejnej kolumny przekroczy dostępną szerokość strony, utwórz nową tabelę
-        if current_width + column_widths[i] > page_width_cm:
-            # Utwórz tabelę dla kolumn od start_col do i-1
-            create_table(doc, headers[start_col:i], [row[start_col:i] for row in data], column_widths[start_col:i], align)
-            start_col = i
-            current_width = 0
-
-        current_width += column_widths[i]
-
-    # Utwórz tabelę dla pozostałych kolumn
-    if start_col < len(column_widths):
-        create_table(doc, headers[start_col:], [row[start_col:] for row in data], column_widths[start_col:], align)
+    headers, data, widths = prepare_data(headers, data, column_widths)
+    for i in range(len(headers)):
+        create_table(doc, headers[i], data[i], widths[i], align)
 
     if add_page:
         for i, section in enumerate(doc.sections):
@@ -54,7 +72,8 @@ def create_table(doc, headers, data, column_widths, align):
     }
 
     doc.add_paragraph()
-    table = doc.add_table(rows=1, cols=len(headers), style='Table Grid')
+    table = doc.add_table(rows=0, cols=len(headers), style='Table Grid')
+    # table.autofit = False
     print(column_widths)
     # Ustaw szerokość kolumn
     for i, width in enumerate(column_widths):
@@ -63,7 +82,7 @@ def create_table(doc, headers, data, column_widths, align):
         table.columns[i].width = Cm(width)
 
     # Nagłówki
-    hdr_cells = table.rows[0].cells
+    hdr_cells = table.add_row().cells
     for i, header in enumerate(headers):
         hdr_cells[i].text = header
         paragraph = hdr_cells[i].paragraphs[0]
@@ -81,5 +100,5 @@ def create_table(doc, headers, data, column_widths, align):
         row_cells = table.add_row().cells
         for i, cell in enumerate(row):
             row_cells[i].text = str(cell) if cell else ""
-            paragraph = row_cells[i].paragraphs[0]
-            paragraph.alignment = align_map[align]
+            row_cells[i].paragraphs[0].aligment = align_map[align]
+            # paragraph.alignment = align_map[align]
