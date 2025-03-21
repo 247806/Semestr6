@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-
 import pandas as pd
-from docx_file import create_docx
+from docx_file import create_docx, prepare_data
 from pdf_file import create_pdf
 
 def select_file():
@@ -33,11 +32,19 @@ def convert():
 
 def read_excel(file_path):
     df = pd.read_excel(file_path, engine="openpyxl").fillna("")  # Zamiana NaN na ""
+    # df = df.values.tolist()
+
+    # Usuń puste wiersze na początku
+    while not df.iloc[0].replace("", pd.NA).dropna().any():
+        df = df.iloc[1:].reset_index(drop=True)  # Usuń pierwszy wiersz i zresetuj indeksy
 
     df.columns = [f"Kolumna_{i}" if col.startswith("Unnamed") else col for i, col in enumerate(df.columns)]
 
     headers = df.columns.tolist()
     data = df.values.tolist()
+    result = [headers] + data
+    print("Rezultat")
+    print(result)
     return headers, data
 
 def prepare_col_sizes(data):
@@ -65,10 +72,10 @@ def prepare_col_sizes(data):
     return column_widths
 
 def load_column_sizes():
-    """ Wczytuje szerokości kolumn i tworzy pola do edycji. """
     headers, data = read_excel(entry_file_path.get())
     column_widths = prepare_col_sizes(data)
-
+    data1, data2, data3 = prepare_data(headers, data, column_widths)
+    create_table_preview(root, data1, data2, data3)
     # Usunięcie poprzednich pól wejściowych
     for widget in column_frame.winfo_children():
         widget.destroy()
@@ -76,19 +83,53 @@ def load_column_sizes():
     global column_entries
     column_entries = []
 
-    tk.Label(column_frame, text="Szerokości kolumn:").pack()
+    tk.Label(column_frame, text="Szerokości kolumn:").grid(row=0, column=0, columnspan=2, sticky="w")
 
     for i, width in enumerate(column_widths):
-        frame = tk.Frame(column_frame)
-        frame.pack(anchor="w")
+        row, col = divmod(i, 2)  # Co dwie kolumny nowy wiersz
 
-        tk.Label(frame, text=f"Kolumna {i + 1} (cm): ").pack(side="left")
+        label = tk.Label(column_frame, text=f"Kolumna {i + 1} (cm):")
+        label.grid(row=row + 1, column=col * 2, sticky="e", padx=5, pady=2)
 
-        entry = tk.Entry(frame, width=10)
+        entry = tk.Entry(column_frame, width=10)
         entry.insert(0, f"{width:.2f}")  # Wstawienie domyślnej wartości
-        entry.pack(side="left")
+        entry.grid(row=row + 1, column=col * 2 + 1, sticky="w", padx=5, pady=2)
 
         column_entries.append(entry)
+
+def load_table_data(parent, headers, data, widths):
+    PIXELS_PER_CM = 37.8
+
+    table_frame = tk.Frame(parent, bd=2, relief="solid")
+    table_frame.pack(padx=10, pady=5, fill="both", expand=True)
+
+    table = ttk.Treeview(table_frame, columns=headers, show="headings")
+
+    # Pasek przewijania
+    scrollbar_x = ttk.Scrollbar(table_frame, orient="horizontal", command=table.xview)
+    scrollbar_y = ttk.Scrollbar(table_frame, orient="vertical", command=table.yview)
+
+    table.configure(xscrollcommand=scrollbar_x.set, yscrollcommand=scrollbar_y.set)
+
+    scrollbar_x.pack(side="bottom", fill="x")
+    scrollbar_y.pack(side="right", fill="y")
+
+    # Konfiguracja kolumn
+    for header, width in zip(headers, widths):
+        table.heading(header, text=header)
+        print("Szerokość " + str(width * PIXELS_PER_CM))
+        table.column(header, width=int(width * PIXELS_PER_CM), stretch=False)  # Przeliczenie szerokości na piksele
+
+    # Dodanie danych
+    for row in data:
+        table.insert("", "end", values=row)
+
+    table.pack(fill="both", expand=True)
+
+def create_table_preview(root, headers_list, data_list, widths_list):
+    for headers, data, widths in zip(headers_list, data_list, widths_list):
+        load_table_data(root, headers, data, widths)
+
 
 # Tworzenie GUI
 root = tk.Tk()
@@ -123,5 +164,3 @@ column_frame.pack()
 tk.Button(frame, text="Konwertuj", command=convert).grid(row=4, column=1, pady=10)
 
 root.mainloop()
-
-
