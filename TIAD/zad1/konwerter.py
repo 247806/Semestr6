@@ -4,6 +4,8 @@ import pandas as pd
 from docx_file import create_docx, prepare_data
 from pdf_file import create_pdf
 
+TABLES = []
+
 def select_file():
     file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
     if file_path:
@@ -32,7 +34,6 @@ def convert():
 
 def read_excel(file_path):
     df = pd.read_excel(file_path, engine="openpyxl").fillna("")  # Zamiana NaN na ""
-    # df = df.values.tolist()
 
     # Usuń puste wiersze na początku
     while not df.iloc[0].replace("", pd.NA).dropna().any():
@@ -59,7 +60,7 @@ def prepare_col_sizes(data):
             sizes[i][j] = len(str(data[j][i])) * 0.381  # Średni rozmiar litery w cm
     print(sizes)
 
-    max_col_size = 7.62
+    max_col_size = 8.26
     min_col_size = 1.5
 
     column_widths = []
@@ -86,7 +87,7 @@ def load_column_sizes():
     tk.Label(column_frame, text="Szerokości kolumn:").grid(row=0, column=0, columnspan=2, sticky="w")
 
     for i, width in enumerate(column_widths):
-        row, col = divmod(i, 2)  # Co dwie kolumny nowy wiersz
+        row, col = divmod(i, 3)  # Co dwie kolumny nowy wiersz
 
         label = tk.Label(column_frame, text=f"Kolumna {i + 1} (cm):")
         label.grid(row=row + 1, column=col * 2, sticky="e", padx=5, pady=2)
@@ -97,11 +98,13 @@ def load_column_sizes():
 
         column_entries.append(entry)
 
+
 def load_table_data(parent, headers, data, widths):
     PIXELS_PER_CM = 37.8
 
-    table_frame = tk.Frame(parent, bd=2, relief="solid")
-    table_frame.pack(padx=10, pady=5, fill="both", expand=True)
+    table_frame = tk.Frame(parent, bd=2, relief="solid", height=100, width=640)
+    table_frame.pack_propagate(False)
+    table_frame.pack(padx=10, pady=5, fill="both")
 
     table = ttk.Treeview(table_frame, columns=headers, show="headings")
 
@@ -125,10 +128,24 @@ def load_table_data(parent, headers, data, widths):
         table.insert("", "end", values=row)
 
     table.pack(fill="both", expand=True)
+    return table_frame
 
 def create_table_preview(root, headers_list, data_list, widths_list):
     for headers, data, widths in zip(headers_list, data_list, widths_list):
-        load_table_data(root, headers, data, widths)
+        TABLES.append(load_table_data(root, headers, data, widths))
+
+def refresh_table():
+    """Aktualizuje podgląd tabeli na podstawie zmienionych szerokości kolumn."""
+    column_widths = update_column_sizes()  # Pobiera nowe szerokości kolumn
+    headers, data = read_excel(entry_file_path.get())
+    data1, data2, data3 = prepare_data(headers, data, column_widths)
+
+    for table in TABLES:
+        table.destroy()
+
+    TABLES.clear()
+    create_table_preview(root, data1, data2, data3)
+
 
 
 # Tworzenie GUI
@@ -161,6 +178,7 @@ alignment_menu.grid(row=3, column=1, sticky="w")
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()
 
-tk.Button(frame, text="Konwertuj", command=convert).grid(row=4, column=1, pady=10)
+tk.Button(frame, text="Konwertuj", command=convert).grid(row=4, column=0, pady=10)
+tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table).grid(row=4, column=1, padx=10, pady=10)
 
 root.mainloop()

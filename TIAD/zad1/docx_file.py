@@ -5,7 +5,7 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 def prepare_data(headers, data, widths):
-    page_width_cm = 15.24
+    page_width_cm = 16.51
     current_width = 0
     start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
     data1 = []
@@ -17,7 +17,6 @@ def prepare_data(headers, data, widths):
             data1.append(headers[start_col:i])
             data2.append([row[start_col:i] for row in data])
             data3.append(widths[start_col:i])
-            # create_table(doc, data1, data2, data3, align)
             start_col = i
             current_width = 0
 
@@ -28,7 +27,6 @@ def prepare_data(headers, data, widths):
         data1.append(headers[start_col:])
         data2.append([row[start_col:] for row in data])
         data3.append(widths[start_col:])
-        # create_table(doc, data1, data2, data3, align)
 
     print("CHECK")
     print(data1)
@@ -70,15 +68,12 @@ def create_table(doc, headers, data, column_widths, align):
         "Do środka": WD_ALIGN_PARAGRAPH.CENTER,
         "Do prawej": WD_ALIGN_PARAGRAPH.RIGHT,
     }
-
     doc.add_paragraph()
     table = doc.add_table(rows=0, cols=len(headers), style='Table Grid')
     # table.autofit = False
     print(column_widths)
     # Ustaw szerokość kolumn
     for i, width in enumerate(column_widths):
-        print(width)
-        # table.columns[i].alignment = align_map[align]
         table.columns[i].width = Cm(width)
 
     # Nagłówki
@@ -101,4 +96,3 @@ def create_table(doc, headers, data, column_widths, align):
         for i, cell in enumerate(row):
             row_cells[i].text = str(cell) if cell else ""
             row_cells[i].paragraphs[0].aligment = align_map[align]
-            # paragraph.alignment = align_map[align]

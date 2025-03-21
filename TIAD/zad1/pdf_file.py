@@ -15,7 +15,7 @@ def create_pdf(headers, data, output_file, add_page, column_widths, align):
     styles = getSampleStyleSheet()
     elements.append(Paragraph("Tabela danych", styles['Title']))
 
-    page_width_cm = 15.24
+    page_width_cm = 16.51
     current_width = 0
     start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
 
@@ -124,3 +124,15 @@ def create_table_pdf(headers, data, column_widths, align):
     # Dodanie tabeli do dokumentu
     return table
 
+# from docx2pdf import convert
+#
+# # Ścieżka do pliku .docx
+# input_docx = "file.docx"
+#
+# # Ścieżka do pliku .pdf (opcjonalnie)
+# output_pdf = "output.pdf"
+#
+# # Konwersja
+# convert(input_docx, output_pdf)
+#
+# print(f"Plik {input_docx} został przekonwertowany na {output_pdf}")
