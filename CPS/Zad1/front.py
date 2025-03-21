@@ -218,6 +218,13 @@ def increase_bins():
 def decrease_bins():
     bins_var.set(max(bins_var.get() - 1, 5))
 
+def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel):
+    global signal_3, time_3
+    signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
+    plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
+    plot_histogram(histogram_frame_3, signal_3)
+    create_parameters_tab(param_frame_3, signal_3, time_3)
+
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
     signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
@@ -338,6 +345,53 @@ def display_data_in_popup(time_data, signal_data, start_time, sampling_rate, num
 
     text_box.config(state=tk.DISABLED)
 
+
+def select_signals_for_operation(operation):
+    global signal_1, time_1, signal_2, time_2
+
+    popup = tk.Toplevel(root)
+    popup.title("Wybór sygnałów do operacji")
+    popup.geometry("400x250")
+
+    ttk.Label(popup, text="Wybierz sygnały do operacji:").pack(pady=10)
+
+    signal_options = ["Sygnał 1", "Sygnał 2"]
+    signal_1_var = tk.StringVar(value=signal_options[0])
+    signal_2_var = tk.StringVar(value=signal_options[1])
+
+    ttk.Label(popup, text="Sygnał 1:").pack()
+    signal_1_dropdown = ttk.Combobox(popup, textvariable=signal_1_var, values=signal_options, state="readonly")
+    signal_1_dropdown.pack()
+
+    ttk.Label(popup, text="Sygnał 2:").pack()
+    signal_2_dropdown = ttk.Combobox(popup, textvariable=signal_2_var, values=signal_options, state="readonly")
+    signal_2_dropdown.pack()
+
+    def confirm_selection(operation):
+        if signal_1_var.get() == "Sygnał 1" and signal_2_var.get() == "Sygnał 2":
+            selected_signal_1 = signal_1
+            selected_time_1 = time_1
+            selected_signal_2 = signal_2
+            selected_time_2 = time_2
+        elif signal_1_var.get() == "Sygnał 2" and signal_2_var.get() == "Sygnał 1":
+            selected_signal_1 = signal_2
+            selected_time_1 = time_2
+            selected_signal_2 = signal_1
+            selected_time_2 = time_1
+
+        print(f"Wybrano {selected_signal_1} i {selected_signal_2} do operacji.")
+        popup.destroy()
+        operate_signals_sel(operation, selected_signal_1, selected_time_1, selected_signal_2, selected_time_2)
+
+
+    confirm_button = ttk.Button(popup, text="Potwierdź", command=lambda: confirm_selection(operation))
+    confirm_button.pack(pady=10)
+
+    popup.transient(root)
+    popup.grab_set()
+    root.wait_window(popup)
+
+
 root = tk.Tk()
 root.title("Generator sygnałów")
 root.geometry("1170x650")
@@ -444,10 +498,10 @@ plot_empty_chart()
 operations_frame = ttk.Frame(root)
 operations_frame.grid(row=9, column=0, columnspan=2, pady=10)
 
-ttk.Button(operations_frame, text="Dodaj", command=lambda: operate_signals("add")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Odejmij", command=lambda: operate_signals("subtract")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Pomnóż", command=lambda: operate_signals("multiply")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Podziel", command=lambda: operate_signals("divide")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Dodaj", command=lambda: select_signals_for_operation("add")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Odejmij", command=lambda: select_signals_for_operation("subtract")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Pomnóż", command=lambda: select_signals_for_operation("multiply")).pack(side=tk.LEFT, padx=5)
+ttk.Button(operations_frame, text="Podziel", command=lambda: select_signals_for_operation("divide")).pack(side=tk.LEFT, padx=5)
 
 dao_frame = ttk.Frame(root)
 dao_frame.grid(row=10, column=0, columnspan=2, pady=10)
