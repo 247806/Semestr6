@@ -38,7 +38,6 @@ def update_column_sizes():
     updated_widths = []
     for i, entry in enumerate(column_entries):
         value = entry.get().strip()
-        print(value)
         if value == "":  # Jeśli pole jest puste, wstaw poprzednią wartość
             value = FIRST_COLUMNS_WIDTHS[i]
             entry.insert(0, f"{value:.2f}")  # Aktualizacja pola, by nie było puste
@@ -52,11 +51,10 @@ def convert():
     align = align_var.get()
     if title == "":
         title = "file"
-
     column_widths = update_column_sizes()
     save_settings()
-    create_docx(headers, data, f"{title}.docx", add_page, column_widths, align)
-    create_pdf(headers, data, f"{title}.pdf", add_page, column_widths, align)
+    create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align)
+    create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
 def read_excel(file_path, header=0):
     df = pd.read_excel(file_path, engine="openpyxl", header=header)
@@ -79,7 +77,6 @@ def prepare_col_sizes(data):
                 sizes[i].append(0)
             sizes[i][j] = len(str(data[j][i])) * 0.381  # Średni rozmiar litery w cm
 
-    print(sizes)
     max_col_size = 8.26
     min_col_size = 1.5
 
@@ -90,7 +87,6 @@ def prepare_col_sizes(data):
         column_width = min(max_col_size,  max(min_col_size, max_width))
         column_widths.append(column_width)
 
-    print(column_widths)
     return column_widths
 
 def validate_column_input(P):
@@ -232,10 +228,18 @@ def load_col_sizes():
                 column_entries[i].insert(0, f"{width:.2f}")
     refresh_table()
 
+def choose_dir():
+    global direction
+    direction = filedialog.askdirectory()  # Otwiera okno wyboru folderu
+    if direction:
+        path_var.set(direction)
+
 # Tworzenie GUI
 root = tk.Tk()
 root.title("Konwerter XLSX do DOCX/PDF")
 root.after(100, load_settings)
+
+path_var = tk.StringVar()
 
 frame = tk.Frame(root, padx=10, pady=10)
 frame.pack(padx=10, pady=10)
@@ -269,6 +273,10 @@ btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table
 btn_refresh.grid(row=4, column=1, padx=10, pady=10)
 btn_load_sizes = tk.Button(frame, text="Wczytaj kolumny", command=load_col_sizes, state="disabled")
 btn_load_sizes.grid(row=4, column=2, padx=10, pady=10)
+
+tk.Label(root, text="Wybierz folder zapisu:").pack(pady=5)
+tk.Entry(root, textvariable=path_var, width=50).pack(pady=5)  # Pole tekstowe na ścieżkę
+tk.Button(root, text="Wybierz folder", command=choose_dir).pack(pady=5)
 
 entry_title.bind("<KeyRelease>", lambda e: save_settings())
 alignment_menu.bind("<<ComboboxSelected>>", lambda e: save_settings())

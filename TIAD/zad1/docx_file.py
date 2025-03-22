@@ -39,7 +39,6 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
         create_table(doc, headers[i], data[i], widths[i], align)
 
     if add_page:
-        print(len(doc.sections))
         for i, section in enumerate(doc.sections):
             footer = section.footer
             paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
@@ -56,9 +55,6 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
             fldRun = OxmlElement('w:r')
             fldSimple.append(fldRun)
             run._r.append(fldSimple)
-
-            # Wyrównanie numeru strony do prawej
-
 
     doc.save(output_file)
     print(f"Plik DOCX zapisany: {output_file}")
