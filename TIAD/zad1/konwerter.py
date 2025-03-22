@@ -3,8 +3,11 @@ from tkinter import filedialog, messagebox, ttk, simpledialog
 import pandas as pd
 from docx_file import create_docx, prepare_data
 from pdf_file import create_pdf
+import json
+import os
 
 TABLES = []
+SETTINGS_FILE = "settings.json"
 
 def select_file():
     file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
@@ -24,6 +27,8 @@ def select_file():
             load_column_sizes(start_row)  # Indeksowanie od 0
             btn_convert.config(state="normal")
             btn_refresh.config(state="normal")
+            if os.path.exists(SETTINGS_FILE):
+                btn_load_sizes.config(state="normal")
 
 column_entries = []
 
@@ -31,7 +36,6 @@ def update_column_sizes():
     """ Aktualizuje listę szerokości kolumn na podstawie wartości wpisanych przez użytkownika.
         Jeśli pole jest puste, wstawia poprzednią wartość z COLUMNS_WIDTHS. """
     updated_widths = []
-    print(FIRST_COLUMNS_WIDTHS)
     for i, entry in enumerate(column_entries):
         value = entry.get().strip()
         print(value)
@@ -50,6 +54,7 @@ def convert():
         title = "file"
 
     column_widths = update_column_sizes()
+    save_settings()
     create_docx(headers, data, f"{title}.docx", add_page, column_widths, align)
     create_pdf(headers, data, f"{title}.pdf", add_page, column_widths, align)
 
@@ -57,7 +62,7 @@ def read_excel(file_path, header=0):
     df = pd.read_excel(file_path, engine="openpyxl", header=header)
 
     df = df.dropna(axis=1, how='all').fillna("")
-    df.columns = [f"Kolumna_{i}" if col.startswith("Unnamed") else col for i, col in enumerate(df.columns)]
+    df.columns = [f"Kolumna_{i+1}" if col.startswith("Unnamed") else col for i, col in enumerate(df.columns)]
 
     headers = df.columns.tolist()
     data = df.values.tolist()
@@ -113,6 +118,8 @@ def load_column_sizes(start_row):
         # Aktywacja przycisków po poprawnym załadowaniu danych
         btn_convert.config(state="normal")
         btn_refresh.config(state="normal")
+        if os.path.exists(SETTINGS_FILE):
+            btn_load_sizes.config(state="normal")
 
     except Exception as e:
         messagebox.showerror("Błąd", f"Nie udało się wczytać pliku: {e}")
@@ -121,6 +128,7 @@ def load_column_sizes(start_row):
         # Dezaktywacja przycisków w razie błędu
         btn_convert.config(state="disabled")
         btn_refresh.config(state="disabled")
+        btn_load_sizes.config(state="disabled")
 
     # Usunięcie poprzednich pól wejściowych
     for widget in column_frame.winfo_children():
@@ -191,11 +199,43 @@ def refresh_table():
 
     TABLES.clear()
     create_table_preview(root, data1, data2, data3)
+    save_settings()
 
+def save_settings():
+    settings = {
+        "title": entry_title.get(),
+        "page_numbering": page.get(),
+        "alignment": align_var.get(),
+        "column_widths": update_column_sizes()
+    }
+    with open(SETTINGS_FILE, "w") as f:
+        json.dump(settings, f, indent=4)
+
+def load_settings():
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, "r") as f:
+            settings = json.load(f)
+
+        entry_title.insert(0, settings.get("title", ""))
+        page.set(settings.get("page_numbering", False))
+        align_var.set(settings.get("alignment", "Do lewej"))
+
+def load_col_sizes():
+    if os.path.exists(SETTINGS_FILE):
+        with open(SETTINGS_FILE, "r") as f:
+            settings = json.load(f)
+
+    if "column_widths" in settings:
+        for i, width in enumerate(settings["column_widths"]):
+            if i < len(column_entries):
+                column_entries[i].delete(0, tk.END)
+                column_entries[i].insert(0, f"{width:.2f}")
+    refresh_table()
 
 # Tworzenie GUI
 root = tk.Tk()
 root.title("Konwerter XLSX do DOCX/PDF")
+root.after(100, load_settings)
 
 frame = tk.Frame(root, padx=10, pady=10)
 frame.pack(padx=10, pady=10)
@@ -227,5 +267,11 @@ btn_convert = tk.Button(frame, text="Konwertuj", command=convert, state="disable
 btn_convert.grid(row=4, column=0, pady=10)
 btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table, state="disabled")
 btn_refresh.grid(row=4, column=1, padx=10, pady=10)
+btn_load_sizes = tk.Button(frame, text="Wczytaj kolumny", command=load_col_sizes, state="disabled")
+btn_load_sizes.grid(row=4, column=2, padx=10, pady=10)
+
+entry_title.bind("<KeyRelease>", lambda e: save_settings())
+alignment_menu.bind("<<ComboboxSelected>>", lambda e: save_settings())
+check_page.config(command=save_settings)
 
 root.mainloop()
