@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, ttk, simpledialog
 import pandas as pd
 from docx_file import create_docx, prepare_data
 from pdf_file import create_pdf
@@ -11,11 +11,19 @@ def select_file():
     if file_path:
         entry_file_path.delete(0, tk.END)
         entry_file_path.insert(0, file_path)
-        load_column_sizes()
 
-        # Aktywowanie przycisków po załadowaniu pliku
-        btn_convert.config(state="normal")
-        btn_refresh.config(state="normal")
+        global start_row
+        start_row = simpledialog.askinteger(
+            "Pierwszy wiersz z danymi",
+            "Podaj numer pierwszego wiersza z danymi:",
+            minvalue=1,
+            initialvalue=1
+        ) - 1
+
+        if start_row is not None:  # Jeśli użytkownik nie anulował okienka
+            load_column_sizes(start_row)  # Indeksowanie od 0
+            btn_convert.config(state="normal")
+            btn_refresh.config(state="normal")
 
 column_entries = []
 
@@ -34,7 +42,7 @@ def update_column_sizes():
     return updated_widths
 
 def convert():
-    headers, data = read_excel(entry_file_path.get())
+    headers, data = read_excel(entry_file_path.get(), start_row)
     title = entry_title.get()
     add_page = page.get()
     align = align_var.get()
@@ -45,13 +53,10 @@ def convert():
     create_docx(headers, data, f"{title}.docx", add_page, column_widths, align)
     create_pdf(headers, data, f"{title}.pdf", add_page, column_widths, align)
 
-def read_excel(file_path):
-    df = pd.read_excel(file_path, engine="openpyxl").fillna("")  # Zamiana NaN na ""
+def read_excel(file_path, header=0):
+    df = pd.read_excel(file_path, engine="openpyxl", header=header)
 
-    # Usuń puste wiersze na początku
-    while not df.iloc[0].replace("", pd.NA).dropna().any():
-        df = df.iloc[1:].reset_index(drop=True)  # Usuń pierwszy wiersz i zresetuj indeksy
-
+    df = df.dropna(axis=1, how='all').fillna("")
     df.columns = [f"Kolumna_{i}" if col.startswith("Unnamed") else col for i, col in enumerate(df.columns)]
 
     headers = df.columns.tolist()
@@ -93,10 +98,10 @@ def validate_column_input(P):
     except ValueError:
         return False
 
-def load_column_sizes():
+def load_column_sizes(start_row):
     global FIRST_COLUMNS_WIDTHS
     try:
-        headers, data = read_excel(entry_file_path.get())
+        headers, data = read_excel(entry_file_path.get(), start_row)
         if not headers or not data:
             raise ValueError("Plik nie zawiera danych")
 
@@ -178,7 +183,7 @@ def create_table_preview(root, headers_list, data_list, widths_list):
 def refresh_table():
     """Aktualizuje podgląd tabeli na podstawie zmienionych szerokości kolumn."""
     column_widths = update_column_sizes()  # Pobiera nowe szerokości kolumn
-    headers, data = read_excel(entry_file_path.get())
+    headers, data = read_excel(entry_file_path.get(), start_row)
     data1, data2, data3 = prepare_data(headers, data, column_widths)
 
     for table in TABLES:
