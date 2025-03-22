@@ -13,11 +13,25 @@ def select_file():
         entry_file_path.insert(0, file_path)
         load_column_sizes()
 
+        # Aktywowanie przycisków po załadowaniu pliku
+        btn_convert.config(state="normal")
+        btn_refresh.config(state="normal")
+
 column_entries = []
 
 def update_column_sizes():
-    """ Aktualizuje listę szerokości kolumn na podstawie wartości wpisanych przez użytkownika. """
-    return [float(entry.get()) for entry in column_entries]
+    """ Aktualizuje listę szerokości kolumn na podstawie wartości wpisanych przez użytkownika.
+        Jeśli pole jest puste, wstawia poprzednią wartość z COLUMNS_WIDTHS. """
+    updated_widths = []
+    print(FIRST_COLUMNS_WIDTHS)
+    for i, entry in enumerate(column_entries):
+        value = entry.get().strip()
+        print(value)
+        if value == "":  # Jeśli pole jest puste, wstaw poprzednią wartość
+            value = FIRST_COLUMNS_WIDTHS[i]
+            entry.insert(0, f"{value:.2f}")  # Aktualizacja pola, by nie było puste
+        updated_widths.append(float(value))
+    return updated_widths
 
 def convert():
     headers, data = read_excel(entry_file_path.get())
@@ -55,6 +69,7 @@ def prepare_col_sizes(data):
                 sizes[i].append(0)
             sizes[i][j] = len(str(data[j][i])) * 0.381  # Średni rozmiar litery w cm
 
+    print(sizes)
     max_col_size = 8.26
     min_col_size = 1.5
 
@@ -62,16 +77,46 @@ def prepare_col_sizes(data):
     for i in range(len(sizes)):
         max_width = max(sizes[i])
         # Ogranicz szerokość kolumny do zakresu [min_col_size, max_col_size]
-        column_width = min(max_col_size, max(min_col_size, max_width))
+        column_width = min(max_col_size,  max(min_col_size, max_width))
         column_widths.append(column_width)
 
+    print(column_widths)
     return column_widths
 
+def validate_column_input(P):
+    """ Walidacja: pozwala tylko na liczby w zakresie 0-16 oraz pusty tekst (dla edycji). """
+    if P == "":  # Pozwalamy na pustą wartość w trakcie edycji
+        return True
+    try:
+        value = float(P)
+        return 0.1 <= value <= 16.52
+    except ValueError:
+        return False
+
 def load_column_sizes():
-    headers, data = read_excel(entry_file_path.get())
-    column_widths = prepare_col_sizes(data)
-    data1, data2, data3 = prepare_data(headers, data, column_widths)
-    create_table_preview(root, data1, data2, data3)
+    global FIRST_COLUMNS_WIDTHS
+    try:
+        headers, data = read_excel(entry_file_path.get())
+        if not headers or not data:
+            raise ValueError("Plik nie zawiera danych")
+
+        column_widths = prepare_col_sizes([headers] + data)
+        FIRST_COLUMNS_WIDTHS = column_widths
+        data1, data2, data3 = prepare_data(headers, data, column_widths)
+        create_table_preview(root, data1, data2, data3)
+
+        # Aktywacja przycisków po poprawnym załadowaniu danych
+        btn_convert.config(state="normal")
+        btn_refresh.config(state="normal")
+
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Nie udało się wczytać pliku: {e}")
+        entry_file_path.delete(0, tk.END)
+
+        # Dezaktywacja przycisków w razie błędu
+        btn_convert.config(state="disabled")
+        btn_refresh.config(state="disabled")
+
     # Usunięcie poprzednich pól wejściowych
     for widget in column_frame.winfo_children():
         widget.destroy()
@@ -81,13 +126,15 @@ def load_column_sizes():
 
     tk.Label(column_frame, text="Szerokości kolumn:").grid(row=0, column=0, columnspan=2, sticky="w")
 
+    validate_command = root.register(validate_column_input)
+
     for i, width in enumerate(column_widths):
         row, col = divmod(i, 3)  # Co dwie kolumny nowy wiersz
 
         label = tk.Label(column_frame, text=f"Kolumna {i + 1} (cm):")
         label.grid(row=row + 1, column=col * 2, sticky="e", padx=5, pady=2)
 
-        entry = tk.Entry(column_frame, width=10)
+        entry = tk.Entry(column_frame, width=10, validate="key", validatecommand=(validate_command, "%P"))
         entry.insert(0, f"{width:.2f}")  # Wstawienie domyślnej wartości
         entry.grid(row=row + 1, column=col * 2 + 1, sticky="w", padx=5, pady=2)
 
@@ -171,7 +218,9 @@ alignment_menu.grid(row=3, column=1, sticky="w")
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()
 
-tk.Button(frame, text="Konwertuj", command=convert).grid(row=4, column=0, pady=10)
-tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table).grid(row=4, column=1, padx=10, pady=10)
+btn_convert = tk.Button(frame, text="Konwertuj", command=convert, state="disabled")
+btn_convert.grid(row=4, column=0, pady=10)
+btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table, state="disabled")
+btn_refresh.grid(row=4, column=1, padx=10, pady=10)
 
 root.mainloop()

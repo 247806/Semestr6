@@ -39,17 +39,26 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
         create_table(doc, headers[i], data[i], widths[i], align)
 
     if add_page:
+        print(len(doc.sections))
         for i, section in enumerate(doc.sections):
-            i+=1
             footer = section.footer
             paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
-            run = paragraph.add_run()
-            run.text = "Strona "
-            field_code = f'{i}'  # Pole numerowania stron
-            paragraph.add_run(f' {field_code}').bold = True
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+            # Dodajemy pole tekstowe dla numeracji stron
+            run = paragraph.add_run("Strona ")
+
+            # Tworzymy element <w:fldSimple w:instr="PAGE">
+            fldSimple = OxmlElement('w:fldSimple')
+            fldSimple.set(qn('w:instr'), "PAGE")  # Ustawienie pola na dynamiczny numer strony
+
+            # Dodajemy pole do stopki
+            fldRun = OxmlElement('w:r')
+            fldSimple.append(fldRun)
+            run._r.append(fldSimple)
 
             # Wyrównanie numeru strony do prawej
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
 
     doc.save(output_file)
     print(f"Plik DOCX zapisany: {output_file}")
