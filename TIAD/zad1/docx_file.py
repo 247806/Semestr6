@@ -28,18 +28,11 @@ def prepare_data(headers, data, widths):
         data2.append([row[start_col:] for row in data])
         data3.append(widths[start_col:])
 
-    print("CHECK")
-    print(data1)
-    print(data2)
-    print(data3)
     return data1, data2, data3
 
 def create_docx(headers, data, output_file, add_page, column_widths, align):
     doc = Document()
     doc.add_heading('Tabela danych', level=1)
-    section = doc.sections[0]
-    width = section.page_width.mm - section.left_margin.mm - section.right_margin.mm
-    print(f"Szerokość strony: {width} punktów")
 
     headers, data, widths = prepare_data(headers, data, column_widths)
     for i in range(len(headers)):
@@ -62,7 +55,6 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
     print(f"Plik DOCX zapisany: {output_file}")
 
 def create_table(doc, headers, data, column_widths, align):
-    print(align)
     align_map = {
         "Do lewej": WD_ALIGN_PARAGRAPH.LEFT,
         "Do środka": WD_ALIGN_PARAGRAPH.CENTER,
@@ -70,8 +62,6 @@ def create_table(doc, headers, data, column_widths, align):
     }
     doc.add_paragraph()
     table = doc.add_table(rows=0, cols=len(headers), style='Table Grid')
-    # table.autofit = False
-    print(column_widths)
     # Ustaw szerokość kolumn
     for i, width in enumerate(column_widths):
         table.columns[i].width = Cm(width)
@@ -95,4 +85,4 @@ def create_table(doc, headers, data, column_widths, align):
         row_cells = table.add_row().cells
         for i, cell in enumerate(row):
             row_cells[i].text = str(cell) if cell else ""
-            row_cells[i].paragraphs[0].aligment = align_map[align]
+            row_cells[i].paragraphs[0].alignment = align_map[align]

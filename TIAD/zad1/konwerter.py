@@ -24,7 +24,6 @@ def convert():
     title = entry_title.get()
     add_page = page.get()
     align = align_var.get()
-    print("Strona: " + str(add_page))
     if title == "":
         title = "file"
 
@@ -43,9 +42,6 @@ def read_excel(file_path):
 
     headers = df.columns.tolist()
     data = df.values.tolist()
-    result = [headers] + data
-    print("Rezultat")
-    print(result)
     return headers, data
 
 def prepare_col_sizes(data):
@@ -58,7 +54,6 @@ def prepare_col_sizes(data):
             while len(sizes[i]) <= j:  # Upewniamy się, że istnieje odpowiednia kolumna
                 sizes[i].append(0)
             sizes[i][j] = len(str(data[j][i])) * 0.381  # Średni rozmiar litery w cm
-    print(sizes)
 
     max_col_size = 8.26
     min_col_size = 1.5
@@ -120,7 +115,6 @@ def load_table_data(parent, headers, data, widths):
     # Konfiguracja kolumn
     for header, width in zip(headers, widths):
         table.heading(header, text=header)
-        print("Szerokość " + str(width * PIXELS_PER_CM))
         table.column(header, width=int(width * PIXELS_PER_CM), stretch=False)  # Przeliczenie szerokości na piksele
 
     # Dodanie danych
@@ -145,7 +139,6 @@ def refresh_table():
 
     TABLES.clear()
     create_table_preview(root, data1, data2, data3)
-
 
 
 # Tworzenie GUI
