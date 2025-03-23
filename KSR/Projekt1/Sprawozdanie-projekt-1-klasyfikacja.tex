@@ -31,7 +31,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             len = \sum_{i=0}^{n} x_i
         \end{equation}
-        gdzie \( x_i \) = liczba liter \( \geq 3 \).
+        gdzie \( x \) = liczba liter \( \geq 3 \).
     \item Dominująca waluta - cecha ta reprezentowana jest poprzez nazwę waluty, ze zbioru walut kluczowych, która pojawia się najczęściej w badanym artykule. Na przykład w przypadku, gdy w badanym tekście pojawi się dwukrotnie słowo "U.S. Dollar" i tylko raz "Japanese Yen" to dla tej cechy zostanie zwrócona wartość tekstowa "U.S. Dollar".
         \begin{equation}
             w = \arg\max_{w \in W} f(w)
@@ -41,32 +41,32 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             M' =  x \in M  \land x \in T
         \end{equation}
-        gdzie M - zbiór miejsc kluczowych, T - zbiór słów znajdujących się w tekście
+        gdzie M - zbiór miejsc kluczowych, T - zbiór słów znajdujących się w tekście, \( x \) = liczba liter \( \geq 3 \).
     \item Liczba unikalnych słów - cecha oznaczająca wystąpienia słów unikalnych, czyli takich, które nie pojawiąją się więcej niż jeden raz w tekście. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said. And the next week also in New York", słowa "New York" nie zostaną zliczone.
         \begin{equation}
             uk = \mid x : x \in T \land f(x) = 1 \mid
         \end{equation}
-        gdzie T - zbiór słów znajdujących się w tekście, \( f(x)\)  - funkcja zwracająca liczbę wystąpień słowa x w tekście.
+        gdzie T - zbiór słów znajdujących się w tekście, \( f(x)\)  - funkcja zwracająca liczbę wystąpień słowa x w tekście, \( x \) = liczba liter \( \geq 3 \).
     \item Średnia długość słowa - cecha opisująca średnią długość słów w badanym tekście.
      \begin{equation}
             al = \frac{\sum_{i=0}^{n} a_i}{\sum_{i=0}^{n} x_i}
         \end{equation}
-        gdzie \( a_i \) - litera, \( x_i \) - liczba liter \( \geq 3 \).
-    \item Liczba  słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
+        gdzie \( a_i \) - litera, \( x \) - liczba liter \( \geq 3 \).
+    \item Liczba słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
         \begin{equation}
             fw = \ \mid x : x \in K \wedge x \in T_{\text{y}} \mid
         \end{equation}
-        gdzie K - zbiór słów kluczowych, \( T_y \) - zbiór słów znajdujący się w pierwszych trzech zdaniach tekstu.
+        gdzie K - zbiór słów kluczowych, \( T_y \) - zbiór słów znajdujący się w pierwszych trzech zdaniach tekstu, \( x\) = liczba liter \( \geq 3 \).
     \item Liczba słów zaczynających się wielką literą - cecha ta oznaczą liczbę wystąpień słów zaczynających się wielką literą, nie uzwlędniając przy tym słów rozpoczynających nowe zdanie.
         \begin{equation}
             bw = \sum_{i=0}^{n} x_i
         \end{equation}
-        gdzie \( x_i \) = słowo zaczynające się wielką literą.
+        gdzie \( x \) = słowo zaczynające się wielką literą.
     \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie \(x_{first} \) = New York.
        \begin{equation}
             x_{first} = \min \{x: x \in K \land x \in T \}
         \end{equation}
-        gdzie K - zbiór słów kluczowych, T - zbiór słów znajdujących się w tekście.
+        gdzie K - zbiór słów kluczowych, T - zbiór słów znajdujących się w tekście, \( x \) = liczba liter \( \geq 3 \).
     \item Liczba słów kluczowych - cecha ta oznacza bezwzględną liczbę wystąpień słów ze zbioru słów kluczowych. 
         \begin{equation}
             kw = \ \mid x : x \in K \land x \in T \mid
@@ -76,12 +76,12 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             rw = \frac{ \mid x : x \in K \land x \in T \mid}{ \sum_{i=0}^{n} x_i}
         \end{equation}
-       gdzie K - zbiór słów kluczowych, \( x_i \) = liczba liter \( \geq 3 \), T - zbiór słów znajdujących się w tekście.
+       gdzie K - zbiór słów kluczowych, \( x \) = liczba liter \( \geq 3 \), T - zbiór słów znajdujących się w tekście.
     \item Nazwiska - cecha ta jest reprezentacją tekstową wszystkich nazwisk pojawiających się ze zbioru nazwisk kluczowych. Przykład: "Wallis was quoted as saying the Reagan Administration wants Japanese cooperation so the White House can ensure any U.S." wynikiem dla tego cytatu będzie zbiór \( N' = \{ \text{Reagan} \} \).
     \begin{equation}
             N' =  x \in N \land x \in T
         \end{equation}
-        gdzie N - zbiór nazwisk kluczowych, T - zbiór słów znajdujących się w tekście.
+        gdzie N - zbiór nazwisk kluczowych, T - zbiór słów znajdujących się w tekście, \( x \) = liczba liter \( \geq 3 \).
 \end{enumerate}
 
 Wektor cech będzie miał postać: 
@@ -91,56 +91,35 @@ Wektor cech będzie miał postać:
 
 
 \section{Miary jakości klasyfikacji}
-\begin{flushleft}
-\( T \) - liczba poprawnie zaakwalifikowanych tekstów \\
-\( N \) - liczba niepoprawnie zaakwalifikowanych tekstów \\
-\( C \) - Kanada \\
-\( J \) - Japonia \\
-\( U \) - USA \\
-\( F \) - Francja \\
-\( W \) - Niemcy Zachodnie \\
-\( UK \) - Wielka Brytania \\
-\end{flushleft}
-
+W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych poprawnie jest rzeczywiście poprawnych. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością.
+\\
+Dokładność jest obliczana dla wszystkich klas jednocześnie:
 \begin{equation}
     ACC = \frac {TC + TJ + TU + TF + TW + TUK}{T + N}
 \end{equation}
+Precison, Recall oraz F1 jest obliczane dla każdej klasy oddzielnie:
 \begin{equation}
-    CPPV = \frac {TC}{TC + FC}
+    PPV_X = \frac {TX}{TX + FX}
 \end{equation}
 \begin{equation}
-    CTPR = \frac {TC}{C}
+    TPR_X = \frac {TX}{X}
 \end{equation}
 \begin{equation}
-    JPPV = \frac {TJ}{TJ + FJ}
+    F1_X = \frac{PPV_X}{TPR_X}
 \end{equation}
-\begin{equation}
-    JTPR = \frac {TJ}{J}
-\end{equation}
-\begin{equation}
-    UPPV = \frac {TU}{TU + FU}
-\end{equation}
-\begin{equation}
-    UTPR = \frac {TU}{U}
-\end{equation}
-\begin{equation}
-    FPPV = \frac {TF}{TF + FF}
-\end{equation}
-\begin{equation}
-    FTPR = \frac {TF}{F}
-\end{equation}
-\begin{equation}
-    WPPV = \frac {TW}{TW + FW}
-\end{equation}
-\begin{equation}
-    WTPR = \frac {TW}{W}
-\end{equation}
-\begin{equation}
-    UKPPV = \frac {TUK}{TUK + FUK}
-\end{equation}
-\begin{equation}
-    UKTPR = \frac {TUK}{UK}
-\end{equation}
+
+gdzie:
+\begin{flushleft}
+\(ACC\) - accuracy, \(PPV\) - precision, \(TPR\) - recall, \(X \in \{C, J, U, F, W, UK \}\), \\
+\( T \) - liczba poprawnie zaakwalifikowanych tekstów, \\
+\( N \) - liczba niepoprawnie zaakwalifikowanych tekstów, \\
+\( C \) - Kanada, \\
+\( J \) - Japonia, \\
+\( U \) - USA, \\
+\( F \) - Francja, \\
+\( W \) - Niemcy Zachodnie, \\
+\( UK \) - Wielka Brytania. \\
+\end{flushleft}
 
 Miary jakości klasyfikacji (Accuracy, Precision,
 Recall, F1). We wprowadzeniu zaprezentować minimum teorii potrzebnej do realizacji
