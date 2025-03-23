@@ -8,6 +8,7 @@ import os
 
 TABLES = []
 SETTINGS_FILE = "settings.json"
+column_entries = []
 
 def select_file():
     file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
@@ -23,24 +24,21 @@ def select_file():
             initialvalue=1
         ) - 1
 
-        if start_row is not None:  # Jeśli użytkownik nie anulował okienka
-            load_column_sizes(start_row)  # Indeksowanie od 0
+        if start_row is not None:
+            load_column_sizes(start_row)
             btn_convert.config(state="normal")
             btn_refresh.config(state="normal")
             if os.path.exists(SETTINGS_FILE):
                 btn_load_sizes.config(state="normal")
 
-column_entries = []
-
+#Aktualizuje szerokości kolumn na podstawie tego co wprowadził użytkownik
 def update_column_sizes():
-    """ Aktualizuje listę szerokości kolumn na podstawie wartości wpisanych przez użytkownika.
-        Jeśli pole jest puste, wstawia poprzednią wartość z COLUMNS_WIDTHS. """
     updated_widths = []
     for i, entry in enumerate(column_entries):
         value = entry.get().strip()
-        if value == "":  # Jeśli pole jest puste, wstaw poprzednią wartość
+        if value == "":
             value = FIRST_COLUMNS_WIDTHS[i]
-            entry.insert(0, f"{value:.2f}")  # Aktualizacja pola, by nie było puste
+            entry.insert(0, f"{value:.2f}")
         updated_widths.append(float(value))
     return updated_widths
 
@@ -66,16 +64,17 @@ def read_excel(file_path, header=0):
     data = df.values.tolist()
     return headers, data
 
+#Oblicza szerokości kolumn
 def prepare_col_sizes(data):
     sizes = []
     for i in range(len(data[0])):
-        while len(sizes) <= i:  # Upewniamy się, że istnieje odpowiedni wiersz
+        while len(sizes) <= i:
             sizes.append([])
 
         for j, row in enumerate(data):
-            while len(sizes[i]) <= j:  # Upewniamy się, że istnieje odpowiednia kolumna
+            while len(sizes[i]) <= j:
                 sizes[i].append(0)
-            sizes[i][j] = len(str(data[j][i])) * 0.381  # Średni rozmiar litery w cm
+            sizes[i][j] = len(str(data[j][i])) * 0.381
 
     max_col_size = 8.26
     min_col_size = 1.5
@@ -83,15 +82,13 @@ def prepare_col_sizes(data):
     column_widths = []
     for i in range(len(sizes)):
         max_width = max(sizes[i])
-        # Ogranicz szerokość kolumny do zakresu [min_col_size, max_col_size]
         column_width = min(max_col_size,  max(min_col_size, max_width))
         column_widths.append(column_width)
 
     return column_widths
 
 def validate_column_input(P):
-    """ Walidacja: pozwala tylko na liczby w zakresie 0-16 oraz pusty tekst (dla edycji). """
-    if P == "":  # Pozwalamy na pustą wartość w trakcie edycji
+    if P == "":
         return True
     try:
         value = float(P)
@@ -99,6 +96,7 @@ def validate_column_input(P):
     except ValueError:
         return False
 
+#Odczytuje dane po wczytaniu pliku przez użytkownika i wyświetla wielkości kolumn do edycji
 def load_column_sizes(start_row):
     global FIRST_COLUMNS_WIDTHS
     try:
@@ -111,7 +109,6 @@ def load_column_sizes(start_row):
         data1, data2, data3 = prepare_data(headers, data, column_widths)
         create_table_preview(root, data1, data2, data3)
 
-        # Aktywacja przycisków po poprawnym załadowaniu danych
         btn_convert.config(state="normal")
         btn_refresh.config(state="normal")
         if os.path.exists(SETTINGS_FILE):
@@ -121,35 +118,33 @@ def load_column_sizes(start_row):
         messagebox.showerror("Błąd", f"Nie udało się wczytać pliku: {e}")
         entry_file_path.delete(0, tk.END)
 
-        # Dezaktywacja przycisków w razie błędu
         btn_convert.config(state="disabled")
         btn_refresh.config(state="disabled")
         btn_load_sizes.config(state="disabled")
 
-    # Usunięcie poprzednich pól wejściowych
     for widget in column_frame.winfo_children():
         widget.destroy()
 
     global column_entries
     column_entries = []
 
-    tk.Label(column_frame, text="Szerokości kolumn:").grid(row=0, column=0, columnspan=2, sticky="w")
+    tk.Label(column_frame, text="Szerokości kolumn:").grid(row=0, column=0, columnspan=1, sticky="w")
 
     validate_command = root.register(validate_column_input)
 
     for i, width in enumerate(column_widths):
-        row, col = divmod(i, 3)  # Co dwie kolumny nowy wiersz
+        row, col = divmod(i, 4)
 
         label = tk.Label(column_frame, text=f"Kolumna {i + 1} (cm):")
-        label.grid(row=row + 1, column=col * 2, sticky="e", padx=5, pady=2)
+        label.grid(row=row + 1, column=col * 2, padx=5, pady=2)
 
-        entry = tk.Entry(column_frame, width=10, validate="key", validatecommand=(validate_command, "%P"))
-        entry.insert(0, f"{width:.2f}")  # Wstawienie domyślnej wartości
-        entry.grid(row=row + 1, column=col * 2 + 1, sticky="w", padx=5, pady=2)
+        entry = tk.Entry(column_frame, width=5, validate="key", validatecommand=(validate_command, "%P"))
+        entry.insert(0, f"{width:.2f}")
+        entry.grid(row=row + 1, column=col * 2 + 1, padx=5, pady=2)
 
         column_entries.append(entry)
 
-
+#Wyświetla podgląd tabeli
 def load_table_data(parent, headers, data, widths):
     PIXELS_PER_CM = 37.8
 
@@ -158,8 +153,6 @@ def load_table_data(parent, headers, data, widths):
     table_frame.pack(padx=10, pady=5, fill="both")
 
     table = ttk.Treeview(table_frame, columns=headers, show="headings")
-
-    # Pasek przewijania
     scrollbar_x = ttk.Scrollbar(table_frame, orient="horizontal", command=table.xview)
     scrollbar_y = ttk.Scrollbar(table_frame, orient="vertical", command=table.yview)
 
@@ -168,12 +161,10 @@ def load_table_data(parent, headers, data, widths):
     scrollbar_x.pack(side="bottom", fill="x")
     scrollbar_y.pack(side="right", fill="y")
 
-    # Konfiguracja kolumn
     for header, width in zip(headers, widths):
         table.heading(header, text=header)
         table.column(header, width=int(width * PIXELS_PER_CM), stretch=False)  # Przeliczenie szerokości na piksele
 
-    # Dodanie danych
     for row in data:
         table.insert("", "end", values=row)
 
@@ -185,8 +176,7 @@ def create_table_preview(root, headers_list, data_list, widths_list):
         TABLES.append(load_table_data(root, headers, data, widths))
 
 def refresh_table():
-    """Aktualizuje podgląd tabeli na podstawie zmienionych szerokości kolumn."""
-    column_widths = update_column_sizes()  # Pobiera nowe szerokości kolumn
+    column_widths = update_column_sizes()
     headers, data = read_excel(entry_file_path.get(), start_row)
     data1, data2, data3 = prepare_data(headers, data, column_widths)
 
@@ -216,6 +206,7 @@ def load_settings():
         page.set(settings.get("page_numbering", False))
         align_var.set(settings.get("alignment", "Do lewej"))
 
+#Wczytuje szerokości kolumn z pliku
 def load_col_sizes():
     if os.path.exists(SETTINGS_FILE):
         with open(SETTINGS_FILE, "r") as f:
@@ -230,11 +221,11 @@ def load_col_sizes():
 
 def choose_dir():
     global direction
-    direction = filedialog.askdirectory()  # Otwiera okno wyboru folderu
+    direction = filedialog.askdirectory()
     if direction:
         path_var.set(direction)
 
-# Tworzenie GUI
+#GUI
 root = tk.Tk()
 root.title("Konwerter XLSX do DOCX/PDF")
 root.after(100, load_settings)
@@ -249,34 +240,34 @@ entry_file_path = tk.Entry(frame, width=50)
 entry_file_path.grid(row=0, column=1)
 tk.Button(frame, text="Wybierz", command=select_file).grid(row=0, column=2, padx=10)
 
-tk.Label(frame, text="Tytuł dokumentu:").grid(row=1, column=0, sticky="w", pady=10)
+tk.Label(frame, text="Wybierz folder zapisu:").grid(row=1, column=0, sticky="w", pady=5)
+entry_path = tk.Entry(frame, textvariable=path_var, width=50)
+entry_path.grid(row=1, column=1)
+tk.Button(frame, text="Wybierz", command=choose_dir).grid(row=1, column=2, padx=10)
+
+tk.Label(frame, text="Tytuł dokumentu:").grid(row=2, column=0, sticky="w", pady=10)
 entry_title = tk.Entry(frame, width=50)
-entry_title.grid(row=1, column=1, columnspan=2, sticky="w")
+entry_title.grid(row=2, column=1, columnspan=2, sticky="w")
 
 page = tk.BooleanVar()
 check_page = tk.Checkbutton(frame, text="Numeruj strony", variable=page)
-check_page.grid(row=2, column=0, pady=5)
+check_page.grid(row=3, column=0, pady=5)
 
-# Dodanie opcji wyrównania
-tk.Label(frame, text="Wyrównanie tekstu:").grid(row=3, column=0, sticky="w", pady=5)
-align_var = tk.StringVar(value="Do lewej")  # Domyślne wyrównanie
+tk.Label(frame, text="Wyrównanie tekstu:").grid(row=3, column=1, sticky="e", pady=5)
+align_var = tk.StringVar(value="Do lewej")
 alignment_options = ["Do lewej", "Do środka", "Do prawej"]
 alignment_menu = ttk.Combobox(frame, textvariable=align_var, values=alignment_options, state="readonly")
-alignment_menu.grid(row=3, column=1, sticky="w")
+alignment_menu.grid(row=3, column=2, sticky="w")
 
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()
 
 btn_convert = tk.Button(frame, text="Konwertuj", command=convert, state="disabled")
-btn_convert.grid(row=4, column=0, pady=10)
+btn_convert.grid(row=5, column=0, pady=10)
 btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table, state="disabled")
-btn_refresh.grid(row=4, column=1, padx=10, pady=10)
+btn_refresh.grid(row=5, column=1, padx=10, pady=10)
 btn_load_sizes = tk.Button(frame, text="Wczytaj kolumny", command=load_col_sizes, state="disabled")
-btn_load_sizes.grid(row=4, column=2, padx=10, pady=10)
-
-tk.Label(root, text="Wybierz folder zapisu:").pack(pady=5)
-tk.Entry(root, textvariable=path_var, width=50).pack(pady=5)  # Pole tekstowe na ścieżkę
-tk.Button(root, text="Wybierz folder", command=choose_dir).pack(pady=5)
+btn_load_sizes.grid(row=5, column=2, padx=10, pady=10)
 
 entry_title.bind("<KeyRelease>", lambda e: save_settings())
 alignment_menu.bind("<<ComboboxSelected>>", lambda e: save_settings())

@@ -7,7 +7,7 @@ from docx.oxml import OxmlElement
 def prepare_data(headers, data, widths):
     page_width_cm = 16.51
     current_width = 0
-    start_col = 0  # Indeks pierwszej kolumny w bieżącej tabeli
+    start_col = 0
     data1 = []
     data2 = []
     data3 = []
@@ -22,7 +22,6 @@ def prepare_data(headers, data, widths):
 
         current_width += widths[i]
 
-    # Utwórz tabelę dla pozostałych kolumn
     if start_col < len(widths):
         data1.append(headers[start_col:])
         data2.append([row[start_col:] for row in data])
@@ -44,14 +43,10 @@ def create_docx(headers, data, output_file, add_page, column_widths, align):
             paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
             paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-            # Dodajemy pole tekstowe dla numeracji stron
             run = paragraph.add_run("Strona ")
 
-            # Tworzymy element <w:fldSimple w:instr="PAGE">
             fldSimple = OxmlElement('w:fldSimple')
-            fldSimple.set(qn('w:instr'), "PAGE")  # Ustawienie pola na dynamiczny numer strony
-
-            # Dodajemy pole do stopki
+            fldSimple.set(qn('w:instr'), "PAGE")
             fldRun = OxmlElement('w:r')
             fldSimple.append(fldRun)
             run._r.append(fldSimple)
@@ -67,7 +62,7 @@ def create_table(doc, headers, data, column_widths, align):
     }
     doc.add_paragraph()
     table = doc.add_table(rows=0, cols=len(headers), style='Table Grid')
-    # Ustaw szerokość kolumn
+
     for i, width in enumerate(column_widths):
         table.columns[i].width = Cm(width)
 
@@ -81,9 +76,8 @@ def create_table(doc, headers, data, column_widths, align):
         run.bold = True
 
         shading_elm = OxmlElement('w:shd')
-        shading_elm.set(qn('w:fill'), '2E75B6')  # Kod koloru HEX (ciemnoniebieski)
+        shading_elm.set(qn('w:fill'), '2E75B6')
         hdr_cells[i]._tc.get_or_add_tcPr().append(shading_elm)
-
 
     # Dane
     for row in data:

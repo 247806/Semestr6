@@ -7,17 +7,15 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 from docx_file import prepare_data
 
 def create_pdf(headers, data, output_file, add_page, column_widths, align):
-    # Tworzenie dokumentu PDF
     pdf = SimpleDocTemplate(output_file, pagesize=A4)
     elements = []
 
-    # Dodanie nagłówka
     styles = getSampleStyleSheet()
     elements.append(Paragraph("Tabela danych", styles['Title']))
 
     headers, data, widths = prepare_data(headers, data, column_widths)
     for i in range(len(headers)):
-        elements.append(Spacer(1, 20))  # 20 punktów odstępu (ok. 7 mm)
+        elements.append(Spacer(1, 20))
         elements.append(create_table_pdf(headers[i], data[i], widths[i], align))
 
     if add_page:
@@ -28,16 +26,14 @@ def create_pdf(headers, data, output_file, add_page, column_widths, align):
 
 
 def add_page_number(canvas, doc):
-    page_num = canvas.getPageNumber()  # Pobierz numer strony
+    page_num = canvas.getPageNumber()
     text = f"Strona {page_num}"
 
-    # Ustaw styl tekstu
     canvas.setFont("Helvetica", 10)
 
-    # Umieść tekst na dole strony, wyśrodkowany
     canvas.drawCentredString(
-        x=doc.pagesize[0] / 2,  # Środek strony w poziomie
-        y=20,  # 20 punktów od dołu strony
+        x=doc.pagesize[0] / 2,
+        y=20,
         text=text
     )
 
@@ -51,7 +47,6 @@ def create_table_pdf(headers, data, column_widths, align):
 
     styles = getSampleStyleSheet()
 
-    # Tworzenie nowego stylu z wybranym wyrównaniem
     custom_style = ParagraphStyle(
         name="CustomStyle",
         parent=styles["Normal"],
@@ -69,16 +64,12 @@ def create_table_pdf(headers, data, column_widths, align):
         wrapped_row = [Paragraph(str(cell), custom_style) for cell in row]
         table_data.append(wrapped_row)
 
-    # Tworzenie tabeli
     table = Table(table_data, colWidths=column_widths)
 
-    # Styl tabeli
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),  # Kolor tła dla nagłówków
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Wyśrodkowanie pionowe tekstu
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Czcionka dla nagłówków
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Obramowanie tabeli
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ]))
 
-    # Dodanie tabeli do dokumentu
     return table
