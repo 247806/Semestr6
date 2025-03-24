@@ -31,7 +31,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             len = \sum_{i=0}^{n} x_i
         \end{equation}
-        gdzie \( x \) = liczba liter \( \geq 3 \).
+        gdzie \( x \) = liczba liter \( \geq 3 \), \( n \) = liczba słów w tekście.
     \item Dominująca waluta - cecha ta reprezentowana jest poprzez nazwę waluty, ze zbioru walut kluczowych, która pojawia się najczęściej w badanym artykule. Na przykład w przypadku, gdy w badanym tekście pojawi się dwukrotnie słowo "U.S. Dollar" i tylko raz "Japanese Yen" to dla tej cechy zostanie zwrócona wartość tekstowa "U.S. Dollar".
         \begin{equation}
             w = \arg\max_{w \in W} f(w)
@@ -49,9 +49,9 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         gdzie T - zbiór słów znajdujących się w tekście, \( f(x)\)  - funkcja zwracająca liczbę wystąpień słowa x w tekście, \( x \) = liczba liter \( \geq 3 \).
     \item Średnia długość słowa - cecha opisująca średnią długość słów w badanym tekście.
      \begin{equation}
-            al = \frac{\sum_{i=0}^{n} a_i}{\sum_{i=0}^{n} x_i}
+            al = \frac{\sum_{i=0}^{m} a_i}{\sum_{i=0}^{n} x_i}
         \end{equation}
-        gdzie \( a_i \) - litera, \( x \) - liczba liter \( \geq 3 \).
+        gdzie \( a_i \) - litera, \( x \) - liczba liter \( \geq 3 \), \( n \) = liczba słów w tekście, \( m \) = liczba liter w tekście.
     \item Liczba słów kluczowych w pierwszych 3 zdaniach - cecha ta oznacza bezwględną liczbę wystąpień słów ze zbioru słów kluczowych w pewnym fragmencie tekstu (pierwsze 3 zdania).
         \begin{equation}
             fw = \ \mid x : x \in K \wedge x \in T_{\text{y}} \mid
@@ -61,7 +61,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             bw = \sum_{i=0}^{n} x_i
         \end{equation}
-        gdzie \( x \) = słowo zaczynające się wielką literą.
+        gdzie \( x \) = słowo zaczynające się wielką literą, \( n \) = liczba słów zaczynających się wielka literą w tekście
     \item Pierwsze kluczowe słowo w tekście - cecha opisująca pierwsze znalezione słowo znajdujące się w zbiorze słów kluczowych. Przykład: "AMR Corp will hold a press conference this morning in New York at 0900 EST, a company spokesman said." wynikiem dla tego cytatu będzie \(x_{first} \) = New York.
        \begin{equation}
             x_{first} = \min \{x: x \in K \land x \in T \}
@@ -76,7 +76,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             rw = \frac{ \mid x : x \in K \land x \in T \mid}{ \sum_{i=0}^{n} x_i}
         \end{equation}
-       gdzie K - zbiór słów kluczowych, \( x \) = liczba liter \( \geq 3 \), T - zbiór słów znajdujących się w tekście.
+       gdzie K - zbiór słów kluczowych, \( x \) = liczba liter \( \geq 3 \), T - zbiór słów znajdujących się w tekście, \( n \) = liczba słów w tekście
     \item Nazwiska - cecha ta jest reprezentacją tekstową wszystkich nazwisk pojawiających się ze zbioru nazwisk kluczowych. Przykład: "Wallis was quoted as saying the Reagan Administration wants Japanese cooperation so the White House can ensure any U.S." wynikiem dla tego cytatu będzie zbiór \( N' = \{ \text{Reagan} \} \).
     \begin{equation}
             N' =  x \in N \land x \in T
