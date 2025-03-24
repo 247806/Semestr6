@@ -91,7 +91,7 @@ Wektor cech będzie miał postać:
 
 
 \section{Miary jakości klasyfikacji}
-W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych poprawnie jest rzeczywiście poprawnych. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością. Każda z opisanych miar jakości przyjmuje wartości z zakresu \(<0, 1>\), przy czym im wyższa wartość oznacza, że tym więcej tekstów zostało poprawnie sklasyfikowanych.
+W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych poprawnie jest rzeczywiście poprawnych. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością. Każda z opisanych miar jakości przyjmuje wartości z zakresu \(<0, 1>\), przy czym wyższa wartość każdej miary oznacza, że więcej tekstów zostało poprawnie sklasyfikowanych.
 \\
 Dokładność jest obliczana dla wszystkich klas jednocześnie:
 \begin{equation}
@@ -113,12 +113,12 @@ gdzie:
 \(ACC\) - accuracy, \(PPV\) - precision, \(TPR\) - recall, \(X \in \{C, J, U, F, W, UK \}\), \\
 \( T \) - liczba poprawnie zaakwalifikowanych tekstów, \\
 \( N \) - liczba niepoprawnie zaakwalifikowanych tekstów, \\
-\( C \) - Kanada, \\
-\( J \) - Japonia, \\
-\( U \) - USA, \\
-\( F \) - Francja, \\
-\( W \) - Niemcy Zachodnie, \\
-\( UK \) - Wielka Brytania. \\
+\( C \) - teksty o Kanadzie, \\
+\( J \) - teksty o Japonii, \\
+\( U \) - teksty o USA, \\
+\( F \) - teksty o Francji, \\
+\( W \) - teksty o Niemczech Zachodnich, \\
+\( UK \) - teksty o Wielkiej Brytanii. \\
 \end{flushleft}
 
 Miary jakości klasyfikacji (Accuracy, Precision,
