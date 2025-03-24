@@ -71,7 +71,7 @@ W projekcie ekstrakcja cech charakterystycznych tekstu jest dokonywana poprzez s
         \begin{equation}
             kw = \ \mid x : x \in K \land x \in T \mid
         \end{equation}
-        gdzie K - zbiór słów kluczowych, T - zbiór słów znajdujących się w tekście.
+        gdzie K - zbiór słów kluczowych, T - zbiór słów znajdujących się w tekście, \( x \) = liczba liter \( \geq 3 \).
     \item Względna liczba słów kluczowych - cecha która reprezentuje stosunek słów kluczowych do długości całego tekstu. 
         \begin{equation}
             rw = \frac{ \mid x : x \in K \land x \in T \mid}{ \sum_{i=0}^{n} x_i}
@@ -91,7 +91,7 @@ Wektor cech będzie miał postać:
 
 
 \section{Miary jakości klasyfikacji}
-W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych poprawnie jest rzeczywiście poprawnych. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością. Każda z opisanych miar jakości przyjmuje wartości z zakresu \(<0, 1>\), przy czym wyższa wartość każdej miary oznacza, że więcej tekstów zostało poprawnie sklasyfikowanych.
+W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych do danej klasy jest rzeczywiście tej klasy. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością. Każda z opisanych miar jakości przyjmuje wartości z zakresu \(<0, 1>\), przy czym wyższa wartość każdej miary oznacza, że więcej tekstów zostało poprawnie sklasyfikowanych.
 \\
 Dokładność jest obliczana dla wszystkich klas jednocześnie:
 \begin{equation}
@@ -99,13 +99,13 @@ Dokładność jest obliczana dla wszystkich klas jednocześnie:
 \end{equation}
 Precison, Recall oraz F1 jest obliczane dla każdej klasy oddzielnie:
 \begin{equation}
-    PPV_X = \frac {TX}{TX + FX}
+    PPV_X = \frac {TX}{TX + NX}
 \end{equation}
 \begin{equation}
     TPR_X = \frac {TX}{X}
 \end{equation}
 \begin{equation}
-    F1_X = \frac{PPV_X}{TPR_X}
+    F1_X = \frac{2 * PPV_X * TPR_X}{PPV_X + TPR_X}
 \end{equation}
 
 gdzie:
@@ -121,18 +121,6 @@ gdzie:
 \( UK \) - teksty o Wielkiej Brytanii. \\
 \end{flushleft}
 
-Miary jakości klasyfikacji (Accuracy, Precision,
-Recall, F1). We wprowadzeniu zaprezentować minimum teorii potrzebnej do realizacji
-zadania, tak by inżynier innej specjalności zrozumiał dalszy opis. Należy podać {\bf konkretne wzory miar użyte w tym eksperymencie oraz krótko
-opisać ich znaczenie i zakresy przyjmowanych wartości. Należy podać przykładowe
-wartości każdej miary. Nie przepisuj
-teorii, ale podaj link/przypis i opisz jak rozumiesz jej zastosowanie w tym konkretnym
-zadaniu}. \\
-\indent Stosowane wzory, oznaczenia z objaśnieniami znaczenia symboli użytych w
-doświadczeniu. Oznaczenia jednolite w obrębie całego sprawozdania.  Opis zawiera przypisy do bibliografii zgodnie z
-Polską Normą, (zob. materiały BG PŁ).\\
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 03 wg Harmonogramu Zajęć
-na WIKAMP KSR.}
 
 
 \section{Metryki i miary podobieństwa tekstów w klasyfikacji}
