@@ -27,24 +27,24 @@ Celem zadania jest stworzenie aplikacji do generowania sygnałów i szumów o ok
 przez użytkownika parametrach. Aplikacja ma posiadać możliowść wyświetlenia wykresów oraz histogramów,
 zapisu i odczytu sygnałów, wykonania operacji na sygnałach oraz obliczenia parametrów sygnału.
 
-\section{Wstp teoretyczny}
+\section{Wstęp teoretyczny}
 
 Program został stworzony w języku Python. Graficzny interfejs użytkownika został stworzony
 przy wykorzystaniu bibliteki Tkinter. Do generowania wykresów i histogramów wykorzystana jest biblioteka Matplotlib,
 natomiast do obliczeń wykorzystywana jest bibliotek Numpy. Program został podzielony na kilka plików.
-Interfejs graficzny znajduje sie w głównym pliku - front. W plikach continousSignal oraz discretSignal znajdują
+Interfejs graficzny znajduje sie w głównym pliku - front. W plikach continousSignal oraz discretSignal znajdują się
 metody służące do obliczania sygnałów. Obliczanie parametrów sygnału znajduje sie w pliku calculateParams, a
 metody odpowiedzialne za obsługe operacji na sygnałach umieszczone są w pliku signalOperation.
 
-\subsection{Pełny interfejs uytkownika} 
+\subsection{Pełny interfejs użytkownika} 
 
 
 
 
-Powyższy zrzut ekranu przedstawia panel interfejsu użytkownika. Po lewej stronie
+Poniższy zrzut ekranu przedstawia panel interfejsu użytkownika. Po lewej stronie
             została umieszczona część odpowiedzialna za obsługę wykresów oraz dobór parametrów
             generowanego wykresu. Po prawej stronie została umieszczona część odpowiedzialna za
-            wyświetlanie wygenerowanych wekresów, histogramów oraz parametrów. Interfejs zapewnia
+            wyświetlanie wygenerowanych wykresów, histogramów oraz parametrów. Interfejs zapewnia
             możliwość dodawanie dwóch wykresów.
 \FloatBarrier
 \begin{figure}[h!]
@@ -56,11 +56,11 @@ Powyższy zrzut ekranu przedstawia panel interfejsu użytkownika. Po lewej stron
 \subsection{Panel obsługi programu}  
 
 
-Panel obsługi posiada 3 karty, które poprzez nacisniecie myszy można przełączać.
+Panel obsługi posiada 3 karty, które poprzez naciśnięcie myszy można przełączać.
 Pierwsza z nich oznaczona jako Generowanie odpowiada za wybór parametrów generowanego
-wykresu, druga oznaczona jako Operacje matemtayczne pozwala na wybór operacji np. dodawanie, odejmowanie, mnożenie,
+wykresu, druga oznaczona jako Operacje matematyczne pozwala na wybór operacji np. dodawanie, odejmowanie, mnożenie,
 dzielenie, natomiast trzecia oznaczona jako Zapis i odczyt odpowiada za zapis, odczyt z pliku,
-oraz wyświetlenie danych znajdujących sie w pliku.
+oraz wyświetlenie danych znajdujących się w pliku.
 \FloatBarrier
 \begin{figure}[h!]
     \centering
@@ -84,9 +84,9 @@ oraz wyświetlenie danych znajdujących sie w pliku.
 \subsection{Panel wyników} 
 
 Panel wyników składa się z trzech kart: Sygnał 1, Sygnał 2 oraz Wynik. W pierszych dwóch kartach można
-edytować wykresy, natomiast w trzeciej karcie pojawia się wynik operacji na sygnałach
-Każda karta zwiera 3 sekcje: Wykres, Histogram oraz Parametry. W sekcji Wykres zostaje wyswietlony wygenerowany
-wykres,w sekcji Histogram zostaje wyświetlony wygenerowany histogram natomiast w sekcji Parametry 
+edytować wykresy, natomiast w trzeciej karcie pojawia się wynik operacji na sygnałach.
+Każda karta zawiera 3 sekcje: Wykres, Histogram oraz Parametry. W sekcji Wykres zostaje wyświetlony wygenerowany
+wykres,w sekcji Histogram zostaje wyświetlony wygenerowany histogram, natomiast w sekcji Parametry 
 zostają wyświetlone parametry wykresu.
 
 \begin{figure}[h!]
@@ -109,7 +109,7 @@ zostają wyświetlone parametry wykresu.
 
 
 Po wybraniu operacji pojawia się dodatkowe okno, w którym można 
-wybrać sygnały jakie maja być użyte do wykonania operacji.
+wybrać sygnały jakie mają być użyte do wykonania operacji.
 \FloatBarrier
 \begin{figure}[h!]
     \centering
@@ -122,7 +122,7 @@ wybrać sygnały jakie maja być użyte do wykonania operacji.
 
 \section{Eksperymenty i wyniki}
 
-Opis wykonywanych eksperymentw. Wymagane jest ilustrowanie przeprowadzanych dowiadcze wykresami oraz tabelami.
+Opis wykonywanych eksperymentów. Wymagane jest ilustrowanie przeprowadzanych dowiadczeń wykresami oraz tabelami.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PODROZDZIA� PT. EKSPERYMENT NR 1 
@@ -144,7 +144,7 @@ Opis wykonywanych eksperymentw. Wymagane jest ilustrowanie przeprowadzanych dowi
         \vspace{0.2cm}
         \begin{tabular}{|c|c|}
             \hline\hline\\[-0.4cm]
-            Amplitiuda & 1  \\
+            Amplituda & 1  \\
             \hline
             Czas początkowy & 0s  \\
             \hline
@@ -193,7 +193,7 @@ Opis wykonywanych eksperymentw. Wymagane jest ilustrowanie przeprowadzanych dowi
 
 \subsection{Szum gaussowski} \label{szumgaussowski} 
         Celem eksperymentu było wygenerowanie szumu gaussowskiego o wybranych parametrach,
-        ktore zostały opisane w sekcji założenia. Funkcja opisująca sygnał:
+        które zostały opisane w sekcji założenia. Funkcja opisująca sygnał:
 
         \begin{figure}[!htbp]
             \centering
@@ -207,7 +207,7 @@ Opis wykonywanych eksperymentw. Wymagane jest ilustrowanie przeprowadzanych dowi
             \vspace{0.2cm}
             \begin{tabular}{|c|c|}
                 \hline\hline\\[-0.4cm]
-                Amplitiuda & 1  \\
+                Amplituda & 1  \\
                 \hline
                 Czas początkowy & 0s  \\
                 \hline
@@ -269,7 +269,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -333,7 +333,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -397,7 +397,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -446,7 +446,7 @@ Wyliczone parametry:
 \end{table}
 
 \subsection{Sygnał prostokątny} \label{prostokat} 
-Celem eksperymentu było wygenerowanie prostokątnego o wybranych parametrach,
+Celem eksperymentu było wygenerowanie sygnału prostokątnego o wybranych parametrach,
 które zostały opisane w sekcji założenia. Funkcja opisująca sygnał:
 
 \begin{figure}[!htbp]
@@ -461,7 +461,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -512,7 +512,7 @@ Wyliczone parametry:
 \end{table}
 
 \subsection{Sygnał prostokątny symetryczny} \label{prostokatsymetryczny} 
-Celem eksperymentu było wygenerowanie sygnału prostokątnego symetryczne o wybranych parametrach,
+Celem eksperymentu było wygenerowanie sygnału prostokątnego symetrycznego o wybranych parametrach,
 które zostały opisane w sekcji założenia. Funkcja opisująca sygnał:
 
 \begin{figure}[!htbp]
@@ -527,7 +527,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -593,7 +593,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -659,7 +659,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -723,7 +723,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -782,7 +782,7 @@ Parametry:
     \vspace{0.2cm}
     \begin{tabular}{|c|c|}
         \hline\hline\\[-0.4cm]
-        Amplitiuda & 1  \\
+        Amplituda & 1  \\
         \hline
         Czas początkowy & 0s  \\
         \hline
@@ -956,7 +956,7 @@ Wyliczone parametry:
 
 \subsection{Dzielenie sygnałów} \label{div} 
 
-Celem eksperymentu było mnożenie sygnałów, które zostały opisane w sekcji założenia
+Celem eksperymentu było dzielenie sygnałów, które zostały opisane w sekcji założenia
 
 \subsubsection{Założenia} 
     Parametry wykresów zostały określone w eksperymencie |3.6| oraz |3.8|
