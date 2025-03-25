@@ -224,8 +224,8 @@ def decrease_bins():
 def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel):
     global signal_3, time_3
 
-    sampling_rate_1 = 1 / (time_1[1] - time_1[0]) if len(time_1) > 1 else 1.0
-    sampling_rate_2 = 1 / (time_2[1] - time_2[0]) if len(time_2) > 1 else 1.0
+    sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
+    sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
 
     if sampling_rate_1 != sampling_rate_2:
         print("Różne próbkowanie")
@@ -238,8 +238,8 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
 
-    sampling_rate_1 = 1 / (time_1[1] - time_1[0]) if len(time_1) > 1 else 1.0
-    sampling_rate_2 = 1 / (time_2[1] - time_2[0]) if len(time_2) > 1 else 1.0
+    sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
+    sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
 
     if sampling_rate_1 != sampling_rate_2:
         print("Różne próbkowanie")
