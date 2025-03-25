@@ -223,17 +223,31 @@ def decrease_bins():
 
 def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel):
     global signal_3, time_3
-    signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
-    plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-    plot_histogram(histogram_frame_3, signal_3)
-    create_parameters_tab(param_frame_3, signal_3, time_3)
+
+    sampling_rate_1 = 1 / (time_1[1] - time_1[0]) if len(time_1) > 1 else 1.0
+    sampling_rate_2 = 1 / (time_2[1] - time_2[0]) if len(time_2) > 1 else 1.0
+
+    if sampling_rate_1 != sampling_rate_2:
+        print("Różne próbkowanie")
+    else:
+        signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
+        plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
+        plot_histogram(histogram_frame_3, signal_3)
+        create_parameters_tab(param_frame_3, signal_3, time_3)
 
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
-    signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
-    plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-    plot_histogram(histogram_frame_3, signal_3)
-    create_parameters_tab(param_frame_3, signal_3, time_3)
+
+    sampling_rate_1 = 1 / (time_1[1] - time_1[0]) if len(time_1) > 1 else 1.0
+    sampling_rate_2 = 1 / (time_2[1] - time_2[0]) if len(time_2) > 1 else 1.0
+
+    if sampling_rate_1 != sampling_rate_2:
+        print("Różne próbkowanie")
+    else:
+        signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
+        plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
+        plot_histogram(histogram_frame_3, signal_3)
+        create_parameters_tab(param_frame_3, signal_3, time_3)
 
 def save_signal():
     global signal_1, time_1

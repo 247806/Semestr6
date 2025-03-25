@@ -1,13 +1,13 @@
 import numpy as np
 
 def operate_signals(operation, signal_1, time_1, signal_2, time_2):
-
     if signal_1 is None or signal_2 is None:
         print("Brak dwóch sygnałów do wykonania operacji.")
         return
 
     signal_3 = np.copy(signal_1)
     time_3 = np.copy(time_1)
+
 
     min_time = max(time_1[0], time_2[0])
     max_time = min(time_1[-1], time_2[-1])
