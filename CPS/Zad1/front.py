@@ -110,9 +110,9 @@ def plot_histogram(frame, signal):
 
     fig, ax = plt.subplots()
     ax.hist(signal, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
-    ax.set_ylabel("Amplituda")
+    ax.set_xlabel("Amplituda")
     ax.set_title("Histogram")
-    ax.set_xlabel("Częstotliwość")
+    ax.set_ylabel("Częstotliwość")
 
     canvas = FigureCanvasTkAgg(fig, master=frame)
     canvas.draw()
@@ -149,36 +149,39 @@ def toggle_fields():
         duty_cycle_entry_t.grid(row=3, column=1, padx=5, pady=5)
 
 def create_parameters_tab(param, signal, time):
+    for widget in param.winfo_children():
+        widget.destroy()
+
     if signal_type.get() not in ["Impuls jednostkowy", "Szum impulsowy"]:
-        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_cont(signal, time):.2f}")
+        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_cont(signal, time):.3f}")
         avg_label.pack(padx=5, pady=5)
 
-        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_cont(signal, time):.2f}")
+        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_cont(signal, time):.3f}")
         abs_avg_label.pack(padx=5, pady=5)
 
-        power_label = ttk.Label(param, text=f"Moc: {cp.power_cont(signal, time):.2f}")
+        power_label = ttk.Label(param, text=f"Moc: {cp.power_cont(signal, time):.3f}")
         power_label.pack(padx=5, pady=5)
 
-        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_cont(signal, time):.2f}")
+        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_cont(signal, time):.3f}")
         dev_label.pack(padx=5, pady=5)
 
-        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_cont(signal, time):.2f}")
+        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_cont(signal, time):.3f}")
         eff_power_label.pack(padx=5, pady=5)
 
     else:
-        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_dis(signal, time):.2f}")
+        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_dis(signal, time):.3f}")
         avg_label.pack(padx=5, pady=5)
 
-        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal, time):.2f}")
+        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal, time):.3f}")
         abs_avg_label.pack(padx=5, pady=5)
 
-        power_label = ttk.Label(param, text=f"Moc: {cp.power_dis(signal, time):.2f}")
+        power_label = ttk.Label(param, text=f"Moc: {cp.power_dis(signal, time):.3f}")
         power_label.pack(padx=5, pady=5)
 
-        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_dis(signal, time):.2f}")
+        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_dis(signal, time):.3f}")
         dev_label.pack(padx=5, pady=5)
 
-        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.2f}")
+        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.3f}")
         eff_power_label.pack(padx=5, pady=5)
 
 def plot_empty_chart():
@@ -198,9 +201,9 @@ def plot_empty_chart():
     canvas.draw()
 
     fig, ax = plt.subplots()
-    ax.set_ylabel("Amplituda")
+    ax.set_xlabel("Amplituda")
     ax.set_title("Histogram")
-    ax.set_xlabel("Częstotliwość")
+    ax.set_ylabel("Częstotliwość")
     ax.grid()
     canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1)
     canvas.get_tk_widget().pack()
@@ -394,49 +397,68 @@ def select_signals_for_operation(operation):
 
 root = tk.Tk()
 root.title("Generator sygnałów")
-root.geometry("1170x650")
+root.geometry("1200x600")
 root.resizable(False, False)
 
-ttk.Label(root, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
+# --- GŁÓWNY NOTEBOOK ---
+main_notebook = ttk.Notebook(root)
+main_notebook.grid(row=0, column=0, padx=10, pady=10)
+
+# --- ZAKŁADKI ---
+tab_generate = ttk.Frame(main_notebook)
+tab_operations = ttk.Frame(main_notebook)
+tab_save = ttk.Frame(main_notebook)
+
+main_notebook.add(tab_generate, text="Generowanie")
+main_notebook.add(tab_operations, text="Operacje matematyczne")
+main_notebook.add(tab_save, text="Zapis i odczyt")
+
+# --- GENEROWANIE ---
+ttk.Label(tab_generate, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
 signal_type = tk.StringVar(value="Sygnał sinusoidalny")
-signal_dropdown = ttk.Combobox(root, textvariable=signal_type, values=["Szum o rozkładzie jednostajnym", "Szum gaussowski", "Sygnał sinusoidalny", "Sygnał prostokątny symetryczny", "Sygnał sinusoidalny wyprostowany jednopołówkowo", "Sygnał sinusoidalny wyprostowany dwupołówkowo ", "Sygnał prostokątny", "Sygnał trójkątny",  "Skok jednostkowy", "Impuls jednostkowy", "Szum impulsowy"],
-                               state="readonly",  width=50)
-signal_dropdown.grid(row=0, column=1, columnspan=1, padx=5, pady=5)
+signal_dropdown = ttk.Combobox(tab_generate, textvariable=signal_type,
+                               values=["Szum o rozkładzie jednostajnym", "Szum gaussowski", "Sygnał sinusoidalny",
+                                       "Sygnał prostokątny symetryczny",
+                                       "Sygnał sinusoidalny wyprostowany jednopołówkowo",
+                                       "Sygnał sinusoidalny wyprostowany dwupołówkowo ",
+                                       "Sygnał prostokątny", "Sygnał trójkątny", "Skok jednostkowy",
+                                       "Impuls jednostkowy", "Szum impulsowy"],
+                               state="readonly", width=50)
+signal_dropdown.grid(row=0, column=1, padx=5, pady=5)
 signal_dropdown.bind("<<ComboboxSelected>>", lambda e: toggle_fields())
 
+ttk.Label(tab_generate, text="Częstotliwość próbkowania").grid(row=1, column=0, padx=5, pady=5)
 sample_rate_var = tk.StringVar(value="1000")
-
-ttk.Label(root, text="Częstotliwość próbkowania").grid(row=1, column=0, padx=5, pady=5)
-sample_rate_entry = ttk.Entry(root, textvariable=sample_rate_var)
+sample_rate_entry = ttk.Entry(tab_generate, textvariable=sample_rate_var)
 sample_rate_entry.grid(row=1, column=1, padx=5, pady=5)
 
-ttk.Label(root, text="Amplituda (A):").grid(row=2, column=0, padx=5, pady=5)
-amplitude_entry = ttk.Entry(root)
+ttk.Label(tab_generate, text="Amplituda (A):").grid(row=2, column=0, padx=5, pady=5)
+amplitude_entry = ttk.Entry(tab_generate)
 amplitude_entry.grid(row=2, column=1, padx=5, pady=5)
 
-ttk.Label(root, text="Czas początkowy (t1):").grid(row=4, column=0, padx=5, pady=5)
-start_time_entry = ttk.Entry(root)
+ttk.Label(tab_generate, text="Czas początkowy (t1):").grid(row=4, column=0, padx=5, pady=5)
+start_time_entry = ttk.Entry(tab_generate)
 start_time_entry.grid(row=4, column=1, padx=5, pady=5)
 
-ttk.Label(root, text="Czas trwania (d):").grid(row=5, column=0, padx=5, pady=5)
-duration_entry = ttk.Entry(root)
+ttk.Label(tab_generate, text="Czas trwania (d):").grid(row=5, column=0, padx=5, pady=5)
+duration_entry = ttk.Entry(tab_generate)
 duration_entry.grid(row=5, column=1, padx=5, pady=5)
 
-duty_cycle_label = ttk.Label(root, text="Współczynnik wypełnienia (kw):")
-duty_cycle_entry = ttk.Entry(root)
+duty_cycle_label = ttk.Label(tab_generate, text="Współczynnik wypełnienia (kw):")
+duty_cycle_entry = ttk.Entry(tab_generate)
 
-duty_cycle_label_ts = ttk.Label(root, text="Czas skoku (ts):")
-duty_cycle_entry_ts = ttk.Entry(root)
+duty_cycle_label_ts = ttk.Label(tab_generate, text="Czas skoku (ts):")
+duty_cycle_entry_ts = ttk.Entry(tab_generate)
 
-duty_cycle_label_t = ttk.Label(root, text="Okres (T):")
-duty_cycle_entry_t = ttk.Entry(root)
+duty_cycle_label_t = ttk.Label(tab_generate, text="Okres (T):")
+duty_cycle_entry_t = ttk.Entry(tab_generate)
 
-duty_cycle_label_p = ttk.Label(root, text="Prawdopodobieństwo (p):")
-duty_cycle_entry_p = ttk.Entry(root)
+duty_cycle_label_p = ttk.Label(tab_generate, text="Prawdopodobieństwo (p):")
+duty_cycle_entry_p = ttk.Entry(tab_generate)
 
 bins_var = tk.IntVar(value=10)
-ttk.Label(root, text="Liczba przedziałów histogramu").grid(row=7, column=0, padx=5, pady=5)
-bins_frame = ttk.Frame(root)
+ttk.Label(tab_generate, text="Liczba przedziałów histogramu").grid(row=7, column=0, padx=5, pady=5)
+bins_frame = ttk.Frame(tab_generate)
 bins_frame.grid(row=7, column=1, padx=5, pady=5)
 
 decrease_button = ttk.Button(bins_frame, text="-", command=decrease_bins)
@@ -448,12 +470,22 @@ bins_label.pack(side=tk.LEFT, padx=5)
 increase_button = ttk.Button(bins_frame, text="+", command=increase_bins)
 increase_button.pack(side=tk.LEFT)
 
-generate_frame = ttk.Frame(root)
-generate_frame.grid(row=8, column=0, columnspan=2, pady=10)
+ttk.Button(tab_generate, text="Generuj sygnał", command=lambda: generate_signal()).grid(row=8, column=0, padx=5, pady=5)
+ttk.Button(tab_generate, text="Generuj histogram", command=lambda: histogram_managment()).grid(row=8, column=1, padx=5, pady=5)
 
-ttk.Button(generate_frame, text="Generuj sygnał", command=lambda: generate_signal()).pack(side=tk.LEFT, padx=5)
-ttk.Button(generate_frame, text="Generuj histogram", command=lambda: histogram_managment()).pack(side=tk.LEFT, padx=5)
 
+# --- OPERACJE ---
+ttk.Button(tab_operations, text="Dodaj", command=lambda: select_signals_for_operation("add")).grid(row=1, column=0, padx=100, pady=50)
+ttk.Button(tab_operations, text="Odejmij", command=lambda: select_signals_for_operation("subtract")).grid(row=1, column=1, padx=10, pady=5)
+ttk.Button(tab_operations, text="Pomnóż", command=lambda: select_signals_for_operation("multiply")).grid(row=2, column=0, padx=100, pady=5)
+ttk.Button(tab_operations, text="Podziel", command=lambda: select_signals_for_operation("divide")).grid(row=2, column=1, padx=10, pady=5)
+
+# --- ZAPIS I ODCZYT ---
+ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
+ttk.Button(tab_save, text="Wczytaj sygnał", command=lambda: load_signal(0)).grid(row=1, column=1, padx=5, pady=5)
+ttk.Button(tab_save, text="Wyświetl dane", command=lambda: load_signal(1)).grid(row=2, column=0, padx=5, pady=5)
+
+# --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)
 signal_notebook.grid(row=0, column=2, rowspan=10, columnspan=10, padx=10, pady=10)
 
@@ -494,21 +526,6 @@ notebook.add(plot_frame_3, text="Wykres")
 notebook.add(histogram_frame_3, text="Histogram")
 notebook.add(param_frame_3, text="Parametry")
 plot_empty_chart()
-
-operations_frame = ttk.Frame(root)
-operations_frame.grid(row=9, column=0, columnspan=2, pady=10)
-
-ttk.Button(operations_frame, text="Dodaj", command=lambda: select_signals_for_operation("add")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Odejmij", command=lambda: select_signals_for_operation("subtract")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Pomnóż", command=lambda: select_signals_for_operation("multiply")).pack(side=tk.LEFT, padx=5)
-ttk.Button(operations_frame, text="Podziel", command=lambda: select_signals_for_operation("divide")).pack(side=tk.LEFT, padx=5)
-
-dao_frame = ttk.Frame(root)
-dao_frame.grid(row=10, column=0, columnspan=2, pady=10)
-
-ttk.Button(dao_frame, text="Zapisz sygnał", command=lambda: save_signal()).pack(side=tk.LEFT, padx=5)
-ttk.Button(dao_frame, text="Wczytaj sygnał", command=lambda: load_signal(0)).pack(side=tk.LEFT, padx=5)
-ttk.Button(dao_frame, text="Wyświetl dane", command=lambda: load_signal(1)).pack(side=tk.LEFT, padx=5)
 
 toggle_fields()
 
