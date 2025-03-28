@@ -91,39 +91,119 @@ Wektor cech będzie miał postać:
 
 
 \section{Miary jakości klasyfikacji}
-W celu określenia jakości klasyfikacji wykorzystywane są cztery miary jakości. Accuracy (dokładność) określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Precision (precyzja), dzięki niej dowiadujemy się, ile wśród obiektów sklasyfikowanych do danej klasy jest rzeczywiście tej klasy. Recall (czułość) opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. F1 to średnia harmoniczna pomiędzy precyzją a czułością. Każda z opisanych miar jakości przyjmuje wartości z zakresu \(<0, 1>\), przy czym wyższa wartość każdej miary oznacza, że więcej tekstów zostało poprawnie sklasyfikowanych.
-\\
-Dokładność jest obliczana dla wszystkich klas jednocześnie:
-\begin{equation}
-    ACC = \frac {TC + TJ + TU + TF + TW + TUK}{T + N}
-\end{equation}
-Precison, Recall oraz F1 jest obliczane dla każdej klasy oddzielnie:
-\begin{equation}
-    PPV_X = \frac {TX}{TX + NX}
-\end{equation}
-\begin{equation}
-    TPR_X = \frac {TX}{X}
-\end{equation}
-\begin{equation}
-    F1_X = \frac{2 * PPV_X * TPR_X}{PPV_X + TPR_X}
-\end{equation}
+W celu określenia jakości przeprowadzonej klasyfikacji należy skorzystać z czterech miar jakości. W trakcie omawiania tej sekcji będziemy się posługiwać symbolami, które będą oznaczać klasy, do których można przypisać dany tekst (J - Japonia, F - Francja, W - Niemcy Zachodnie, C - Kanada, U - USA, UK - Wielka Brytania). 
 
-gdzie:
-\begin{flushleft}
-\(ACC\) - accuracy, \(PPV\) - precision, \(TPR\) - recall, \(X \in \{C, J, U, F, W, UK \}\), \\
-\( T \) - liczba poprawnie zaakwalifikowanych tekstów, \\
-\( N \) - liczba niepoprawnie zaakwalifikowanych tekstów, \\
-\( C \) - teksty o Kanadzie, \\
-\( J \) - teksty o Japonii, \\
-\( U \) - teksty o USA, \\
-\( F \) - teksty o Francji, \\
-\( W \) - teksty o Niemczech Zachodnich, \\
-\( UK \) - teksty o Wielkiej Brytanii. \\
+\subsection{Dokładność (Accuracy)}
+Dokładność to miara, która określa jaka część obiektów, ze wszystkich zaklasyfikowanych, została zaklasyfikowana poprawnie. Dokładność jest obliczana dla wszystkich klas jednocześnie i przyjmuje wartości z zakresu \([0, 1]\). Wyższa wartość dokładności oznacza, że ogólny procent poprawnie sklasyfikowanych obiektów jest większy, co sugeruje, że skuteczność klasyfikatora jest większa.
+\begin{equation}
+    ACC = \frac {TP}{TP + N}
+\end{equation}
+gdzie \(ACC\) - accuracy, \(TP\) - liczba wszystkich poprawnie sklasyfikowanych tekstów, \(N\) - liczba niepoprawnie sklasyfikowanych tekstów. \\
+\subsection{Precyzja (Precision)}
+Dzięki precyzji dowiadujemy się, ile wśród obiektów sklasyfikowanych do danej klasy jest rzeczywiście tej klasy. Precyzja jest obliczana dla wszystkich klas oddzielnie i przyjmuje wartości z zakresu \([0, 1]\). Im wyższy współczynnik precyzji, tym mniej błędnych klasyfikacji do danej klasy.
+\begin{equation}
+    PPV_x = \frac {TP_x}{TP_x + N_x}
+\end{equation}
+gdzie \(PPV_x\) - precision dla danej klasy \(x\), \(TP_x\) - liczba poprawnie sklasyfikowanych tekstów klasy \(x\), \(N_x\) - liczba niepoprawnie sklasyfikowanych  tekstów do klasy \(x\), \(x \in \{ \text{C, J, U, F, W, UK} \}\).
+\subsection{Czułość (Recall)}
+Czułość opisuje jaki jest udział poprawnie sklasyfikowanych obiektów wśród wszystkich obiektów tej klasy. Czułość jest obliczana dla wszystkich klas oddzielnie i przyjmuje wartości z zakresu \([0, 1]\). Wyższa wartość czułości oznacza, że klasyfikator skuteczniej wykrywa wszystkie przypadki danej klasy, co oznacza zmniejszenie liczby pominiętych istotnych obiektów.
+\begin{equation}
+    TPR_x = \frac {TP_x}{TP_x + NF_x}
+\end{equation}
+gdzie \(TPR_x\) - recall dla danej klasy \(x\), \(TP_x\) - liczba poprawnie sklasyfikowanych tekstów klasy \(x\), \(NF_x\) - liczba tekstów klasy \(x\), które zostały przypisane do innej klasy, \(x \in \{ \text{C, J, U, F, W, UK} \}\). 
+\subsection{F1}
+F1 to średnia harmoniczna pomiędzy precyzją a czułością, pozwalająca ocenić równowagę między nimi.  F1 jest obliczana dla wszystkich klas oddzielnie i przyjmuje wartości z zakresu \([0, 1]\). Im wyższa wartość miary F1, tym lepsza równowaga pomiędzy precyzją, a czułością
+\begin{equation}
+    F1_x = \frac{2 \times PPV_x \times TPR_x}{PPV_x + TPR_x}
+\end{equation}
+gdzie \(F1_x\) - miara F1 dla danej klasy \(x\), \(x \in \{ \text{C, J, U, F, W, UK} \}\). 
+
+\subsection{Przykład z wykorzystaniem miar jakości klasyfikacji}
+Mamy trzy zbiory, na ich podstawie obliczymy accuracy oraz precision, recall i F1 dla tekstów przypisanych do klasy Japonii: 
+\begin{enumerate}
+    \item Zbiór tekstów przypisanych jako Japonia \( \{ \text{J, J, J, F, U} \} \).
+    \item Zbiór tekstów przypisanych jako Francja \( \{ \text{F, F, F, J} \} \).
+    \item Zbiór tekstów przypisanych jako USA \( \{ \text{U, U, F, F} \} \).
+\end{enumerate}
+\[
+    ACC = \frac{TP}{TP + N} = \frac{8}{13} \approx 0.62
+\]
+\[
+    PPV_J = \frac{TP_J}{TP_J + N_J} =\frac{3}{5} = 0.6
+\]
+\[
+    TPR_J = \frac{TP_J}{TP_J + NF_J} = \frac{3}{4} = 0.75
+\]
+\[
+    F1_J = \frac{2 \times PPV_J \times TPR_J}{PPV_J + TPR_J} = \frac{0.9}{1.35} \approx 0.67
+\]
+
 \end{flushleft}
 
 
 
 \section{Metryki i miary podobieństwa tekstów w klasyfikacji}
+Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, kluczową rolę w tym procesie odgrywają metryki oraz miary, które są wykorzystywane do ustalenia stopnia zgodności pomiędzy obiektami. Metryki umożliwiają obliczenie odległości między wektorami liczbowymi. Natomiast niektóre cechy w wektorach przyjmują wartości tekstowe, aby obliczyć ich podobieństwo trzeba je najpierw zmienić na wartości liczbowe. Umożliwiają to miary, pozwalające określić, jak podobne są do siebie ciągi znaków.
+
+\subsection{Metryki}
+\begin{enumerate}
+    \item Metryka euklidesowa
+        \begin{equation}
+      \rho_E(v1, v2) = \sqrt{\sum_{i=1}^{n} (v1_i - v2_i)^2}  
+        \end{equation}
+        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
+    \item Metryka uliczna
+        \begin{equation}
+          \rho_M(v1, v2) = \sum_{i=1}^{n} |v1_i - v2_i|
+        \end{equation}
+        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
+    \item Metryka Czebyszewa
+        \begin{equation}
+          \rho_C(v1, v2) = \max_{i = 1,...,n} |v1_i - v2_i|
+        \end{equation}
+        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach. \\
+\end{enumerate}
+Załóżmy, że mamy dwa wektory cech:
+\begin{enumerate}
+    \item \(v1 = (1, 2, 3)\)
+    \item \(v2 = (4, 6, 3)\)
+\end{enumerate}
+\[
+     \rho_E(v1, v2) = \sqrt{(1-4)^2 + (2-6)^2 + (3-3)^2} = \sqrt{9 + 16 + 0} = \sqrt{25} = 5
+\] \\
+\[
+    \rho_M(v1, v2) = |1-4| + |2-6| + |3-3| = 3 + 4 + 0 = 7
+\] \\ 
+\[
+    \rho_C(v1, v2) = \max(|1-4|, |2-6|, |3-3|) = \max(3, 4, 0) = 4
+ \]
+Metryka euklidesowa, ulicza oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
+
+\subsection{Miara Jaccarda}
+Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobień
+stwo dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają, że dwa zbiory tekstowe są do siebie podobne. \\
+Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
+\begin{equation}
+    d = 1 - sim(A, B)
+\end{equation}
+gdzie \(sim(A,B)\) oznacza miarę Jaccarda
+\begin{equation}
+    J(A, B) = \frac{|A \cap B|}{|A \cup B|}
+\end{equation}
+gdzie \(A\) oraz \(B\) to zbiory składające się z liter cechy słownikowej wektora \(v1\) oraz \(v2\) \\
+
+Załóżmy, że mamy dwa wektory cech:
+\begin{enumerate}
+    \item \(v1 = (1, ABC, 3)\)
+    \item \(v2 = (4, CED, 3)\)
+\end{enumerate}
+\[
+    J(A, B) = \frac{\{ \text{C} \}}{\{\text{A,B,C,E,D}\}} = \frac{1}{5}= 0.2.
+ \]
+ \[
+     \rho_E(v1, v2) = \sqrt{(1-4)^2 + (1 - 0.2)^2 + (3-3)^2} = \sqrt{9 + 0.64 + 0} = \sqrt{25} = 3.10
+\] \\
+
 
 Wzory, znaczenia i opisy symboli zastosowanych metryk z
 przykładami. Wzory, opisy i znaczenia miar
@@ -172,7 +252,8 @@ podać merytoryczne (ale nie czasowe) przyczyny tych braków.
 
 
 \begin{thebibliography}{0}
-\bibitem{knn} https://home.agh.edu.pl/~horzyk/lectures/miw/KNN.pdf
+\bibitem{knn} Metoda k-NN \url{https://home.agh.edu.pl/~horzyk/lectures/miw/KNN.pdf} [dostęp: 28.03.2025r.]
+\bibitem{tab} Wikipedia, Tablica pomyłek, \url{https://pl.wikipedia.org/wiki/Tablica_pomy%C5%82ek}. [dostęp: 28.03.2025r.]
 \bibitem{niewiadomski08} A. Niewiadomski, Methods for the Linguistic Summarization of Data: Applications of Fuzzy Sets and Their Extensions, Akademicka Oficyna Wydawnicza EXIT, Warszawa, 2008.
 \end{thebibliography}
 
