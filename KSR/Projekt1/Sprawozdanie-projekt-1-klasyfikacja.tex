@@ -144,21 +144,21 @@ Mamy trzy zbiory, na ich podstawie obliczymy accuracy oraz precision, recall i F
 
 
 \section{Metryki i miary podobieństwa tekstów w klasyfikacji}
-Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, kluczową rolę w tym procesie odgrywają metryki oraz miary, które są wykorzystywane do ustalenia stopnia zgodności pomiędzy obiektami. Metryki umożliwiają obliczenie odległości między wektorami liczbowymi. Natomiast niektóre cechy w wektorach przyjmują wartości tekstowe, aby obliczyć ich podobieństwo trzeba je najpierw zmienić na wartości liczbowe. Umożliwiają to miary, pozwalające określić, jak podobne są do siebie ciągi znaków.
+Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, kluczową rolę w tym procesie odgrywają metryki oraz miary, które są wykorzystywane do ustalenia stopnia zgodności pomiędzy obiektami. Metryki umożliwiają obliczenie odległości między wektorami liczbowymi. Natomiast w przypadku cech tekstowych, zanim będzie można obliczyć ich podobieństwo, należy dokonać ich transformacji na wartości liczbowe. Umożliwiają to miary, które określają podobieństwo między ciągami znaków.
 
 \subsection{Metryki}
 \begin{enumerate}
-    \item Metryka euklidesowa
+    \item Metryka euklidesowa - w celu obliczenia odległości \(\rho_E(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć pierwiastek kwadratowy z sumy kwadratów różnic ich składowych zgodnie ze wzorem:
         \begin{equation}
       \rho_E(v1, v2) = \sqrt{\sum_{i=1}^{n} (v1_i - v2_i)^2}  
         \end{equation}
         gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
-    \item Metryka uliczna
+    \item Metryka uliczna - w celu obliczenia odległości \(\rho_M(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć sumę wartości bezwzględnych różnic cech zgodnie ze wzorem:
         \begin{equation}
           \rho_M(v1, v2) = \sum_{i=1}^{n} |v1_i - v2_i|
         \end{equation}
         gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
-    \item Metryka Czebyszewa
+    \item Metryka Czebyszewa - w celu obliczenia odległości \(\rho_C(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć maksymalną wartość bezwzględnych różnic cech zgodnie ze wzorem:
         \begin{equation}
           \rho_C(v1, v2) = \max_{i = 1,...,n} |v1_i - v2_i|
         \end{equation}
@@ -181,10 +181,7 @@ Załóżmy, że mamy dwa wektory cech:
 Metryka euklidesowa, uliczna oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
 
 \subsection{Miara Jaccarda}
-Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobieństwo 
-dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu 
-[0,1], gdzie wartości bliższe 1 oznaczają większe podobieństwo między dwoma zbiorami tekstowymi. \\
-Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
+Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobieństwo dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają większe podobnieństwo dwóch: 0 oznacza brak wspólnych elementów, 1 oznacza identyczne zbiory znaków. Przekształcenie cech tekstowych na wartości numeryczne umożliwia obliczenie ich wpływu na odległości między wektorami. Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
 \begin{equation}
     d = 1 - sim(A, B)
 \end{equation}
@@ -210,17 +207,6 @@ A = \{A, B, C\}, \quad B = \{C, E, D\}
  \[
      \rho_E(v1, v2) = \sqrt{(1-4)^2 + (1 - 0.2)^2 + (3-3)^2} = \sqrt{9 + 0.64 + 0} = \sqrt{25} = 3.10
 \] \\
-
-
-Wzory, znaczenia i opisy symboli zastosowanych metryk z
-przykładami. Wzory, opisy i znaczenia miar
-podobieństwa tekstów zastosowanych w obliczaniu metryk dla wektorów cech z
-przykładami dla każdej miary \cite{niewiadomski08}.  Oznaczenia jednolite w obrębie całego sprawozdania.  {\bf Podaj metryki i miary
-podobieństwa nie z literatury (te wystarczy zacytować linkiem), ale konkretne ich
-postaci stosowane w zadaniu. Jakie zakresy wartości przyjmują te miary i
-metryki, co oznaczają ich wartości? Podaj przykładowe wartości dla przykładowych wektorów cech}. \\ 
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 04 wg Harmonogramu Zajęć
-na WIKAMP KSR.}
 
 \section{Wyniki klasyfikacji dla różnych parametrów wejściowych}
 Wstępne wyniki miary Accuracy dla próbnych klasyfikacji na ograniczonym zbiorze tekstów (podać parametry i kryteria
