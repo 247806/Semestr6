@@ -125,6 +125,7 @@ Mamy trzy zbiory, na ich podstawie obliczymy accuracy oraz precision, recall i F
     \item Zbiór tekstów przypisanych jako Francja \( \{ \text{F, F, F, J} \} \).
     \item Zbiór tekstów przypisanych jako USA \( \{ \text{U, U, F, F} \} \).
 \end{enumerate}
+\begin{flushleft}
 \[
     ACC = \frac{TP}{TP + N} = \frac{8}{13} \approx 0.62
 \]
@@ -177,11 +178,12 @@ Załóżmy, że mamy dwa wektory cech:
 \[
     \rho_C(v1, v2) = \max(|1-4|, |2-6|, |3-3|) = \max(3, 4, 0) = 4
  \]
-Metryka euklidesowa, ulicza oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
+Metryka euklidesowa, uliczna oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
 
 \subsection{Miara Jaccarda}
-Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobień
-stwo dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają, że dwa zbiory tekstowe są do siebie podobne. \\
+Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobieństwo 
+dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu 
+[0,1], gdzie wartości bliższe 1 oznaczają większe podobieństwo między dwoma zbiorami tekstowymi. \\
 Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
 \begin{equation}
     d = 1 - sim(A, B)
@@ -190,13 +192,18 @@ gdzie \(sim(A,B)\) oznacza miarę Jaccarda
 \begin{equation}
     J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 \end{equation}
-gdzie \(A\) oraz \(B\) to zbiory składające się z liter cechy słownikowej wektora \(v1\) oraz \(v2\) \\
+gdzie \(A\) oraz \(B\) to zbiory składające się z liter cechy tekstowej odpowiedniej dla wektora \(v1\) oraz \(v2\), \\
+\( |A \cap B| \) to \textbf{moc części wspólnej} dwóch zbiorów \( A \) i \( B \), czyli liczba elementów (w tym przypadku liter), które znajdują się \textbf{w obu zbiorach jednocześnie}, \\
+\( |A \cup B| \) to \textbf{moc sumy} zbiorów \( A \) i \( B \), czyli liczba elementów (liter), które znajdują się \textbf{w co najmniej jednym z tych zbiorów}. Przy tym, zbiór sumy musi zawierać tylko \textbf{unikalne} elementy, czyli powtarzające się litery liczymy tylko raz.
 
 Załóżmy, że mamy dwa wektory cech:
 \begin{enumerate}
     \item \(v1 = (1, ABC, 3)\)
     \item \(v2 = (4, CED, 3)\)
 \end{enumerate}
+\[
+A = \{A, B, C\}, \quad B = \{C, E, D\}
+\]
 \[
     J(A, B) = \frac{\{ \text{C} \}}{\{\text{A,B,C,E,D}\}} = \frac{1}{5}= 0.2.
  \]
