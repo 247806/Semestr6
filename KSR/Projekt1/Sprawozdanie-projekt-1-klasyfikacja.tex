@@ -175,6 +175,7 @@ gdzie \(TP_x\) - liczba poprawnie sklasyfikowanych tekstów klasy \(x\), \(N_x\)
 
 
 
+
 \section{Metryki i miary podobieństwa tekstów w klasyfikacji}
 Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, kluczową rolę w tym procesie odgrywają metryki oraz miary, które są wykorzystywane do ustalenia stopnia zgodności pomiędzy obiektami. Metryki umożliwiają obliczenie odległości między wektorami liczbowymi. Natomiast w przypadku cech tekstowych, zanim będzie można obliczyć ich podobieństwo, należy dokonać ich transformacji na wartości liczbowe. Umożliwiają to miary, które określają podobieństwo między ciągami znaków.
 
@@ -196,20 +197,38 @@ Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, klucz
         \end{equation}
         gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach. \\
 \end{enumerate}
-Załóżmy, że mamy dwa wektory cech:
+W celu poprawnego przeprowadzenia obliczeń dla metryk należy uprzednio przeprowadzić normalizację cech wektórów, tak aby żadna z cech nie była dominująca. Wektory zostaną znormalizowane za pomocą metody min-max scaling do zakresu [0, 1]. Załóżmy, że mamy dwa wektory cech:
 \begin{enumerate}
-    \item \(v1 = (1, 2, 3)\)
+    \item \(v1 = (1, 2, 30)\)
     \item \(v2 = (4, 6, 3)\)
 \end{enumerate}
 \[
-     \rho_E(v1, v2) = \sqrt{(1-4)^2 + (2-6)^2 + (3-3)^2} = \sqrt{9 + 16 + 0} = \sqrt{25} = 5
-\] \\
+    c_{\min} = 1
+\]
 \[
-    \rho_M(v1, v2) = |1-4| + |2-6| + |3-3| = 3 + 4 + 0 = 7
-\] \\ 
+    c_{\max} = 30
+\]
+gdzie c to cecha składowa wektora \(v1\) lub \(v2\). \\
+
+Aby otrzymać znormalizowane wartości należy skorzystać z wzoru:
+\begin{equation}
+    c' = \frac{c - c_{min}}{c_{max} - c_{min}}
+\end{equation}
+Znormalizowana postać wektorów:
+\begin{enumerate}
+    \item \(v1' = (0.000, 0.034, 1.000)\)
+    \item \(v2' = (0.103, 0.172, 0.069)\)
+\end{enumerate} 
 \[
-    \rho_C(v1, v2) = \max(|1-4|, |2-6|, |3-3|) = \max(3, 4, 0) = 4
- \]
+     \rho_E(v1, v2) = \sqrt{(0.000 - 0.103)^2 + (0.034 - 0.172)^2 + (1.000 - 0.069)^2} = \sqrt{0.946} \approx 0.947
+\]
+\[
+    \rho_M(v1, v2) = |0.000 - 0.103| + |0.034 - 0.172| + |1.000 - 0.069| = 1.172
+\]
+\[
+    \rho_C(v1, v2) = \max(|0.000 - 0.103|, |0.034 - 0.172|, |1.000 - 0.069|) = \max(0.103, 0.138, 0.931) = 0.931
+\]
+\\
 Metryka euklidesowa, uliczna oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
 
 \subsection{Miara Jaccarda}
@@ -225,7 +244,7 @@ gdzie \(A\) oraz \(B\) to zbiory składające się z liter cechy tekstowej odpow
 \( |A \cap B| \) to \textbf{moc części wspólnej} dwóch zbiorów \( A \) i \( B \), czyli liczba elementów (w tym przypadku liter), które znajdują się \textbf{w obu zbiorach jednocześnie}, \\
 \( |A \cup B| \) to \textbf{moc sumy} zbiorów \( A \) i \( B \), czyli liczba elementów (liter), które znajdują się \textbf{w co najmniej jednym z tych zbiorów}. Przy tym, zbiór sumy musi zawierać tylko \textbf{unikalne} elementy, czyli powtarzające się litery liczymy tylko raz.
 
-Załóżmy, że mamy dwa wektory cech:
+Załóżmy, że mamy dwa wektory cech (wektory powinny być znomalizowane, ale na potrzeby tego przykładu zostało to pominięte):
 \begin{enumerate}
     \item \(v1 = (1, ABC, 3)\)
     \item \(v2 = (4, CED, 3)\)
