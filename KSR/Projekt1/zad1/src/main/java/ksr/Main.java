@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static ksr.extraction.StopListFilter.loadStopList;
+import static ksr.extraction.StopListFilter.removeStopWords;
 import static ksr.loading.Load.loadReutersArticles;
 
 public class Main {
@@ -45,31 +46,31 @@ public class Main {
             countCountries(trainArticles);
 //            String result = stemmer.stem("I'm testing word Japanese");
 //            System.out.println(result);
-//            int counter = 1;
-//            for (Article article : trainArticles) {
-//                System.out.println(counter++ + " / " + trainArticles.size());
-//                removeStopWords(article.getBody(), stopWords);
-//                features = featureExtractor.extractFeatures(article.getBody());
-//                trainFeatures.add(features);
-//                article.setFeatures(features);
-//            }
-//            counter = 1;
-//            for (Article article : testArticles) {
-//                System.out.println(counter++ + " / " + testArticles.size());
-//                removeStopWords(article.getBody(), stopWords);
-//                features = featureExtractor.extractFeatures(article.getBody());
-//                testFeatures.add(features);
-//                article.setFeatures(features);
-//            }
-//
-//            normalization.preprocess(trainFeatures);
-//            for (int i = 0; i < 10; i++) {
-//                System.out.println(trainFeatures.get(i));
-//                System.out.println(normalization.normalize(trainFeatures.get(i)));
-//            }
-//
-//            trainFeatures.stream().limit(10).forEach(System.out::println);
-//            testFeatures.stream().limit(10).forEach(System.out::println);
+            int counter = 1;
+            for (Article article : trainArticles) {
+                System.out.println(counter++ + " / " + trainArticles.size());
+                removeStopWords(article.getBody(), stopWords);
+                features = featureExtractor.extractFeatures(article.getBody());
+                trainFeatures.add(features);
+                article.setFeatures(features);
+            }
+            counter = 1;
+            for (Article article : testArticles) {
+                System.out.println(counter++ + " / " + testArticles.size());
+                removeStopWords(article.getBody(), stopWords);
+                features = featureExtractor.extractFeatures(article.getBody());
+                testFeatures.add(features);
+                article.setFeatures(features);
+            }
+
+            normalization.preprocess(trainFeatures);
+            for (int i = 0; i < 10; i++) {
+                System.out.println(trainFeatures.get(i));
+                System.out.println(normalization.normalize(trainFeatures.get(i)));
+            }
+
+            trainFeatures.stream().limit(10).forEach(System.out::println);
+            testFeatures.stream().limit(10).forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
