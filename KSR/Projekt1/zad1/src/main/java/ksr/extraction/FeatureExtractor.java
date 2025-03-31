@@ -1,4 +1,4 @@
-package extraction;
+package ksr.extraction;
 
 import lombok.Getter;
 
@@ -6,8 +6,8 @@ import java.util.*;
 import java.util.regex.*;
 import edu.stanford.nlp.simple.*;
 
-import static extraction.KeyWordsLoader.allKeyWords;
-import static extraction.KeyWordsLoader.loadWords;
+import static ksr.extraction.KeyWordsLoader.allKeyWords;
+import static ksr.extraction.KeyWordsLoader.loadWords;
 
 @Getter
 public class FeatureExtractor {

@@ -1,4 +1,4 @@
-package extraction;
+package ksr.extraction;
 
 import java.io.*;
 import java.nio.file.*;

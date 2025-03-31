@@ -1,4 +1,4 @@
-package extraction;
+package ksr.extraction;
 
 import java.util.HashMap;
 import java.util.List;

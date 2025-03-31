@@ -1,12 +1,14 @@
-import extraction.FeatureExtractor;
-import extraction.Normalization;
-import loading.Article;
+package ksr;
+
+import ksr.extraction.FeatureExtractor;
+import ksr.extraction.Normalization;
+import ksr.loading.Article;
 
 import java.io.IOException;
 import java.util.*;
 
-import static extraction.StopListFilter.loadStopList;
-import static loading.Load.loadReutersArticles;
+import static ksr.extraction.StopListFilter.loadStopList;
+import static ksr.loading.Load.loadReutersArticles;
 
 public class Main {
     private static final List<String> TARGET_COUNTRIES = List.of("japan", "usa", "uk", "canada", "west-germany", "france");

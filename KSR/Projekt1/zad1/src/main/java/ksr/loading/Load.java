@@ -1,4 +1,4 @@
-package loading;
+package ksr.loading;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
