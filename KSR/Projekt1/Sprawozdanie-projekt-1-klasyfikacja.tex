@@ -125,13 +125,45 @@ Mamy trzy zbiory, na ich podstawie obliczymy accuracy oraz precision, recall i F
     \item Zbiór tekstów przypisanych jako Francja \( \{ \text{F, F, F, J} \} \).
     \item Zbiór tekstów przypisanych jako USA \( \{ \text{U, U, F, F} \} \).
 \end{enumerate}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        - & \textbf{\(TP_X\)} & \textbf{\(N_X\)} & \textbf{\(NF_X\)} \\
+        \hline
+        \textbf{Japonia (J)}  & \( TP_J = 3 \) & \( N_J = 2 \) & \( NF_J = 1 \) \\
+        \hline
+        \textbf{Francja (F)}  & \( TP_F = 3 \) & \( N_F = 1 \) & \( NF_F = 3 \) \\
+        \hline
+        \textbf{USA (U)}      & \( TP_U = 2 \) & \( N_U = 2 \) & \( NF_U = 1 \) \\
+        \hline
+    \end{tabular}
+    \caption{Wartości dla klasyfikacji tekstów}
+\end{table}
+
+
+
+gdzie \(TP_x\) - liczba poprawnie sklasyfikowanych tekstów klasy \(x\), \(N_x\) - liczba niepoprawnie sklasyfikowanych  tekstów do klasy \(x\), \(NF_x\) - liczba tekstów klasy \(x\), które zostały przypisane do innej klasy, \(x \in \{ \text{C, J, U, F, W, UK} \}\).
+
 \begin{flushleft}
+- \(TP = 3 + 3 + 2 = 8\) (suma wszystkich poprawnie sklasyfikowanych tekstów),\\
+- \(N = 2 + 1 + 2 = 5\) (suma wszystkich tekstów przypisanych do niewłaściwej klasy).
+
 \[
     ACC = \frac{TP}{TP + N} = \frac{8}{13} \approx 0.62
 \]
+
+- \(TP_J = 3\) (Liczba tekstów poprawnie sklasyfikowanych do Japonii),\\
+- \(N_J = 2\) (Liczba tekstów niepoprawnie przypisanych do Japonii).
+
 \[
     PPV_J = \frac{TP_J}{TP_J + N_J} =\frac{3}{5} = 0.6
 \]
+
+- \(TP_J = 3\) (Liczba tekstów poprawnie przypisanych do Japonii),\\
+- \(NF_J = 1\) (Liczba tekstów klasy Japonia, które zostały błędnie przypisane do innej klasy).
+
 \[
     TPR_J = \frac{TP_J}{TP_J + NF_J} = \frac{3}{4} = 0.75
 \]
