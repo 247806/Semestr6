@@ -8,6 +8,9 @@ import continousSignal
 import discretSignal
 import calculateParams as cp
 import signalOperation as so
+from ttkthemes import ThemedTk
+import os
+
 
 signal_1 = None
 time_1 = None
@@ -76,7 +79,7 @@ def generate_signal():
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
 def plot_signal(time, signal, signal_types, plot, histogram):
-
+    plt.style.use('grayscale')
     for widget in plot.winfo_children():
         widget.destroy()
 
@@ -105,6 +108,7 @@ def histogram_managment():
         plot_histogram(histogram_frame_3, signal_3)
 
 def plot_histogram(frame, signal):
+    plt.style.use('grayscale')
     for widget in frame.winfo_children():
         widget.destroy()
 
@@ -185,6 +189,7 @@ def create_parameters_tab(param, signal, time):
         eff_power_label.pack(padx=5, pady=5)
 
 def plot_empty_chart():
+    plt.style.use('grayscale')
     fig, ax = plt.subplots()
     ax.set_title("Wykres sygnału")
     ax.set_xlabel("Czas")
@@ -408,11 +413,23 @@ def select_signals_for_operation(operation):
     popup.grab_set()
     root.wait_window(popup)
 
+root = ThemedTk()
+#root = tk.Tk()
+# Uzyskanie katalogu, w którym znajduje się skrypt
+base_dir = os.path.dirname(__file__)
 
-root = tk.Tk()
+# Utworzenie ścieżki względnej do pliku .tcl
+tcl_path = os.path.join(base_dir, "breeze-dark", "breeze-dark.tcl")
+print(tcl_path)
+root.tk.call("source", tcl_path)
+
+# Ustawienie motywu
+root.set_theme("breeze-dark")  # Możesz zmienić "arc" na inny motyw
+print(root.get_themes())
 root.title("Generator sygnałów")
 root.geometry("1200x600")
 root.resizable(False, False)
+
 
 # --- GŁÓWNY NOTEBOOK ---
 main_notebook = ttk.Notebook(root)
