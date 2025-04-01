@@ -7,10 +7,14 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import continousSignal
 import discretSignal
 import calculateParams as cp
+
 import signalOperation as so
 from ttkthemes import ThemedTk
 import os
-
+import ioModule
+from myPlots import plot_signal,plot_histogram, plot_signal_samp
+from sampling import sampling
+from quantization import clippQuant
 
 signal_1 = None
 time_1 = None
@@ -64,13 +68,13 @@ def generate_signal():
         time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2)
         plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2)
-        plot_histogram(histogram_frame_2, signal_2)
+        plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
 
     else:
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
         plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
         create_parameters_tab(param_frame_1, signal_1, time_1)
-        plot_histogram(histogram_frame_1, signal_1)
+        plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
 
 
     if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
@@ -78,49 +82,18 @@ def generate_signal():
         d = full_periods * T
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
-def plot_signal(time, signal, signal_types, plot, histogram):
-    plt.style.use('classic')
-    for widget in plot.winfo_children():
-        widget.destroy()
-
-    for widget in histogram.winfo_children():
-        widget.destroy()
-
-    fig, ax = plt.subplots()
-    if signal_types in ["Impuls jednostkowy", "Szum impulsowy"]:
-        ax.scatter(time, signal)
-    else:
-        ax.plot(time, signal)
-    ax.set_title("Wykres sygnału")
-    ax.set_xlabel("Czas [s]")
-    ax.set_ylabel("Amplituda")
-    ax.grid()
-    canvas = FigureCanvasTkAgg(fig, master=plot)
-    canvas.draw()
-    canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
+    singal_samp, time_samp = sampling(signal_1, time_1, sample_rate=10)
+    plot_signal_samp(time_samp, singal_samp, sam_frame_1)
+    time_quant, signal_quant = clippQuant(singal_samp, time_samp)
+    plot_signal(time_quant, signal_quant,  "Sygnał", quad1_frame_1, histogram_frame_3)
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
-        plot_histogram(histogram_frame_1, signal_1)
+        plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
     elif signal_notebook.index(signal_notebook.select()) == 1:
-        plot_histogram(histogram_frame_2, signal_2)
+        plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
     else:
-        plot_histogram(histogram_frame_3, signal_3)
-
-def plot_histogram(frame, signal):
-    plt.style.use('classic')
-    for widget in frame.winfo_children():
-        widget.destroy()
-
-    fig, ax = plt.subplots()
-    ax.hist(signal, bins=int(bins_var.get()), alpha=0.7, color='blue', edgecolor='black')
-    ax.set_xlabel("Amplituda")
-    ax.set_title("Histogram")
-    ax.set_ylabel("Częstotliwość")
-
-    canvas = FigureCanvasTkAgg(fig, master=frame)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
+        plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
 
 def toggle_fields():
     if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"]:
@@ -204,6 +177,24 @@ def plot_empty_chart():
     canvas = FigureCanvasTkAgg(fig, master=plot_frame_3)
     canvas.get_tk_widget().pack()
     canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=sam_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=sam_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=quad1_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=quad1_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=quad2_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=quad2_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
 
     fig, ax = plt.subplots()
     ax.set_xlabel("Amplituda")
@@ -237,7 +228,7 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
     else:
         signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
         plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-        plot_histogram(histogram_frame_3, signal_3)
+        plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
         create_parameters_tab(param_frame_3, signal_3, time_3)
 
 def operate_signals(operation):
@@ -251,7 +242,7 @@ def operate_signals(operation):
     else:
         signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
         plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-        plot_histogram(histogram_frame_3, signal_3)
+        plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
         create_parameters_tab(param_frame_3, signal_3, time_3)
 
 def save_signal():
@@ -266,58 +257,13 @@ def save_signal():
         signal = signal_3
         time = time_3
 
-    if time is None or signal is None:
-        print("Brak danych do zapisania")
-        return
-
-    if len(time) != len(signal):
-        print("Długości time i signal muszą się zgadzać")
-        return
-
-    start_time = time[0]
-
-    sampling_rate = 1 / (time[1] - time[0]) if len(time) > 1 else 1.0
-
-    num_samples = len(signal)
-
-    max_amplitude = max(abs(s) for s in signal)
-
-    file_path = filedialog.asksaveasfilename(defaultextension=".bin",
-                                             filetypes=[("Binary Files", "*.bin"), ("All Files", "*.*")])
-    if not file_path:
-        return
-
-    with open(file_path, mode='wb') as file:
-        file.write(struct.pack('d', start_time))
-        file.write(struct.pack('d', sampling_rate))
-        file.write(struct.pack('i', num_samples))
-        file.write(struct.pack('d', max_amplitude))
-
-        for t, s in zip(time, signal):
-            file.write(struct.pack('d', t))
-            file.write(struct.pack('d', s))
-
-    print(f"Plik zapisany: {file_path}")
+    ioModule.save_signal(signal, time)
 
 def load_signal(type):
     global time_1, signal_1, signal_2, time_2, signal_3, time_3
-    file_path = filedialog.askopenfilename(filetypes=[("Binary Files", "*.bin"), ("All Files", "*.*")])
-    if not file_path:
-        return
 
-    time_temp, signal_temp = [], []
 
-    with open(file_path, mode='rb') as file:
-        start_time = struct.unpack('d', file.read(8))[0]
-        sampling_rate = struct.unpack('d', file.read(8))[0]
-        num_samples = struct.unpack('i', file.read(4))[0]
-        max_amplitude = struct.unpack('d', file.read(8))[0]
-
-        for _ in range(num_samples):
-            t = struct.unpack('d', file.read(8))[0]  # czas
-            s = struct.unpack('d', file.read(8))[0]  # amplituda
-            time_temp.append(t)
-            signal_temp.append(s)
+    time_temp, signal_temp, start_time, sampling_rate, max_amplitude, num_samples = ioModule.load_signal()
 
     if signal_notebook.index(signal_notebook.select()) == 0:
         time_1 = np.array(time_temp)
@@ -341,12 +287,9 @@ def load_signal(type):
     if type == 0:
         plot_signal(time, signal, "Załadowany sygnał", plot, histogram)
         create_parameters_tab(param, signal, time)
-        plot_histogram(histogram, signal)
+        plot_histogram(histogram, signal, int(bins_var.get()))
     else:
         display_data_in_popup(time, signal, start_time, sampling_rate, num_samples, max_amplitude)
-
-    print(f"\nPlik wczytany: {file_path}")
-
 
 def display_data_in_popup(time_data, signal_data, start_time, sampling_rate, num_samples, max_amplitude):
     popup = tk.Toplevel(root)
@@ -366,7 +309,6 @@ def display_data_in_popup(time_data, signal_data, start_time, sampling_rate, num
         text_box.insert(tk.END, f"{t:.6f}\t{s:.6f}\n")
 
     text_box.config(state=tk.DISABLED)
-
 
 def select_signals_for_operation(operation):
     global signal_1, time_1, signal_2, time_2
@@ -424,7 +366,7 @@ print(tcl_path)
 root.tk.call("source", tcl_path)
 
 # Ustawienie motywu
-root.set_theme("breeze-dark")  # Możesz zmienić "arc" na inny motyw
+root.set_theme("arc")  # Możesz zmienić "arc" na inny motyw
 print(root.get_themes())
 root.title("Generator sygnałów")
 root.geometry("1200x600")
@@ -533,19 +475,36 @@ notebook.pack(expand=True, fill='both')
 plot_frame_1 = ttk.Frame(notebook)
 histogram_frame_1 = ttk.Frame(notebook)
 param_frame_1 = ttk.Frame(notebook)
+sam_frame_1 = ttk.Frame(notebook)
+quad_frame = ttk.Notebook(notebook)
 notebook.add(plot_frame_1, text="Wykres")
 notebook.add(histogram_frame_1, text="Histogram")
 notebook.add(param_frame_1, text="Parametry")
+notebook.add(sam_frame_1, text="Próbkowanie")
+notebook.add(quad_frame, text="Kwantyzacja")
 
+quad1_frame_1 = ttk.Frame(quad_frame)
+quad2_frame_1 = ttk.Frame(quad_frame)
+quad_frame.add(quad1_frame_1, text="Kwantyzacja z obcięciem")
+quad_frame.add(quad2_frame_1, text="Kwantyzacja z zaokrągleniem")
 
 notebook = ttk.Notebook(signal_frame_2)
 notebook.pack(expand=True, fill='both')
 plot_frame_2 = ttk.Frame(notebook)
 histogram_frame_2 = ttk.Frame(notebook)
 param_frame_2 = ttk.Frame(notebook)
+sam_frame_2 = ttk.Frame(notebook)
+quad_frame = ttk.Notebook(notebook)
 notebook.add(plot_frame_2, text="Wykres")
 notebook.add(histogram_frame_2, text="Histogram")
 notebook.add(param_frame_2, text="Parametry")
+notebook.add(sam_frame_2, text="Próbkowanie")
+notebook.add(quad_frame, text="Kwantyzacja")
+
+quad1_frame_2 = ttk.Frame(quad_frame)
+quad2_frame_2 = ttk.Frame(quad_frame)
+quad_frame.add(quad1_frame_2, text="Kwantyzacja z obcięciem")
+quad_frame.add(quad2_frame_2, text="Kwantyzacja z zaokrągleniem")
 
 
 notebook = ttk.Notebook(signal_frame_3)
