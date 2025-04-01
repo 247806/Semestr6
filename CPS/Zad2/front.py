@@ -79,7 +79,7 @@ def generate_signal():
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
 def plot_signal(time, signal, signal_types, plot, histogram):
-    plt.style.use('grayscale')
+    plt.style.use('classic')
     for widget in plot.winfo_children():
         widget.destroy()
 
@@ -108,7 +108,7 @@ def histogram_managment():
         plot_histogram(histogram_frame_3, signal_3)
 
 def plot_histogram(frame, signal):
-    plt.style.use('grayscale')
+    plt.style.use('classic')
     for widget in frame.winfo_children():
         widget.destroy()
 
@@ -189,7 +189,7 @@ def create_parameters_tab(param, signal, time):
         eff_power_label.pack(padx=5, pady=5)
 
 def plot_empty_chart():
-    plt.style.use('grayscale')
+    plt.style.use('classic')
     fig, ax = plt.subplots()
     ax.set_title("Wykres sygnału")
     ax.set_xlabel("Czas")
