@@ -1,6 +1,7 @@
 import extraction.FeatureExtractor;
 import extraction.Normalization;
 import loading.Article;
+import metrics.NGramMethod;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,35 +31,22 @@ public class Main {
         Normalization normalization = new Normalization();
         List<Map<String, Object>> trainFeatures = new ArrayList<>();
         List<Map<String, Object>> testFeatures = new ArrayList<>();
+        NGramMethod ngramMethod = new NGramMethod();
 
 
 
         try {
             List<Article> allArticles = loadReutersArticles(datasetPath);
-//            articles = selectBalancedTrainSet(articles);
-//            List<Article> loadedTrainArticles = loadReutersArticles(datasetPath, "TRAIN");
-//            List<Article> trainArticles = selectBalancedTrainSet(loadedTrainArticles);
+
             System.out.println("Załadowano " + allArticles.size() + " wszystkich artykułów.");
-
-//            List<Article> loadedTestArticles = loadReutersArticles(datasetPath, "TEST");
-//            List<Article> testArticles = calculateTestArticleNumber(trainArticles.size(), loadedTestArticles);
-//            System.out.println("Załadowano " + testArticles.size() + " artykułów testowych.");
-
+            System.out.println(ngramMethod.calculateNGramSimilarity("casualty", "case", 2, 4));
             Map<String, Object> features;
             countCountries(allArticles);
-//            int counter = 1;
-//            for (Article article : articles) {
-//                System.out.println(counter++ + " / " + articles.size());
+            int counter = 1;
+//            for (Article article : allArticles) {
+//                System.out.println(counter++ + " / " + allArticles.size());
 //                removeStopWords(article.getBody(), stopWords);
 //                features = featureExtractor.extractFeatures(article.getBody());
-//                article.setFeatures(features);
-//            }
-//            counter = 1;
-//            for (Article article : testArticles) {
-//                System.out.println(counter++ + " / " + testArticles.size());
-//                removeStopWords(article.getBody(), stopWords);
-//                features = featureExtractor.extractFeatures(article.getBody());
-//                testFeatures.add(features);
 //                article.setFeatures(features);
 //            }
 //
