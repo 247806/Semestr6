@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static extraction.StopListFilter.loadStopList;
+import static extraction.StopListFilter.removeStopWords;
 import static loading.Load.loadReutersArticles;
 
 public class Main {
@@ -14,6 +15,7 @@ public class Main {
     private static final int MAX_ARTICLES = 220;
     private static final int K = 10;
     private static final double SET_PROPORTION = 0.6;
+    private static final int SIZE = 1000;
 
     public static void main(String[] args) throws IOException {
         String datasetPath = "src/main/resources/articles";
@@ -24,31 +26,31 @@ public class Main {
 
         Set<String> stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
 
-//        Stemmer stemmer = new Stemmer();
         FeatureExtractor featureExtractor = new FeatureExtractor(filePaths);
         Normalization normalization = new Normalization();
         List<Map<String, Object>> trainFeatures = new ArrayList<>();
         List<Map<String, Object>> testFeatures = new ArrayList<>();
 
-        try {
-            List<Article> loadedTrainArticles = loadReutersArticles(datasetPath, "TRAIN");
-            List<Article> trainArticles = selectBalancedTrainSet(loadedTrainArticles);
-            System.out.println("Załadowano " + trainArticles.size() + " artykułów trenujących.");
 
-            List<Article> loadedTestArticles = loadReutersArticles(datasetPath, "TEST");
-            List<Article> testArticles = calculateTestArticleNumber(trainArticles.size(), loadedTestArticles);
-            System.out.println("Załadowano " + testArticles.size() + " artykułów testowych.");
+
+        try {
+            List<Article> allArticles = loadReutersArticles(datasetPath);
+//            articles = selectBalancedTrainSet(articles);
+//            List<Article> loadedTrainArticles = loadReutersArticles(datasetPath, "TRAIN");
+//            List<Article> trainArticles = selectBalancedTrainSet(loadedTrainArticles);
+            System.out.println("Załadowano " + allArticles.size() + " wszystkich artykułów.");
+
+//            List<Article> loadedTestArticles = loadReutersArticles(datasetPath, "TEST");
+//            List<Article> testArticles = calculateTestArticleNumber(trainArticles.size(), loadedTestArticles);
+//            System.out.println("Załadowano " + testArticles.size() + " artykułów testowych.");
 
             Map<String, Object> features;
-            countCountries(trainArticles);
-//            String result = stemmer.stem("I'm testing word Japanese");
-//            System.out.println(result);
+            countCountries(allArticles);
 //            int counter = 1;
-//            for (Article article : trainArticles) {
-//                System.out.println(counter++ + " / " + trainArticles.size());
+//            for (Article article : articles) {
+//                System.out.println(counter++ + " / " + articles.size());
 //                removeStopWords(article.getBody(), stopWords);
 //                features = featureExtractor.extractFeatures(article.getBody());
-//                trainFeatures.add(features);
 //                article.setFeatures(features);
 //            }
 //            counter = 1;
@@ -81,6 +83,7 @@ public class Main {
         int countC = 0;
         int countG = 0;
         int countUK = 0;
+        int diff = 0;
         for (Article a : articles) {
             if (a.getPlace().contains("japan")) {
                 countJ++;
@@ -94,10 +97,12 @@ public class Main {
                 countUK++;
             } else if (a.getPlace().contains("west-germany")) {
                 countG++;
+            } else {
+                diff++;
             }
         }
         System.out.println("Japan: " + countJ + " USA: " + countUSA + " Canada: " + countC + " UK: "
-                + countUK + " Germany: " + countG + " France: " + countF);
+                + countUK + " Germany: " + countG + " France: " + countF + " Different: " + diff);
     }
 
     private static List<Article> selectBalancedTrainSet(List<Article> trainArticles) {
