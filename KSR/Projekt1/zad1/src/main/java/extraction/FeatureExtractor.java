@@ -7,22 +7,19 @@ import java.util.regex.*;
 import edu.stanford.nlp.simple.*;
 
 import static extraction.KeyWordsLoader.allKeyWords;
-import static extraction.KeyWordsLoader.loadWords;
 
 @Getter
 public class FeatureExtractor {
-    private final List<String> filePaths;
     private final Set<String> cities;
     private final Set<String> currencies;
     private final Set<String> names;
     private final Set<String> keywords;
 
-    public FeatureExtractor(List<String> filePaths) {
-        this.filePaths = filePaths;
-        cities = loadWords(filePaths.get(0));
-        currencies = loadWords(filePaths.get(1));
-        names = loadWords(filePaths.get(2));
-        keywords = allKeyWords(filePaths);
+    public FeatureExtractor(Set<String> cities, Set<String> currencies, Set<String> names, Set<String> keywords) {
+        this.cities = cities;
+        this.currencies = currencies;
+        this.names = names;
+        this.keywords = keywords;
     }
 
     public Map<String, Object> extractFeatures(String text) {

@@ -6,7 +6,7 @@ import java.util.*;
 
 
 public class KeyWordsLoader {
-    public static Set<String> loadWords(String filePath) {
+    private static Set<String> loadWords(String filePath) {
         Set<String> cities = new HashSet<>();
         try {
             List<String> lines = Files.readAllLines(Paths.get(filePath));
@@ -21,21 +21,25 @@ public class KeyWordsLoader {
         return cities;
     }
 
-    public static Set<String> allKeyWords(List<String> filePaths) {
-        Set<String> keyWords = new HashSet<>();
-        try {
-            for (String filePath : filePaths) {
-                List<String> lines = Files.readAllLines(Paths.get(filePath));
-                for (String line : lines) {
-                    if (!line.trim().isEmpty()) {
-                        keyWords.add(line.trim()); // Usuwa zbędne spacje i dodaje miasto do zbioru
-                    }
-                }
-            }
+    public static Set<String> getCities() {
+        return loadWords("src/main/resources/keywords/places.txt");
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Set<String> getNames() {
+        return loadWords("src/main/resources/keywords/names.txt");
+    }
+
+    public static Set<String> getCurrencies() {
+        return loadWords("src/main/resources/keywords/currency.txt");
+    }
+
+    public static Set<String> allKeyWords() {
+        Set<String> keyWords = new HashSet<>();
+
+        keyWords.addAll(getCities());
+        keyWords.addAll(getNames());
+        keyWords.addAll(getCurrencies());
+
         return keyWords;
     }
 }
