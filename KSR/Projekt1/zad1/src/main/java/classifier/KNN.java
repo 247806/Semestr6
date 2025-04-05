@@ -30,13 +30,13 @@ public class KNN {
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final NGramMethod ngramMethod = new NGramMethod();
 
     public KNN() throws IOException {
         allArticles = loadReutersArticles("src/main/resources/articles");
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        NGramMethod ngramMethod = new NGramMethod();
         Metrics metrics = new EuclideanMetrics();
 
 //        int counter = 1;
@@ -64,8 +64,20 @@ public class KNN {
         System.out.println(trainingSet.get(4).getFeatures());
         System.out.println(testSet.get(1).getFeatures());
 
+//        for (Article article : testSet) {
+//            classifyArticle(article, metrics);
+//        }
+
         metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
 
+    }
+
+    private void classifyArticle(Article article, Metrics metrics) {
+        Map<Article, Double> distances = new HashMap<>();
+        for (Article trainingArticle : trainingSet) {
+            double distance = metrics.calculate(article, trainingArticle, ngramMethod);
+            distances.put(trainingArticle, distance);
+        }
     }
 
     private void splitData(List<Article> allArticles) {

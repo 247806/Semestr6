@@ -17,19 +17,19 @@ public class EuclideanMetrics implements Metrics {
             System.out.println("CECHA NUMER " + counter);
             if (c1 == null || c2 == null) {
                 sum+=1.0;
-                System.out.println("MAMY NULLA");
+//                System.out.println("MAMY NULLA");
                 System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
             } else if (c1 instanceof String && c2 instanceof String) {
                 double similarity = nGramMethod.calculateNGramSimilarity((String) c1,(String) c2, 2, 4);
                 System.out.println(similarity);
                 sum+= Math.pow(1 - similarity, 2);
-                System.out.println("MAMY STRINGA");
+//                System.out.println("MAMY STRINGA");
                 System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
             } else if (c1 instanceof List<?> list1 && c2 instanceof List<?> list2) {
 
                 if (list1.isEmpty() || list2.isEmpty()) {
                     sum += 1.0;
-                    System.out.println("ZBIÓR STRINGÓW");
+//                    System.out.println("ZBIÓR STRINGÓW");
                     System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
                 } else {
                     double totalSimilarity = 0.0;
@@ -45,7 +45,7 @@ public class EuclideanMetrics implements Metrics {
 
                     double avgSimilarity = totalSimilarity / count;
                     sum += Math.pow(1 - avgSimilarity, 2);
-                    System.out.println("ZBIÓR STRINGÓW");
+//                    System.out.println("ZBIÓR STRINGÓW");
                     System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
                 }
             }  // Object[] vs Object[]
@@ -53,7 +53,7 @@ public class EuclideanMetrics implements Metrics {
 
                 if (arr1.length == 0 || arr2.length == 0) {
                     sum += 1;
-                    System.out.println("TABLICE");
+//                    System.out.println("TABLICE");
                     System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
                 } else {
                     double totalSimilarity = 0.0;
@@ -69,14 +69,14 @@ public class EuclideanMetrics implements Metrics {
 
                     double avgSimilarity = totalSimilarity / count;
                     sum += Math.pow(1 - avgSimilarity, 2);
-                    System.out.println("TABLICE");
+//                    System.out.println("TABLICE");
                     System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
                 }
             } else {
                 double value1 = Double.parseDouble(features1.get(i).toString());
                 double value2 = Double.parseDouble(features2.get(i).toString());
                 sum += Math.pow(value1 - value2, 2);
-                System.out.println("MAMY DOUBLEA");
+//                System.out.println("MAMY DOUBLEA");
                 System.out.println("cecha 1: " + c1 + " cecha 2: " + c2 + " suma: " + sum);
             }
             counter++;
