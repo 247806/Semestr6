@@ -1,10 +1,17 @@
 package classifier;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import extraction.FeatureExtractor;
 import extraction.Normalization;
 import loading.Article;
+import metrics.EuclideanMetrics;
+import metrics.Metrics;
 import metrics.NGramMethod;
+import utils.ArticleData;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +29,7 @@ public class KNN {
     private static final int K = 10;
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public KNN() throws IOException {
         allArticles = loadReutersArticles("src/main/resources/articles");
@@ -29,29 +37,38 @@ public class KNN {
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
         NGramMethod ngramMethod = new NGramMethod();
+        Metrics metrics = new EuclideanMetrics();
 
+//        int counter = 1;
+//        for (Article article : allArticles) {
+//            System.out.println(counter++ + " / " + allArticles.size());
+//            removeStopWords(article.getBody(), stopWords);
+//            List<Object> feature = featureExtractor.extractFeatures(article.getBody());
+//            article.setFeatures(feature);
+//            features.add(feature);
+//        }
+//
+//        normalization.preprocess(features);
+//        for (Article article : allArticles) {
+//            List<Object> normalizedFeature = normalization.normalize(article.getFeatures());
+//            article.setFeatures(normalizedFeature);
+//        }
+//
+//        splitData(allArticles);
 
-        int counter = 1;
-        for (Article article : allArticles) {
-            System.out.println(counter++ + " / " + allArticles.size());
-            removeStopWords(article.getBody(), stopWords);
-            List<Object> feature = featureExtractor.extractFeatures(article.getBody());
-            article.setFeatures(feature);
-            features.add(feature);
-        }
+//        saveFeaturesToFile(trainingSet, "trainingSet.json");
+//        saveFeaturesToFile(testSet, "testSet.json");
 
-        normalization.preprocess(features);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(features.get(i));
-            System.out.println(normalization.normalize(features.get(i)));
+        List<Article> trainingSet = loadArticlesFromJson("trainingSet.json");
+        List<Article> testSet = loadArticlesFromJson("testSet.json");
+        System.out.println(trainingSet.get(4).getFeatures());
+        System.out.println(testSet.get(1).getFeatures());
 
-        }
-
-        this.splitData();
+        metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
 
     }
 
-    private void splitData() {
+    private void splitData(List<Article> allArticles) {
         Map<String, List<Article>> articlesPerCountry = this.allArticles.stream()
                 .collect(Collectors.groupingBy(Article::getPlace));
 
@@ -83,4 +100,29 @@ public class KNN {
         }
 
     }
+
+    public void saveFeaturesToFile(List<Article> articles, String filePath) throws IOException {
+        List<ArticleData> data = articles.stream()
+                .map(article -> new ArticleData(article.getPlace(), article.getFeatures()))
+                .collect(Collectors.toList());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValue(new File(filePath), data);
+    }
+
+    public static List<Article> loadArticlesFromJson(String filePath) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<ArticleData> data = List.of(mapper.readValue(new File(filePath), ArticleData[].class));
+
+        List<Article> articles = new ArrayList<>();
+        for (ArticleData entry : data) {
+            Article article = new Article("", entry.getPlace()); // jeśli nie zapisujesz body, zostaw pusty
+            article.setFeatures(entry.getFeatures());
+            articles.add(article);
+        }
+
+        return articles;
+    }
+
 }

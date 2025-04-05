@@ -1,7 +1,7 @@
 package metrics;
 
 public class NGramMethod {
-    public float calculateNGramSimilarity(String text1, String text2, int n1, int n2) {
+    public double calculateNGramSimilarity(String text1, String text2, int n1, int n2) {
 
         String word1 = text1.replaceAll("\\s+", "");
         String word2 = text2.replaceAll("\\s+", "");
@@ -20,7 +20,7 @@ public class NGramMethod {
             }
         }
 
-        float f = (float) 2 / ((N - n1 + 1) * (N - n1 + 2) - (N - n2 + 1) * (N - n2));
+        double f = (double) 2 / ((N - n1 + 1) * (N - n1 + 2) - (N - n2 + 1) * (N - n2));
         return f * commonNGrams;
     }
 }

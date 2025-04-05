@@ -3,5 +3,5 @@ package metrics;
 import loading.Article;
 
 public interface Metrics {
-    float calculate(Article article1, Article article2);
+    double calculate(Article article1, Article article2, NGramMethod nGramMethod);
 }

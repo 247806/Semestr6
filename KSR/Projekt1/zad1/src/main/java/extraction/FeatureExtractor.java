@@ -96,7 +96,7 @@ public class FeatureExtractor {
                 })
                 .map(Map.Entry::getKey)
                 .findFirst()
-                .orElse("None");
+                .orElse(null);
     }
 
     private int countOccurrences(String text, String word) {
@@ -155,7 +155,7 @@ public class FeatureExtractor {
 
     private String findFirstKeyword(String text, Set<String> keywords) {
         int minIndex = Integer.MAX_VALUE;
-        String firstKeyword = "None";
+        String firstKeyword = null;
 
         for (String key : keywords) {
             int index = text.indexOf(key);

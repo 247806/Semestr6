@@ -2,6 +2,7 @@ package loading;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,12 @@ public class Article {
 
     @Override
     public String toString() {
-        return "\nPlace: " + place +
-                "\nBody: " + body;
+        return new ToStringBuilder(this)
+                .append("body", body)
+                .append("place", place)
+                .append("features", features)
+                .append("predictedPlace", predictedPlace)
+                .toString();
     }
 }
 
