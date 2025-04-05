@@ -6,8 +6,6 @@ import java.util.*;
 import java.util.regex.*;
 import edu.stanford.nlp.simple.*;
 
-import static extraction.KeyWordsLoader.allKeyWords;
-
 @Getter
 public class FeatureExtractor {
     private final Set<String> cities;
@@ -22,56 +20,56 @@ public class FeatureExtractor {
         this.keywords = keywords;
     }
 
-    public Map<String, Object> extractFeatures(String text) {
-        Map<String, Object> features = new HashMap<>();
+    public List<Object> extractFeatures(String text) {
+        List<Object> features = new ArrayList<>();
 //        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
 
         // 1. Długość tekstu (liczba słów o długości >= 3)
 //        String[] words = text.split("\\s+");
         String[] words = tokenize(text);
         int wordCount = (int) Arrays.stream(words).filter(w -> w.length() >= 3).count();
-        features.put("length", wordCount);
+        features.add(wordCount);
 
         // 2. Dominująca waluta
         String dominantCurrency = findDominantEntity(text, currencies);
-        features.put("dominant_currency", dominantCurrency);
+        features.add(dominantCurrency);
 
         // 3. Nazwy miast
         List<String> foundCities = findEntities(text, cities);
-        features.put("cities", foundCities);
+        features.add(foundCities);
 
         // 4. Liczba unikalnych słów
 //        String[] wordsWithoutDots = text.replaceAll("[.,!?:;]", "").split("\\s+");
         Set<String> uniqueWords = new HashSet<>(Arrays.stream(words).filter(w -> w.length() >= 3).toList());
-        features.put("unique_word_count", uniqueWords.size());
+        features.add(uniqueWords.size());
 
         // 5. Średnia długość słowa
         double avgWordLength = Arrays.stream(words).filter(w -> w.length() >= 3).mapToInt(String::length).average().orElse(0);
-        features.put("avg_word_length", avgWordLength);
+        features.add(avgWordLength);
 
         // 6. Liczba słów kluczowych w pierwszych 3 zdaniach
         int firstThreeSentences = countKeywordsInFirstSentences(words, 3, keywords);
-        features.put("keywords_in_first_3_sentences", firstThreeSentences);
+        features.add(firstThreeSentences);
 
         // 7. Liczba słów zaczynających się wielką literą (nie licząc początku zdania)
         int capitalizedWordCount = countCapitalizedWords(words);
-        features.put("capitalized_word_count", capitalizedWordCount);
+        features.add(capitalizedWordCount);
 
         // 8. Pierwsze słowo kluczowe w tekście
         String firstKeyword = findFirstKeyword(text, keywords);
-        features.put("first_keyword", firstKeyword);
+        features.add(firstKeyword);
 
         // 9. Liczba słów kluczowych
         int keywordCount = countKeywordOccurrences(text, keywords);
-        features.put("keyword_count", keywordCount);
+        features.add(keywordCount);
 
         // 10. Względna liczba słów kluczowych
         double relativeKeywordCount = keywordCount > 0 ? (double) keywordCount / wordCount : 0;
-        features.put("relative_keyword_count", relativeKeywordCount);
+        features.add(relativeKeywordCount);
 
         // 11. Nazwiska
         List<String> foundNames = findEntities(text, names);
-        features.put("names", foundNames);
+        features.add(foundNames);
 
         return features;
     }

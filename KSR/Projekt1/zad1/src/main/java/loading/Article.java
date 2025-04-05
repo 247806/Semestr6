@@ -3,21 +3,21 @@ package loading;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
-@Getter
 @Setter
+@Getter
 public class Article {
-    String body;
-    String place;
-    Map<String, Object> features;
+    private String body;
+    private String place;
+    private List<Object> features;
+    private String predictedPlace = null;
 
     public Article(String body, String place) {
         this.body = body;
         this.place = place;
     }
-
-
 
     @Override
     public String toString() {
