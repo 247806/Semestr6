@@ -31,6 +31,7 @@ public class KNN {
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final NGramMethod ngramMethod = new NGramMethod();
+    private final QualityMeasures qualityMeasures = new QualityMeasures();
 
     public KNN() throws IOException {
         allArticles = loadReutersArticles("src/main/resources/articles");
@@ -68,14 +69,13 @@ public class KNN {
             classifyArticle(article, metrics);
         }
 
-        for (Article article : testSet) {
-            if (!Objects.equals(article.getPredictedPlace(), article.getPlace())) {
-                System.out.println("Label: " + article.getPlace());
-                System.out.println("Predicted: " + article.getPredictedPlace());
-            }
-
-        }
-
+        qualityMeasures.calculateAccuracy(testSet);
+        qualityMeasures.calculateQualityForPlace(testSet, "usa");
+        qualityMeasures.calculateQualityForPlace(testSet, "uk");
+        qualityMeasures.calculateQualityForPlace(testSet, "canada");
+        qualityMeasures.calculateQualityForPlace(testSet, "france");
+        qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
+        qualityMeasures.calculateQualityForPlace(testSet, "japan");
 //        metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
 //        classifyArticle(testSet.get(0), metrics);
     }
