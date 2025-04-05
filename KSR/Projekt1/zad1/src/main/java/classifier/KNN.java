@@ -22,8 +22,8 @@ import static extraction.StopListFilter.removeStopWords;
 import static loading.Load.loadReutersArticles;
 
 public class KNN {
-    private final List<Article> trainingSet = new ArrayList<>();
-    private final List<Article> testSet = new ArrayList<>();
+    private final List<Article> trainingSet;
+    private final List<Article> testSet;
     private final List<Article> allArticles;
     private final Set<String> stopWords;
     private static final int K = 10;
@@ -59,17 +59,25 @@ public class KNN {
 //        saveFeaturesToFile(trainingSet, "trainingSet.json");
 //        saveFeaturesToFile(testSet, "testSet.json");
 
-        List<Article> trainingSet = loadArticlesFromJson("trainingSet.json");
-        List<Article> testSet = loadArticlesFromJson("testSet.json");
-        System.out.println(trainingSet.get(4).getFeatures());
-        System.out.println(testSet.get(1).getFeatures());
+        this.trainingSet = loadArticlesFromJson("trainingSet.json");
+        this.testSet = loadArticlesFromJson("testSet.json");
 
-//        for (Article article : testSet) {
-//            classifyArticle(article, metrics);
-//        }
+        int counter = 1;
+        for (Article article : testSet) {
+            System.out.println(counter++ + " / " + testSet.size());
+            classifyArticle(article, metrics);
+        }
 
-        metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
+        for (Article article : testSet) {
+            if (!Objects.equals(article.getPredictedPlace(), article.getPlace())) {
+                System.out.println("Label: " + article.getPlace());
+                System.out.println("Predicted: " + article.getPredictedPlace());
+            }
 
+        }
+
+//        metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
+//        classifyArticle(testSet.get(0), metrics);
     }
 
     private void classifyArticle(Article article, Metrics metrics) {
@@ -78,6 +86,67 @@ public class KNN {
             double distance = metrics.calculate(article, trainingArticle, ngramMethod);
             distances.put(trainingArticle, distance);
         }
+
+        List<Map.Entry<Article, Double>> sortedDistances = new ArrayList<>(distances.entrySet());
+        sortedDistances.sort(Map.Entry.comparingByValue());
+
+        // Wybieranie K najbliższych artykułów
+        List<Article> nearestNeighbors = new ArrayList<>();
+        for (int i = 0; i < K; i++) {
+            nearestNeighbors.add(sortedDistances.get(i).getKey());
+        }
+//        System.out.println("Najbliżsi sąsiedzi: " + nearestNeighbors.stream()
+//                .map(Article::getPlace)
+//                .collect(Collectors.toList()));
+
+        // Liczenie liczby wystąpień miejsca (place) wśród K najbliższych sąsiadów
+        Map<String, Integer> placeCounts = new HashMap<>();
+        for (Article neighbor : nearestNeighbors) {
+            String place = neighbor.getPlace();
+            placeCounts.put(place, placeCounts.getOrDefault(place, 0) + 1);
+        }
+//        System.out.println("Zliczone miejsca: " + placeCounts);
+
+        // Sortowanie miejsc według liczby wystąpień
+
+        List<Map.Entry<String, Integer>> placeCountsList = new ArrayList<>(placeCounts.entrySet());
+        placeCountsList.sort(Map.Entry.comparingByValue());
+
+        if (placeCountsList.size() > 1) {
+            if (placeCountsList.get(0).getValue() > placeCountsList.get(1).getValue()) {
+                String predictedPlace = placeCounts.entrySet().stream()
+                        .max(Map.Entry.comparingByValue())
+                        .get()
+                        .getKey();
+                article.setPredictedPlace(predictedPlace);
+            } else {
+
+                Map<String, Double> placeWeights = new HashMap<>();
+                for (int i = 0; i < nearestNeighbors.size(); i++) {
+                    Article neighbor = nearestNeighbors.get(i);
+                    String place = neighbor.getPlace();
+                    double weight = 1.0 / sortedDistances.get(i).getValue();  // Odwrotność odległości, im mniejsza odległość, tym większa waga
+                    placeWeights.put(place, placeWeights.getOrDefault(place, 0.0) + weight);
+                }
+                // Wybór miejsca z największą wagą
+                String predictedPlace = placeWeights.entrySet().stream()
+                        .max(Map.Entry.comparingByValue())
+                        .get()
+                        .getKey();
+
+                // Ustawienie przewidywanego miejsca w artykule
+                article.setPredictedPlace(predictedPlace);
+
+            }
+        } else {
+            String predictedPlace = placeCounts.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .get()
+                    .getKey();
+            article.setPredictedPlace(predictedPlace);
+        }
+
+
     }
 
     private void splitData(List<Article> allArticles) {
