@@ -25,13 +25,14 @@ public class CzebyszewMetrics implements Metrics {
                     diff = 1.0;
                 } else {
                     double totalSimilarity = 0.0;
-                    int count = 0;
-
+                    double count = Math.max(list1.size(), list2.size());
                     for (Object o1 : list1) {
                         for (Object o2 : list2) {
-                            totalSimilarity += nGramMethod.calculateNGramSimilarity(
+                            double temp = nGramMethod.calculateNGramSimilarity(
                                     o1.toString(), o2.toString(), 2, 4);
-                            count++;
+                            if (temp > totalSimilarity) {
+                                totalSimilarity = temp;
+                            }
                         }
                     }
 

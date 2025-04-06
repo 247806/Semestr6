@@ -23,7 +23,7 @@ public class KNN {
     private final List<Article> testSet = new ArrayList<>();
     private final List<Article> allArticles;
     private final Set<String> stopWords;
-    private static final int K = 2;
+    private static final int K = 10;
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -73,11 +73,11 @@ public class KNN {
         qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
         qualityMeasures.calculateQualityForPlace(testSet, "japan");
 
-        for (Article article : testSet) {;
-            if (Objects.equals(article.getPlace(), "west-germany")) {
-                System.out.println(article.getPredictedPlace());
-            }
-        }
+//        for (Article article : testSet) {;
+//            if (Objects.equals(article.getPlace(), "west-germany")) {
+//                System.out.println(article.getPredictedPlace());
+//            }
+//        }
 
     }
 
