@@ -231,33 +231,52 @@ Znormalizowana postać wektorów:
 \\
 Metryka euklidesowa, uliczna oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
 
-\subsection{Miara Jaccarda}
-Wykorzystując miarę Jaccarda możemy pewną liczbą wyrazić podobieństwo dwóch łańcuchów znaków. Miara Jaccarda przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają większe podobnieństwo dwóch: 0 oznacza brak wspólnych elementów, 1 oznacza identyczne zbiory znaków. Przekształcenie cech tekstowych na wartości numeryczne umożliwia obliczenie ich wpływu na odległości między wektorami. Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
+\subsection{Uogólniona miara n-gramów z ograniczeniami}
+Wykorzystując uogólnioną miarę n-gramów z ograniczeniami możemy pewną liczbą wyrazić podobieństwo dwóch łańcuchów znaków. Ta miara przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają większe podobieństwo po między badanymi łańcuchami znaków. Krańcowe wartości oznaczają: 0 – różne łańcuchy znaków, 1 - identyczne zbiory znaków. Przekształcenie cech tekstowych na wartości numeryczne umożliwia obliczenie ich wpływu na odległości między wektorami. Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
 \begin{equation}
     d = 1 - sim(A, B)
 \end{equation}
-gdzie \(sim(A,B)\) oznacza miarę Jaccarda
+gdzie \(sim(A,B)\) oznacza uogólnioną miarę n-gramów z ograniczeniami
 \begin{equation}
-    J(A, B) = \frac{|A \cap B|}{|A \cup B|}
+    \mu_N(s_1, s_2) = f(N, n_1, n_2) \sum_{i=n_1}^{n_2} \sum_{j=1}^{N(s_1) - i + 1} h(i, j)
 \end{equation}
-gdzie \(A\) oraz \(B\) to zbiory składające się z liter cechy tekstowej odpowiedniej dla wektora \(v1\) oraz \(v2\), \\
-\( |A \cap B| \) to \textbf{moc części wspólnej} dwóch zbiorów \( A \) i \( B \), czyli liczba elementów (w tym przypadku liter), które znajdują się \textbf{w obu zbiorach jednocześnie}, \\
-\( |A \cup B| \) to \textbf{moc sumy} zbiorów \( A \) i \( B \), czyli liczba elementów (liter), które znajdują się \textbf{w co najmniej jednym z tych zbiorów}. Przy tym, zbiór sumy musi zawierać tylko \textbf{unikalne} elementy, czyli powtarzające się litery liczymy tylko raz.
+gdzie
+\begin{equation} 
+f(N, n_1, n_2) = \frac{2}{(N - n_1 + 1)(N - n_1 + 2) - (N - n_2 + 1)(N - n_2)}
+\end{equation}
+wyraza odwrotnosc liczby mozliwych podciagów o długosciach od \(n_1\) do \(n_2\),
+\(1 < n_1 < n_2 < N\); \\
+
+\(h(i,j) = 1\) jeśli \(i\)-elementowy podciag w słowie s1 zaczynajacy sie od \(j\)-tej
+pozycji w słowie \(s_1\) pojawia sie przynajmniej raz w słowie \(s_2\) (inaczej
+\(h(i,j) = 0\));\\
+
+\(N(s_1), N(s_2)\) - oznaczają liczbę liter w słowach \( s_1\) i \( s_2\);\\
+
+
+\(N = \max \{N(s_1), N(s_2)\}\).\\
+
+
 
 Załóżmy, że mamy dwa wektory cech (wektory powinny być znomalizowane, ale na potrzeby tego przykładu zostało to pominięte):
 \begin{enumerate}
-    \item \(v1 = (1, ABC, 3)\)
-    \item \(v2 = (4, CED, 3)\)
+    \item \(v1 = (1, KARTON, 3)\)
+    \item \(v2 = (4, KARNISZ, 3)\)
 \end{enumerate}
 \[
-A = \{A, B, C\}, \quad B = \{C, E, D\}
+s_1 = \{K, A, R, T, O, N\}, \quad s_2 = \{K, A, R, N, I, S, Z\}
 \]
+dla \(n_1 = 2\) oraz \(n_2 = 3\), \(N(s_1) = 6\), \(N(s_2) = 7\), \(N = \max \{N(s_1), N(s_2)\} = 7\)
 \[
-    J(A, B) = \frac{\{ \text{C} \}}{\{\text{A,B,C,E,D}\}} = \frac{1}{5}= 0.2.
+    \mu_N(s_1, s_2) = \frac{2}{(7 - 2 + 1)(7 - 2 + 2) - (7 - 3 + 1)(7 - 3)} \sum_{i=2}^{3} \sum_{j=1}^{6 - i + 1} h(i, j) = \frac{2 + 1}{11} \approx 0.27.
  \]
+ ponieważ w \(s_2\) występują poniższe podciągi z \(s_1\)\\
+ 2 - 2-elementowe ka, ar;\\
+ 1 - 3-elementowy kar;
  \[
-     \rho_E(v1, v2) = \sqrt{(1-4)^2 + (1 - 0.2)^2 + (3-3)^2} = \sqrt{9 + 0.64 + 0} = \sqrt{25} = 3.10
+     \rho_E(v1, v2) = \sqrt{(1-4)^2 + (1 - 0.27)^2 + (3-3)^2} = \sqrt{9 + 0.73 + 0} = \sqrt{9.73} \approx 3.12
 \] \\
+
 
 \section{Wyniki klasyfikacji dla różnych parametrów wejściowych}
 Wstępne wyniki miary Accuracy dla próbnych klasyfikacji na ograniczonym zbiorze tekstów (podać parametry i kryteria
