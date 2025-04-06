@@ -26,7 +26,7 @@ public class KNN {
     private final List<Article> testSet;
     private final List<Article> allArticles;
     private final Set<String> stopWords;
-    private static final int K = 10;
+    private static final int K = 2;
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -115,20 +115,17 @@ public class KNN {
         // Sortowanie miejsc według liczby wystąpień
 
         List<Map.Entry<String, Integer>> placeCountsList = new ArrayList<>(placeCounts.entrySet());
-        placeCountsList.sort(Map.Entry.comparingByValue());
+        placeCountsList.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
 
         if (placeCountsList.size() > 1) {
             if (placeCountsList.get(0).getValue() > placeCountsList.get(1).getValue()) {
-                String predictedPlace = placeCounts.entrySet().stream()
-                        .max(Map.Entry.comparingByValue())
-                        .get()
-                        .getKey();
+                String predictedPlace = placeCountsList.getFirst().getKey();
                 article.setPredictedPlace(predictedPlace);
             } else {
 
                 Map<String, Double> placeWeights = new HashMap<>();
                 for (int i = 0; i < nearestNeighbors.size(); i++) {
-                    Article neighbor = nearestNeighbors.get(i);
+                    Article neighbor = sortedDistances.get(i).getKey();
                     String place = neighbor.getPlace();
                     double weight = 1.0 / sortedDistances.get(i).getValue();  // Odwrotność odległości, im mniejsza odległość, tym większa waga
                     placeWeights.put(place, placeWeights.getOrDefault(place, 0.0) + weight);
@@ -144,10 +141,7 @@ public class KNN {
 
             }
         } else {
-            String predictedPlace = placeCounts.entrySet().stream()
-                    .max(Map.Entry.comparingByValue())
-                    .get()
-                    .getKey();
+            String predictedPlace = placeCountsList.getFirst().getKey();
             article.setPredictedPlace(predictedPlace);
         }
 
