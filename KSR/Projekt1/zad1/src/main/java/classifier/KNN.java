@@ -1,12 +1,12 @@
 package classifier;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import extraction.FeatureExtractor;
 import extraction.Normalization;
 import loading.Article;
 import metrics.EuclideanMetrics;
+import metrics.ManhattanMetrics;
 import metrics.Metrics;
 import metrics.NGramMethod;
 import utils.ArticleData;
@@ -38,7 +38,7 @@ public class KNN {
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        Metrics metrics = new EuclideanMetrics();
+        Metrics metrics = new ManhattanMetrics();
 
 //        int counter = 1;
 //        for (Article article : allArticles) {
@@ -56,7 +56,7 @@ public class KNN {
 //        }
 //
 //        splitData(allArticles);
-
+//
 //        saveFeaturesToFile(trainingSet, "trainingSet.json");
 //        saveFeaturesToFile(testSet, "testSet.json");
 
@@ -76,8 +76,13 @@ public class KNN {
         qualityMeasures.calculateQualityForPlace(testSet, "france");
         qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
         qualityMeasures.calculateQualityForPlace(testSet, "japan");
-//        metrics.calculate(trainingSet.get(4), testSet.get(1), ngramMethod);
-//        classifyArticle(testSet.get(0), metrics);
+
+        for (Article article : testSet) {;
+            if (Objects.equals(article.getPlace(), "west-germany")) {
+                System.out.println(article.getPredictedPlace());
+            }
+        }
+
     }
 
     private void classifyArticle(Article article, Metrics metrics) {
@@ -153,17 +158,16 @@ public class KNN {
         Map<String, List<Article>> articlesPerCountry = this.allArticles.stream()
                 .collect(Collectors.groupingBy(Article::getPlace));
 
-        System.out.println("Wszytkie artykuly: " + allArticles.size());
-
         for (Map.Entry<String, List<Article>> entry : articlesPerCountry.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue().size());
             List<Article> articles = entry.getValue();
-            Collections.shuffle(articles);
+//            Collections.shuffle(articles);
 
             int splitIndex = (int) (articles.size() * SET_PROPORTION);
             trainingSet.addAll(articles.subList(0, splitIndex));
             testSet.addAll(articles.subList(splitIndex, articles.size()));
         }
+
 
         System.out.println("Zbiór treningowy: " + trainingSet.size());
         System.out.println("Zbiór testowy: " + testSet.size());
