@@ -12,9 +12,9 @@ import signalOperation as so
 from ttkthemes import ThemedTk
 import os
 import ioModule
-from myPlots import plot_signal,plot_histogram, plot_signal_samp
+from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from sampling import sampling
-from quantization import clippQuant
+from quantization import clippQuant, roundQuant
 
 signal_1 = None
 time_1 = None
@@ -85,7 +85,8 @@ def generate_signal():
     singal_samp, time_samp = sampling(signal_1, time_1, sample_rate=10)
     plot_signal_samp(time_samp, singal_samp, sam_frame_1)
     time_quant, signal_quant = clippQuant(singal_samp, time_samp)
-    plot_signal(time_quant, signal_quant,  "Sygnał", quad1_frame_1, histogram_frame_3)
+    plot_signal_quant(time_quant, signal_quant,  "test", quad1_frame_1, histogram_frame_3,time_1, signal_1)
+    plot_signal_quant(time_samp, singal_samp, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:

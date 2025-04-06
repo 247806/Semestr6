@@ -7,7 +7,7 @@ def sampling(signal, time, sample_rate):
     A = max(abs(s) for s in signal)
     t1 = time[0]
     T = 1
-    d = 12
+    d = 4
 
     time_samp = np.arange(t1, d, 1 / sample_rate)
 
