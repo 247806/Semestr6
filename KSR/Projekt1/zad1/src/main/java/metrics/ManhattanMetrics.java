@@ -24,15 +24,20 @@ public class ManhattanMetrics implements Metrics {
                     sum += 1.0;
                 } else {
                     double totalSimilarity = 0.0;
+                    List<?> bigger = list1.size() >= list2.size() ? list1 : list2;
+                    List<?> smaller = list1.size() > list2.size() ? list2 : list1;
+
                     double count = Math.max(list1.size(), list2.size());
-                    for (Object o1 : list1) {
-                        for (Object o2 : list2) {
-                            double temp = nGramMethod.calculateNGramSimilarity(
+                    for (Object o1 : bigger) {
+                        double temp = 0.0;
+                        for (Object o2 : smaller) {
+                            double temp2 = nGramMethod.calculateNGramSimilarity(
                                     o1.toString(), o2.toString(), 2, 4);
-                            if (temp > totalSimilarity) {
-                                totalSimilarity = temp;
+                            if (temp2 > temp) {
+                                temp = temp2;
                             }
                         }
+                        totalSimilarity += temp;
                     }
 
                     double avgSimilarity = totalSimilarity / count;

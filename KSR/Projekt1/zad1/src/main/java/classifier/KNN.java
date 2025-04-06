@@ -35,7 +35,7 @@ public class KNN {
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        Metrics metrics = new EuclideanMetrics();
+        Metrics metrics = new CzebyszewMetrics();
 
 //        int counter = 1;
 //        for (Article article : allArticles) {

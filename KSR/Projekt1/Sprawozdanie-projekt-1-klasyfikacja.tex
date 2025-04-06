@@ -306,10 +306,10 @@ Dla poniższych obliczeń przyjęto następujące parametry:\\ podział zbioru =
     \begin{tabular}{|c|c|c|}
     \hline
     \textbf{Nr} & \textbf{Parametr \(k\)} & \textbf{Accuracy} \\ \hline
-    1 & 2 & 0.8532\\ \hline
-    2 & 3 & 0.8904 \\ \hline
-    3 & 5 & 0.8904 \\ \hline
-    4 & 10 & 0.8864 \\ \hline
+    1 & 2 & 0.8611\\ \hline
+    2 & 3 & 0.8885 \\ \hline
+    3 & 5 & 0.8885 \\ \hline
+    4 & 10 & 0.8924 \\ \hline
     5 & 20 & 0.8826 \\ \hline
     6 & 50 & 0.8532 \\ \hline    
     \end{tabular}
@@ -317,9 +317,9 @@ Dla poniższych obliczeń przyjęto następujące parametry:\\ podział zbioru =
 \end{table}
 W powyższej tabeli przedstawiono wyniki klasyfikacji dla różnych wartości parametru \(k\) w algorytmie kNN, przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego, metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\).
 
-Na podstawie wyników można zaobserwować, że miara Accuracy rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 5\), osiągając maksimum równe 0{,}8904. Dalsze zwiększanie wartości \(k\) prowadzi jednak do spadku dokładności klasyfikatora. Może to świadczyć o nadmiernym uogólnieniu modelu przy zbyt dużej liczbie sąsiadów, co skutkuje mniejszą precyzją klasyfikacji.
+Na podstawie wyników można zaobserwować, że miara Accuracy rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 10\), osiągając maksimum równe 0{,}8924. Dalsze zwiększanie wartości \(k\) prowadzi jednak do spadku dokładności klasyfikatora. Może to świadczyć o nadmiernym uogólnieniu modelu przy zbyt dużej liczbie sąsiadów, co skutkuje mniejszą precyzją klasyfikacji.
 
-Optymalną wartością parametru \(k\) w tej konfiguracji wydaje się być \(k = 5\), zapewniającą najlepszy kompromis między stabilnością a dokładnością decyzji klasyfikatora.
+Optymalną wartością parametru \(k\) w tej konfiguracji wydaje się być \(k = 10\), zapewniającą najlepszy kompromis między stabilnością a dokładnością decyzji klasyfikatora.
 
 \subsection{Różny podział zbioru pomiędzy uczący, a testowy}
 Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 10, \\metryka euklidesowa, \\\(n_1 = 2\),\\ \(n_2 = 4\). 
@@ -329,10 +329,10 @@ Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 
     \begin{tabular}{|c|c|c|}
     \hline
     \textbf{Nr} & \textbf{Podział zbioru} & \textbf{Accuracy} \\ \hline
-    1 & 0.2 & 0.8708\\ \hline
-    2 & 0.4 & 0.8787 \\ \hline
-    3 & 0.6 & 0.8864 \\ \hline
-    4 & 0.8 & 0.9023 \\ \hline 
+    1 & 0.2 & 0.8787\\ \hline
+    2 & 0.4 & 0.8827 \\ \hline
+    3 & 0.6 & 0.8924 \\ \hline
+    4 & 0.8 & 0.9063 \\ \hline 
     \end{tabular}
     \caption{Wyniki miary Accuracy dla różnego podziału zbiorów}
 \end{table}
@@ -348,9 +348,9 @@ Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 
     \begin{tabular}{|c|c|c|}
     \hline
     \textbf{Nr} & \textbf{Metryka} & \textbf{Accuracy} \\ \hline
-    1 & Metryka euklidesowa & 0.8864\\ \hline
+    1 & Metryka euklidesowa & 0.8924\\ \hline
     2 & Metryka uliczna & 0.8767 \\ \hline
-    3 & Metryka Czybyszewa & - \\ \hline
+    3 & Metryka Czybyszewa & 0.8102 \\ \hline
     \end{tabular}
     \caption{Wyniki miary Accuracy dla różnych metryk}
 \end{table}
