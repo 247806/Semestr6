@@ -23,7 +23,7 @@ public class KNN {
     private final List<Article> testSet = new ArrayList<>();
     private final List<Article> allArticles;
     private final Set<String> stopWords;
-    private static final int K = 10;
+    private static final int K = 2;
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -35,9 +35,9 @@ public class KNN {
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        Metrics metrics = new ManhattanMetrics();
+        Metrics metrics = new EuclideanMetrics();
 
-        int counter = 1;
+//        int counter = 1;
 //        for (Article article : allArticles) {
 //            System.out.println(counter++ + " / " + allArticles.size());
 //            removeStopWords(article.getBody(), stopWords);

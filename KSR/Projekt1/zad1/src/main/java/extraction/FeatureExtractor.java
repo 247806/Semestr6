@@ -31,11 +31,11 @@ public class FeatureExtractor {
         features.add(wordCount);
 
         // 2. Dominująca waluta
-        String dominantCurrency = findDominantEntity(text, currencies);
+        String dominantCurrency = findDominantEntity(text.toLowerCase(), currencies);
         features.add(dominantCurrency);
 
         // 3. Nazwy miast
-        List<String> foundCities = findEntities(text, cities);
+        List<String> foundCities = findEntities(text.toLowerCase(), cities);
         features.add(foundCities);
 
         // 4. Liczba unikalnych słów
@@ -56,11 +56,11 @@ public class FeatureExtractor {
         features.add(capitalizedWordCount);
 
         // 8. Pierwsze słowo kluczowe w tekście
-        String firstKeyword = findFirstKeyword(text, keywords);
+        String firstKeyword = findFirstKeyword(text.toLowerCase(), keywords);
         features.add(firstKeyword);
 
         // 9. Liczba słów kluczowych
-        int keywordCount = countKeywordOccurrences(text, keywords);
+        int keywordCount = countKeywordOccurrences(text.toLowerCase(), keywords);
         features.add(keywordCount);
 
         // 10. Względna liczba słów kluczowych
@@ -68,7 +68,7 @@ public class FeatureExtractor {
         features.add(relativeKeywordCount);
 
         // 11. Nazwiska
-        List<String> foundNames = findEntities(text, names);
+        List<String> foundNames = findEntities(text.toLowerCase(), names);
         features.add(foundNames);
 
         return features;
@@ -79,10 +79,10 @@ public class FeatureExtractor {
         Map<String, Integer> firstPosition = new HashMap<>();
 
         for (String entity : entities) {
-            int count = countOccurrences(text, entity);
+            int count = countOccurrences(text.toLowerCase(), entity.toLowerCase());
             if (count > 0) {
-                frequency.put(entity, count);
-                firstPosition.put(entity, text.indexOf(entity));
+                frequency.put(entity.toLowerCase(), count);
+                firstPosition.put(entity.toLowerCase(), text.indexOf(entity.toLowerCase()));
             }
         }
 
@@ -111,9 +111,9 @@ public class FeatureExtractor {
     private List<String> findEntities(String text, Set<String> entities) {
         List<String> found = new ArrayList<>();
         for (String entity : entities) {
-            int count = countOccurrences(text, entity);
+            int count = countOccurrences(text.toLowerCase(), entity.toLowerCase());
             for (int i = 0; i < count; i++) {
-                found.add(entity);
+                found.add(entity.toLowerCase());
             }
         }
         return found;
@@ -131,14 +131,14 @@ public class FeatureExtractor {
             }
             sb.append(word).append(" ");
         }
-        List <String> found = findEntities(sb.toString(), keywords);
+        List <String> found = findEntities(sb.toString().toLowerCase(), keywords);
         return found.size();
     }
 
     private int countKeywordOccurrences(String text, Set<String> keywords) {
         int count = 0;
         for (String key : keywords) {
-            count += countOccurrences(text, key);
+            count += countOccurrences(text.toLowerCase(), key.toLowerCase());
         }
         return count;
     }
@@ -158,10 +158,10 @@ public class FeatureExtractor {
         String firstKeyword = null;
 
         for (String key : keywords) {
-            int index = text.indexOf(key);
+            int index = text.indexOf(key.toLowerCase());
             if (index != -1 && index < minIndex) {
                 minIndex = index;
-                firstKeyword = key;
+                firstKeyword = key.toLowerCase();
             }
         }
         return firstKeyword;
