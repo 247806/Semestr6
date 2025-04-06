@@ -279,6 +279,73 @@ dla \(n_1 = 2\) oraz \(n_2 = 3\), \(N(s_1) = 6\), \(N(s_2) = 7\), \(N = \max \{N
 
 
 \section{Wyniki klasyfikacji dla różnych parametrów wejściowych}
+W niniejszej sekcji przedstawiono wstępne wyniki klasyfikacji uzyskane dla ograniczonego zbioru tekstów testowych zawierającego 1277 artykułów. Celem analizy było zbadanie wpływu wybranych parametrów wejściowych na skuteczność klasyfikatora, mierzonych za pomocą miary Accuracy. 
+
+Badanie przeprowadzono w oparciu o różne warianty konfiguracji, zgodnie z punktami 3–8 zawartymi w opisie Projektu 1. Uwzględniono m.in. rózne wartości paramtetru \(k\), rózny podział zbioru pomiędzy uczący, a testowy oraz różne metryki.
+
+\subsection{Różne wartości parametru \(k\)}
+Dla poniższych obliczeń przyjęto następujące parametry:\\ podział zbioru = 0.6, \\metryka euklidesowa, \\\(n_1 = 2\),\\ \(n_2 = 4\). 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Nr} & \textbf{Parametr \(k\)} & \textbf{Accuracy} \\ \hline
+    1 & 2 & 0.8630\\ \hline
+    2 & 3 & 0.8806 \\ \hline
+    3 & 5 & 0.8845 \\ \hline
+    4 & 10 & 0.8904 \\ \hline
+    5 & 20 & 0.8786 \\ \hline
+    6 & 50 & 0.8551 \\ \hline    
+    \end{tabular}
+    \caption{Wyniki miary Accuracy dla różnych parametrów \(k\)}
+\end{table}
+W powyższej tabeli przedstawiono wyniki klasyfikacji dla różnych wartości parametru \(k\) w algorytmie kNN, przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego, metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\).
+
+Na podstawie wyników można zaobserwować, że miara Accuracy rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 10\), osiągając maksimum równe 0{,}8904. Dalsze zwiększanie wartości \(k\) prowadzi jednak do spadku dokładności klasyfikatora. Może to świadczyć o nadmiernym uogólnieniu modelu przy zbyt dużej liczbie sąsiadów, co skutkuje mniejszą precyzją klasyfikacji.
+
+Optymalną wartością parametru \(k\) w tej konfiguracji wydaje się być \(k = 10\), zapewniającą najlepszy kompromis między stabilnością a dokładnością decyzji klasyfikatora.
+
+\subsection{Różny podział zbioru pomiędzy uczący, a testowy}
+Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 10, \\metryka euklidesowa, \\\(n_1 = 2\),\\ \(n_2 = 4\). 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Nr} & \textbf{Podział zbioru} & \textbf{Accuracy} \\ \hline
+    1 & 0.2 & 0.8835\\ \hline
+    2 & 0.4 & 0.8801 \\ \hline
+    3 & 0.6 & 0.8904 \\ \hline
+    4 & 0.8 & 0.9023 \\ \hline 
+    \end{tabular}
+    \caption{Wyniki miary Accuracy dla różnego podziału zbiorów}
+\end{table}
+W powyższej tabeli przedstawiono wyniki eksperymentów przeprowadzonych dla różnych proporcji podziału zbioru danych na część uczącą i testową dla stałych parametrów \(k = 10\), metryka euklidesowa oraz zakres długości n-gramów \(n_1 = 2\) i \(n_2 = 4\).
+
+Wyniki wskazują na istotny wpływ proporcji podziału zbioru na dokładność klasyfikacji. W miarę zwiększania udziału zbioru uczącego w całości danych, skuteczność klasyfikatora również rośnie, osiągając najwyższą wartość przy podziale 80\% danych do zbioru uczącego. Zwiększenie tego udziału powoduje, że model ma więcej danych do nauki, co przekłada się na lepsze dopasowanie do wzorców w danych. Z kolei mniejsze proporcje danych uczących prowadzą do gorszej efektywności, co może być wynikiem niedostatecznej liczby próbek w procesie treningu.
+
+\subsection{Różne metryki}
+Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 10, \\podział zbioru = 0.6, \\\(n_1 = 2\),\\ \(n_2 = 4\). 
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Nr} & \textbf{Metryka} & \textbf{Accuracy} \\ \hline
+    1 & Metryka euklidesowa & 0.8904\\ \hline
+    2 & Metryka uliczna & 0.8845 \\ \hline
+    3 & Metryka Czybyszewa & - \\ \hline
+    \end{tabular}
+    \caption{Wyniki miary Accuracy dla różnego podziału zbiorów}
+\end{table}
+W powyższej tabeli przedstawiono wyniki eksperymentów przeprowadzonych z użyciem różnych metryk odległości, przy stałych parametrach: \(k = 10\), podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego oraz zakresie n-gramów \(n_1 = 2\) i \(n_2 = 4\).
+
+Wyniki wskazują na najlepszą skuteczność klasyfikatora przy zastosowaniu metryki euklidesowej, uzyskując miarę Accuracy równą 0{,}8904. Metryka uliczna, choć również dała zadowalające wyniki (Accuracy = 0{,}8845), okazała się nieco mniej efektywna w porównaniu do metryki euklidesowej. Z kolei metryka Czybyszewa, mimo że została uwzględniona w eksperymencie, nie została jeszcze zaimplementowana, stąd brak wyników dla tej metryki.
+
+Wyniki te wskazują, że wybór odpowiedniej metryki ma istotny wpływ na skuteczność klasyfikacji, a metryka euklidesowa w analizowanej konfiguracji przyniosła najlepsze rezultaty.\\
+
+
 Wstępne wyniki miary Accuracy dla próbnych klasyfikacji na ograniczonym zbiorze tekstów (podać parametry i kryteria
 wyboru wg punktów 3.-8. z opisu Projektu 1.). 
 \noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 05 wg Harmonogramu Zajęć
