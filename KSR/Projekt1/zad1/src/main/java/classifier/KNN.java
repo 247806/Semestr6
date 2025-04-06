@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import extraction.FeatureExtractor;
 import extraction.Normalization;
 import loading.Article;
-import metrics.EuclideanMetrics;
-import metrics.ManhattanMetrics;
-import metrics.Metrics;
-import metrics.NGramMethod;
+import metrics.*;
 import utils.ArticleData;
 
 import java.io.File;
@@ -22,11 +19,11 @@ import static extraction.StopListFilter.removeStopWords;
 import static loading.Load.loadReutersArticles;
 
 public class KNN {
-    private final List<Article> trainingSet;
-    private final List<Article> testSet;
+    private final List<Article> trainingSet = new ArrayList<>();
+    private final List<Article> testSet = new ArrayList<>();
     private final List<Article> allArticles;
     private final Set<String> stopWords;
-    private static final int K = 2;
+    private static final int K = 10;
     private static final double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -40,7 +37,7 @@ public class KNN {
         Normalization normalization = new Normalization();
         Metrics metrics = new ManhattanMetrics();
 
-//        int counter = 1;
+        int counter = 1;
 //        for (Article article : allArticles) {
 //            System.out.println(counter++ + " / " + allArticles.size());
 //            removeStopWords(article.getBody(), stopWords);
@@ -57,15 +54,14 @@ public class KNN {
 //
 //        splitData(allArticles);
 //
-//        saveFeaturesToFile(trainingSet, "trainingSet.json");
-//        saveFeaturesToFile(testSet, "testSet.json");
+//
+//        saveFeaturesToFile(allArticles, "allArticles.json");
+        List <Article> allArticlesLoaded = loadArticlesFromJson("allArticles.json");
+        splitData(allArticlesLoaded); // uwazac zeby nie właczyc z splitData z linii 55
 
-        this.trainingSet = loadArticlesFromJson("trainingSet.json");
-        this.testSet = loadArticlesFromJson("testSet.json");
-
-        int counter = 1;
+        int counter2 = 1;
         for (Article article : testSet) {
-            System.out.println(counter++ + " / " + testSet.size());
+            System.out.println(counter2++ + " / " + testSet.size());
             classifyArticle(article, metrics);
         }
 
@@ -100,9 +96,6 @@ public class KNN {
         for (int i = 0; i < K; i++) {
             nearestNeighbors.add(sortedDistances.get(i).getKey());
         }
-//        System.out.println("Najbliżsi sąsiedzi: " + nearestNeighbors.stream()
-//                .map(Article::getPlace)
-//                .collect(Collectors.toList()));
 
         // Liczenie liczby wystąpień miejsca (place) wśród K najbliższych sąsiadów
         Map<String, Integer> placeCounts = new HashMap<>();
@@ -149,7 +142,7 @@ public class KNN {
     }
 
     private void splitData(List<Article> allArticles) {
-        Map<String, List<Article>> articlesPerCountry = this.allArticles.stream()
+        Map<String, List<Article>> articlesPerCountry = allArticles.stream()
                 .collect(Collectors.groupingBy(Article::getPlace));
 
         for (Map.Entry<String, List<Article>> entry : articlesPerCountry.entrySet()) {
@@ -158,8 +151,8 @@ public class KNN {
 //            Collections.shuffle(articles);
 
             int splitIndex = (int) (articles.size() * SET_PROPORTION);
-            trainingSet.addAll(articles.subList(0, splitIndex));
-            testSet.addAll(articles.subList(splitIndex, articles.size()));
+            this.trainingSet.addAll(articles.subList(0, splitIndex));
+            this.testSet.addAll(articles.subList(splitIndex, articles.size()));
         }
 
 
