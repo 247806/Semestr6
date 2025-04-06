@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
+\usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage[utf8]{inputenc}
@@ -183,20 +184,34 @@ Metoda klasyfikacji k-NN polega na znajdowaniu k najbliższych sąsiadów, klucz
 \begin{enumerate}
     \item Metryka euklidesowa - w celu obliczenia odległości \(\rho_E(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć pierwiastek kwadratowy z sumy kwadratów różnic ich składowych zgodnie ze wzorem:
         \begin{equation}
-      \rho_E(v1, v2) = \sqrt{\sum_{i=1}^{n} (v1_i - v2_i)^2}  
+      \rho_E(v1, v2) = \sqrt{\sum_{i=1}^{n} (v1_i \underset{m}{-} v2_i)^2}  
         \end{equation}
-        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
+        gdzie \(n\) - liczba cech w wektorach.
+        
     \item Metryka uliczna - w celu obliczenia odległości \(\rho_M(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć sumę wartości bezwzględnych różnic cech zgodnie ze wzorem:
         \begin{equation}
-          \rho_M(v1, v2) = \sum_{i=1}^{n} |v1_i - v2_i|
+          \rho_M(v1, v2) = \sum_{i=1}^{n} |v1_i \underset{m}{-} v2_i|
         \end{equation}
-        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach.
+        gdzie \(n\) - liczba cech w wektorach.
+        
     \item Metryka Czebyszewa - w celu obliczenia odległości \(\rho_C(v1, v2)\) między dwoma wektorami \(v1, v2\) należy obliczyć maksymalną wartość bezwzględnych różnic cech zgodnie ze wzorem:
         \begin{equation}
-          \rho_C(v1, v2) = \max_{i = 1,...,n} |v1_i - v2_i|
+          \rho_C(v1, v2) = \max_{i = 1,...,n} |v1_i \underset{m}{-} v2_i|
         \end{equation}
-        gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\), \(n\) - liczba cech w wektorach. \\
+        gdzie \(n\) - liczba cech w wektorach.
 \end{enumerate}
+gdzie 
+\[
+    v1_i \underset{m}{-} v2_i = 
+    \begin{cases}
+    v1_i - v2_i & \text{dla } v1_i, v2_i \in \mathbb{R} \\
+    1 - sim_w(v1_i, v2_i) & \text{jeśli } v1_i, v2_i \text{ są tekstami}\\
+    1 - sim_z(v1_i, v2_i) & \text{jeśli } v1_i, v2_i \text{ są zbiorami tekstów}
+    \end{cases}
+\]
+gdzie \(v1_i\), \(v2_i\) - i-ta składowa wektorów cech \(v1\) oraz \(v2\),\\ \(sim_w\) - podobieństwo tekstów obliczone uogólnioną miarę n-gramów z ograniczeniami (pkt 4.2),\\ \(sim_z\) - podobieństwo zdań obliczone miarą podobieństwa zdań (pkt 4.3)\\
+
+
 W celu poprawnego przeprowadzenia obliczeń dla metryk należy uprzednio przeprowadzić normalizację cech wektórów, tak aby żadna z cech nie była dominująca. Wektory zostaną znormalizowane za pomocą metody min-max scaling do zakresu [0, 1]. Załóżmy, że mamy dwa wektory cech:
 \begin{enumerate}
     \item \(v1 = (1, 2, 30)\)
@@ -337,7 +352,7 @@ Dla poniższych obliczeń przyjęto następujące parametry:\\ parametr \(k\) = 
     2 & Metryka uliczna & 0.8767 \\ \hline
     3 & Metryka Czybyszewa & - \\ \hline
     \end{tabular}
-    \caption{Wyniki miary Accuracy dla różnego podziału zbiorów}
+    \caption{Wyniki miary Accuracy dla różnych metryk}
 \end{table}
 W powyższej tabeli przedstawiono wyniki eksperymentów przeprowadzonych z użyciem różnych metryk odległości, przy stałych parametrach: \(k = 10\), podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego oraz zakresie n-gramów \(n_1 = 2\) i \(n_2 = 4\).
 
