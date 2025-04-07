@@ -40,7 +40,7 @@ public class KNN {
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        Metrics metrics = new CzebyszewMetrics();
+        Metrics metrics = new EuclideanMetrics();
 
 //        int counter = 1;
 //        for (Article article : allArticles) {
@@ -62,7 +62,11 @@ public class KNN {
 //
 //        saveFeaturesToFile(allArticles, "allArticles.json");
         List <Article> allArticlesLoaded = loadArticlesFromJson("allArticles.json");
-        splitData(allArticlesLoaded); // uwazac zeby nie właczyc z splitData z linii 55
+        List<Integer> numbers = new ArrayList<>(List.of(1,2, 4));
+//        System.out.println(allArticlesLoaded.getFirst().getFeatures());
+        List<Article> newAllArticles = deleteFeature(allArticlesLoaded, numbers);
+//        System.out.println(newAllArticles.getFirst().getFeatures());
+        splitData(newAllArticles); // uwazac zeby nie właczyc z splitData z linii 55
 
         int counter2 = 1;
         for (Article article : testSet) {
@@ -78,11 +82,11 @@ public class KNN {
         qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
         qualityMeasures.calculateQualityForPlace(testSet, "japan");
 
-//        for (Article article : testSet) {;
-//            if (Objects.equals(article.getPlace(), "west-germany")) {
-//                System.out.println(article.getPredictedPlace());
-//            }
-//        }
+        for (Article article : testSet) {;
+            if (Objects.equals(article.getPlace(), "west-germany")) {
+                System.out.println(article.getPredictedPlace());
+            }
+        }
 
     }
 
@@ -200,6 +204,21 @@ public class KNN {
         }
 
         return articles;
+    }
+
+    private List<Article> deleteFeature(List<Article> articles, List<Integer> numbers) {
+        List<Article> newList = new ArrayList<>();
+        for (Article a : articles) {
+            int counter = 0;
+            List<Object> features = a.getFeatures();
+            for (Integer i : numbers) {
+                features.remove((int) i - counter);
+                counter++;
+            }
+            a.setFeatures(features);
+            newList.add(a);
+        }
+        return newList;
     }
 
 }
