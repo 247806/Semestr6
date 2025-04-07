@@ -1,49 +1,52 @@
 package ksr.extraction;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Normalization {
-    private final Map<String, Double> minValues = new HashMap<>(Map.of(
-            "keywords_in_first_3_sentences", Double.MAX_VALUE,
-            "relative_keyword_count", Double.MAX_VALUE,
-            "keyword_count", Double.MAX_VALUE,
-            "length", Double.MAX_VALUE,
-            "avg_word_length", Double.MAX_VALUE,
-            "unique_word_count", Double.MAX_VALUE,
-            "capitalized_word_count", Double.MAX_VALUE));
+    private final List<Double> minValues = new ArrayList<>(List.of(
+            Double.MAX_VALUE,
+            Double.MAX_VALUE,
+            Double.MAX_VALUE,
+            Double.MAX_VALUE,
+            Double.MAX_VALUE,
+            Double.MAX_VALUE,
+            Double.MAX_VALUE
+    ));
 
-    private final Map<String, Double> maxValues = new HashMap<>(Map.of(
-            "keywords_in_first_3_sentences", Double.MIN_VALUE,
-            "relative_keyword_count", Double.MIN_VALUE,
-            "keyword_count", Double.MIN_VALUE,
-            "length", Double.MIN_VALUE,
-            "avg_word_length", Double.MIN_VALUE,
-            "unique_word_count", Double.MIN_VALUE,
-            "capitalized_word_count", Double.MIN_VALUE));
+    private final List<Double> maxValues = new ArrayList<>(List.of(
+            Double.MIN_VALUE,
+            Double.MIN_VALUE,
+            Double.MIN_VALUE,
+            Double.MIN_VALUE,
+            Double.MIN_VALUE,
+            Double.MIN_VALUE,
+            Double.MIN_VALUE));
 
-    public void preprocess(List<Map<String, Object>> features) {
-        for (Map<String, Object> feature : features) {
-            for (Map.Entry<String, Object> entry : feature.entrySet()) {
-                if (entry.getValue() instanceof Number) {
-                    double value = ((Number) entry.getValue()).doubleValue();
+    public void preprocess(List<List<Object>> features) {
+        for (List<Object> feature : features) {
+            int counter = 0;
+            for (int i = 0; i < feature.size(); i++) {
+                if (feature.get(i) instanceof Number) {
+                    double value = ((Number) feature.get(i)).doubleValue();
 
-                    minValues.put(entry.getKey(), Math.min(minValues.get(entry.getKey()), value));
-                    maxValues.put(entry.getKey(), Math.max(maxValues.get(entry.getKey()), value));
+                    minValues.set(counter, Math.min(minValues.get(counter), value));
+                    maxValues.set(counter, Math.max(maxValues.get(counter), value));
+
+                    counter++;
                 }
             }
         }
     }
 
-    public Map<String, Object> normalize(Map<String, Object> feature) {
-        Map<String, Object> normalizedFeature = new HashMap<>(feature);
-
-        for (Map.Entry<String, Object> entry : feature.entrySet()) {
-            if (entry.getValue() instanceof Number && minValues.containsKey(entry.getKey())) {
-                double value = ((Number) entry.getValue()).doubleValue();
-                double minValue = minValues.get(entry.getKey());
-                double maxValue = maxValues.get(entry.getKey());
+    public List <Object> normalize(List <Object> feature) {
+        List <Object> normalizedFeature = new ArrayList<>(feature);
+        int counter = 0;
+        for (int i = 0; i < feature.size(); i++) {
+            if (feature.get(i) instanceof Number) {
+                double value = ((Number) feature.get(i)).doubleValue();
+                double minValue = minValues.get(counter);
+                double maxValue = maxValues.get(counter);
 
                 double normalizedValue;
                 if (maxValue != minValue) {
@@ -52,8 +55,10 @@ public class Normalization {
                     normalizedValue = 0.0;
                 }
 
-                normalizedFeature.put(entry.getKey(), normalizedValue);
+                normalizedFeature.set(i, normalizedValue);
+                counter++;
             }
+
         }
         return normalizedFeature;
     }
