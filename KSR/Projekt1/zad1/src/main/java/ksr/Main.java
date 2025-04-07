@@ -7,7 +7,9 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-    KNN knn = new KNN();
+        int k = 10;
+        double proportion = 0.6;
+        KNN knn = new KNN(k, proportion);
 
     }
 }

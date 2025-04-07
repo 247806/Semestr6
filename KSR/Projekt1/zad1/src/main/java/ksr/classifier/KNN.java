@@ -22,14 +22,20 @@ public class KNN {
     private final List<Article> testSet = new ArrayList<>();
     private final List<Article> allArticles;
     private final Set<String> stopWords;
-    private static final int K = 10;
-    private static final double SET_PROPORTION = 0.6;
+    private static int K = 10;
+    private static double SET_PROPORTION = 0.6;
     private List<List<Object>> features = new ArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final NGramMethod ngramMethod = new NGramMethod();
     private final QualityMeasures qualityMeasures = new QualityMeasures();
 
-    public KNN() throws IOException {
+    public KNN(int k,double proportion) throws IOException {
+        this.K = k;
+        this.SET_PROPORTION = proportion;
+
+        System.out.println("K: " + K);
+        System.out.println("Proporcja zbioru treningowego: " + SET_PROPORTION);
+
         allArticles = loadReutersArticles("src/main/resources/articles");
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
