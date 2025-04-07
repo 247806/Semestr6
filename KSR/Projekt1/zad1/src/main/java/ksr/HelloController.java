@@ -15,11 +15,14 @@ public class HelloController {
     private TextField kTextField;
 
     @FXML
+    private TextField proportionTextField;
+
+    @FXML
     protected void onHelloButtonClick() throws IOException {
         welcomeText.setText("Welcome to JavaFX Application!");
         //Main.main(null);
         int k= Integer.parseInt(kTextField.getText());
-        double proportion=0.6;
+        double proportion= Double.parseDouble(proportionTextField.getText());
         KNN knn = new KNN(k, proportion);
     }
 }
