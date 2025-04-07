@@ -1,28 +1,27 @@
-package metrics;
+package ksr.metrics;
 
-import loading.Article;
+import ksr.loading.Article;
 
 import java.util.List;
 
-public class CzebyszewMetrics implements Metrics {
+public class EuclideanMetrics implements Metrics {
     @Override
     public double calculate(Article article1, Article article2, NGramMethod nGramMethod) {
-        double maxDiff = 0.0;
+        double sum = 0.0;
         List<Object> features1 = article1.getFeatures();
         List<Object> features2 = article2.getFeatures();
         for (int i = 0; i < features1.size(); i++) {
-            double diff = 0.0;
             Object c1 = features1.get(i);
             Object c2 = features2.get(i);
             if (c1 == null || c2 == null) {
-                diff=1.0;
+                sum+=1.0;
             } else if (c1 instanceof String && c2 instanceof String) {
                 double similarity = nGramMethod.calculateNGramSimilarity((String) c1,(String) c2, 2, 4);
-                diff = Math.abs(1 - similarity);
+                sum+= Math.pow(1 - similarity, 2);
             } else if (c1 instanceof List<?> list1 && c2 instanceof List<?> list2) {
 
                 if (list1.isEmpty() || list2.isEmpty()) {
-                    diff = 1.0;
+                    sum += 1.0;
                 } else {
                     double totalSimilarity = 0.0;
                     List<?> bigger = list1.size() > list2.size() ? list1 : list2;
@@ -42,18 +41,14 @@ public class CzebyszewMetrics implements Metrics {
                     }
 
                     double avgSimilarity = totalSimilarity / count;
-                    diff = Math.abs(1 - avgSimilarity);
+                    sum += Math.pow(1 - avgSimilarity, 2);
                 }
-            } else {
+            }  else {
                 double value1 = Double.parseDouble(features1.get(i).toString());
                 double value2 = Double.parseDouble(features2.get(i).toString());
-                diff = Math.abs(value1 - value2);
-            }
-
-            if (diff > maxDiff) {
-                maxDiff = diff;
+                sum += Math.pow(value1 - value2, 2);
             }
         }
-        return maxDiff;
+        return Math.sqrt(sum);
     }
 }

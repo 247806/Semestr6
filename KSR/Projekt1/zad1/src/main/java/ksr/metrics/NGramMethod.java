@@ -1,4 +1,4 @@
-package metrics;
+package ksr.metrics;
 
 import java.util.HashSet;
 import java.util.Set;

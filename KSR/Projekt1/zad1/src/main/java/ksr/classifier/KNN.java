@@ -1,22 +1,21 @@
-package classifier;
+package ksr.classifier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import extraction.FeatureExtractor;
-import extraction.Normalization;
-import loading.Article;
-import metrics.*;
-import utils.ArticleData;
+import ksr.extraction.FeatureExtractor;
+import ksr.extraction.Normalization;
+import ksr.loading.Article;
+import ksr.metrics.*;
+import ksr.utils.ArticleData;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static extraction.KeyWordsLoader.*;
-import static extraction.StopListFilter.loadStopList;
-import static extraction.StopListFilter.removeStopWords;
-import static loading.Load.loadReutersArticles;
+import static ksr.extraction.KeyWordsLoader.*;
+import static ksr.extraction.StopListFilter.loadStopList;
+import static ksr.loading.Load.loadReutersArticles;
 
 public class KNN {
     private final List<Article> trainingSet = new ArrayList<>();

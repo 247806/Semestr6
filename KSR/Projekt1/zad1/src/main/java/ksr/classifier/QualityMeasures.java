@@ -1,6 +1,6 @@
-package classifier;
+package ksr.classifier;
 
-import loading.Article;
+import ksr.loading.Article;
 
 import java.util.List;
 

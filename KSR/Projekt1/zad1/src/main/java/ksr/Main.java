@@ -1,4 +1,6 @@
-import classifier.KNN;
+package ksr;
+
+import ksr.classifier.KNN;
 
 import java.io.IOException;
 

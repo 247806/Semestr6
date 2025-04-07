@@ -1,30 +1,31 @@
-package metrics;
+package ksr.metrics;
 
-import loading.Article;
+import ksr.loading.Article;
 
 import java.util.List;
 
-public class ManhattanMetrics implements Metrics {
+public class CzebyszewMetrics implements Metrics {
     @Override
     public double calculate(Article article1, Article article2, NGramMethod nGramMethod) {
-        double sum = 0.0;
+        double maxDiff = 0.0;
         List<Object> features1 = article1.getFeatures();
         List<Object> features2 = article2.getFeatures();
         for (int i = 0; i < features1.size(); i++) {
+            double diff = 0.0;
             Object c1 = features1.get(i);
             Object c2 = features2.get(i);
             if (c1 == null || c2 == null) {
-                sum+=1.0;
+                diff=1.0;
             } else if (c1 instanceof String && c2 instanceof String) {
                 double similarity = nGramMethod.calculateNGramSimilarity((String) c1,(String) c2, 2, 4);
-                sum+= Math.abs(1 - similarity);
+                diff = Math.abs(1 - similarity);
             } else if (c1 instanceof List<?> list1 && c2 instanceof List<?> list2) {
 
                 if (list1.isEmpty() || list2.isEmpty()) {
-                    sum += 1.0;
+                    diff = 1.0;
                 } else {
                     double totalSimilarity = 0.0;
-                    List<?> bigger = list1.size() >= list2.size() ? list1 : list2;
+                    List<?> bigger = list1.size() > list2.size() ? list1 : list2;
                     List<?> smaller = list1.size() > list2.size() ? list2 : list1;
 
                     double count = Math.max(list1.size(), list2.size());
@@ -41,14 +42,18 @@ public class ManhattanMetrics implements Metrics {
                     }
 
                     double avgSimilarity = totalSimilarity / count;
-                    sum += Math.abs(1 - avgSimilarity);
+                    diff = Math.abs(1 - avgSimilarity);
                 }
             } else {
                 double value1 = Double.parseDouble(features1.get(i).toString());
                 double value2 = Double.parseDouble(features2.get(i).toString());
-                sum += Math.abs(value1 - value2);
+                diff = Math.abs(value1 - value2);
+            }
+
+            if (diff > maxDiff) {
+                maxDiff = diff;
             }
         }
-        return sum;
+        return maxDiff;
     }
 }

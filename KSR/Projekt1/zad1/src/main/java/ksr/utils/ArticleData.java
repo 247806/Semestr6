@@ -1,4 +1,4 @@
-package utils;
+package ksr.utils;
 
 import java.util.List;
 

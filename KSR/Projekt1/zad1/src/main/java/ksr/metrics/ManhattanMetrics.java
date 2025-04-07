@@ -1,10 +1,10 @@
-package metrics;
+package ksr.metrics;
 
-import loading.Article;
+import ksr.loading.Article;
 
 import java.util.List;
 
-public class EuclideanMetrics implements Metrics {
+public class ManhattanMetrics implements Metrics {
     @Override
     public double calculate(Article article1, Article article2, NGramMethod nGramMethod) {
         double sum = 0.0;
@@ -17,14 +17,14 @@ public class EuclideanMetrics implements Metrics {
                 sum+=1.0;
             } else if (c1 instanceof String && c2 instanceof String) {
                 double similarity = nGramMethod.calculateNGramSimilarity((String) c1,(String) c2, 2, 4);
-                sum+= Math.pow(1 - similarity, 2);
+                sum+= Math.abs(1 - similarity);
             } else if (c1 instanceof List<?> list1 && c2 instanceof List<?> list2) {
 
                 if (list1.isEmpty() || list2.isEmpty()) {
                     sum += 1.0;
                 } else {
                     double totalSimilarity = 0.0;
-                    List<?> bigger = list1.size() > list2.size() ? list1 : list2;
+                    List<?> bigger = list1.size() >= list2.size() ? list1 : list2;
                     List<?> smaller = list1.size() > list2.size() ? list2 : list1;
 
                     double count = Math.max(list1.size(), list2.size());
@@ -41,14 +41,14 @@ public class EuclideanMetrics implements Metrics {
                     }
 
                     double avgSimilarity = totalSimilarity / count;
-                    sum += Math.pow(1 - avgSimilarity, 2);
+                    sum += Math.abs(1 - avgSimilarity);
                 }
-            }  else {
+            } else {
                 double value1 = Double.parseDouble(features1.get(i).toString());
                 double value2 = Double.parseDouble(features2.get(i).toString());
-                sum += Math.pow(value1 - value2, 2);
+                sum += Math.abs(value1 - value2);
             }
         }
-        return Math.sqrt(sum);
+        return sum;
     }
 }
