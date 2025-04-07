@@ -249,7 +249,7 @@ Z wykorzystaniem powyższych wektorów otrzymujemy:
 Metryka euklidesowa, uliczna oraz Czebyszewa przyjmują wartości z zakresu \([0, \infty)\). Im otrzymana wartość jest mniejsza, tym oba wektory cech są do siebie bardziej podobne.
 
 \subsection{Uogólniona miara n-gramów z ograniczeniami}
-Wykorzystując uogólnioną miarę n-gramów z ograniczeniami możemy pewną liczbą wyrazić podobieństwo dwóch łańcuchów znaków. Ta miara przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają większe podobieństwo po między badanymi łańcuchami znaków. Krańcowe wartości oznaczają: 0 – różne łańcuchy znaków, 1 - identyczne łańcuchy znaków. Przekształcenie cech tekstowych na wartości numeryczne umożliwia obliczenie ich wpływu na odległości między wektorami. Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
+Wykorzystując uogólnioną miarę n-gramów z ograniczeniami możemy pewną liczbą wyrazić podobieństwo dwóch łańcuchów znaków. Ta miara przyjmuje wartości z zakresu \([0,1]\), przy czym wartości wyższe oznaczają większe podobieństwo pomiędzy badanymi łańcuchami znaków. Krańcowe wartości oznaczają: 0 – różne łańcuchy znaków, 1 - identyczne łańcuchy znaków. Przekształcenie cech tekstowych na wartości numeryczne umożliwia obliczenie ich wpływu na odległości między wektorami. Odległość pomiędzy dwoma łańcuchami znaków możemy określić poprzez:
 \begin{equation}
     d = 1 - sim_w(s1, s2)
 \end{equation}
@@ -266,11 +266,11 @@ wyraża odwrotność liczby możliwych podciagów o długosciach od \(n_1\) do \
 \(h(i,j) = 1\) jeśli \(i\)-elementowy podciag w słowie s1 zaczynajacy sie od \(j\)-tej
 pozycji w słowie \(s_1\) pojawia sie przynajmniej raz w słowie \(s_2\) (inaczej
 \(h(i,j) = 0\));\\
-\(N(s1), N(s2)\) - oznaczają liczbę liter w słowach \( v1\) i \(v2\);\\
-\(N = \max \{N(v1), N(v2)\}\).\\
+\(N(s1), N(s2)\) - oznaczają liczbę liter w słowach \( s1\) i \(s2\);\\
+\(N = \max \{N(s1), N(s2)\}\).\\
 
 
-Załóżmy, że mamy dwa wektory cech (wektory powinny być znomalizowane, ale na potrzeby tego przykładu zostało to pominięte):
+Załóżmy, że mamy dwa wektory cech (wektory powinny być znormalizowane, ale na potrzeby tego przykładu zostało to pominięte):
 \begin{enumerate}
     \item \(v1 = (1, KARTON, 3)\)
     \item \(v2 = (4, KARNISZ, 3)\)
@@ -302,7 +302,7 @@ Obliczając podobieństwo przyjmujemy \(n_1 = 2\) oraz \(n_2 = 3\)
 \] 
 
 \subsection{Miara podobieństwa zdań}
-Wykorzystując uogólnioną miarę podobieństwa zdań, traktowanych jako zbiory (a nie ciągi) wyrazów, możemy pewną liczbą wyrazić stopień podobieństwa pomiędzy dwoma zdaniami. Miara ta przyjmuje wartości z zakresu \([0,1]\), gdzie wyższe wartości oznaczają większe podobieństwo między porównywanymi zdaniami. Krańcowe wartości interpretujemy następująco: 0 – zdania zupełnie różne, 1 – zdania identyczne pod względem zestawu użytych słów. Przekształcenie cech tekstowych na wartości numeryczne umożliwia analizę ich wpływu na odległości w przestrzeni wektorowej. Odległość pomiędzy dwoma zdaniami możemy określić za pomocą następującej formuły:
+Wykorzystując uogólnioną miarę podobieństwa zdań, traktowanych jako zbiory (a nie ciągi) wyrazów, możemy pewną liczbą wyrazić stopień podobieństwa pomiędzy dwoma zbiorami słów. Miara ta przyjmuje wartości z zakresu \([0,1]\), gdzie wyższe wartości oznaczają większe podobieństwo między porównywanymi zbiorami. Krańcowe wartości interpretujemy następująco: 0 – zbiory zupełnie różne, 1 – zbiory identyczne pod względem zestawu użytych słów. Przekształcenie cech tekstowych na wartości numeryczne umożliwia analizę ich wpływu na odległości w przestrzeni wektorowej. Odległość pomiędzy dwoma zbiorami wyrazów możemy określić za pomocą następującej formuły:
 \begin{equation}
     d = 1 - sim_z(z1, z2)
 \end{equation}
@@ -311,20 +311,17 @@ gdzie \(sim_z(z1,z2)\) oznacza miarę podobieństwa zdań\\
 \mu_{NZ}(z_1, z_2) = \frac{1}{N} \sum_{i=1}^{N(z_1)} \max_{j = 1, \ldots, N(z_1)} \mu_N(s_{1i}, s_{2j})
 \end{equation}
 gdzie:\\
- $s_{1i}$ – $i$-ty wyraz w zdaniu $z_1$;\\
- $s_{2j}$ – $j$-ty wyraz w zdaniu $z_2$;\\
+ $s_{1i}$ – $i$-ty wyraz w zbiorze $z_1$;\\
+ $s_{2j}$ – $j$-ty wyraz w zbiorze $z_2$;\\
  $\mu_N(s_{1i}, s_{2j})$ – wartość funkcji (22) dla $(s_{1i}, s_{2j})$;\\
- $N(z_1), N(z_2)$ – liczba słów w zdaniach $z_1$, $z_2$;\\
+ $N(z_1), N(z_2)$ – liczba słów w zbiorach $z_1$, $z_2$;\\
  $N = \max\{N(z_1), N(z_2)\}$.\\
-
-
 Załóżmy, że mamy dwa wektory cech (wektory powinny być znormalizowane, ale na potrzeby tego przykładu zostało to pominięte):
 \begin{enumerate}
     \item \(v_1 = (1, \text{ kot je}, 3)\)
     \item \(v_2 = (4, \text{ kot pije wodę}, 3)\)
 \end{enumerate}
-
-Traktując drugą cechę jako zdania złożone ze zbiorów wyrazów, mamy:
+Traktując drugą cechę jako zbiór wyrazów, mamy:
 \[
 z_1 = \{\text{kot}, \text{je}\}, \quad z_2 = \{\text{kot}, \text{pije}, \text{wodę}\}
 \]
@@ -332,8 +329,7 @@ czyli:
 \[
 N(z_1) = 2, \quad N(z_2) = 3, \quad N = \max\{N(z_1), N(z_2)\} = 3
 \]
-
-Wartość podobieństwa zdań:
+Wartość podobieństwa zbiorów:
 \[
 \mu_{NZ}(z_1, z_2) = \frac{1}{3}\sum_{i=1}^{3} \max_{j = 1, 2} \mu_N(s_{1i}, s_{2j}) = \frac{1 + 0.2 + 0}{3} = 0.4
 \]
@@ -346,7 +342,6 @@ gdzie
 \max \{\mu_N(\text{kot}, \text{wodę}), \mu_N(\text{je}, \text{wodę})\} = 0 \\
 \end{aligned}
 \]
-
 Wówczas odległość euklidesowa pomiędzy wektorami wynosi:
 \[
 \rho_E(v_1, v_2) = \sqrt{(1 - 4)^2 + (1 - 0.4)^2 + (3 - 3)^2} = \sqrt{9 + 0.36 + 0} = \sqrt{9.25} \approx 3.06
@@ -393,7 +388,7 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
     \caption{Wyniki miary Accuracy dla różnego podziału zbiorów}
 \end{table}
 
-Wyniki wskazują na istotny wpływ proporcji podziału zbioru na dokładność klasyfikacji. W miarę zwiększania udziału zbioru uczącego w całości danych, skuteczność klasyfikatora również rośnie, osiągając najwyższą wartość przy podziale 80\% danych do zbioru uczącego. Zwiększenie tego udziału powoduje, że model ma więcej danych do nauki, co przekłada się na lepsze dopasowanie do wzorców w danych. Z kolei mniejsze proporcje danych uczących prowadzą do gorszej efektywności, co może być wynikiem niedostatecznej liczby próbek w procesie treningu.
+Wyniki wskazują na istotny wpływ proporcji podziału zbioru na dokładność klasyfikacji. W miarę zwiększania udziału zbioru uczącego w całości danych, skuteczność klasyfikatora rośnie, osiągając najwyższą wartość przy podziale 80\% danych do zbioru uczącego. Zwiększenie tego udziału powoduje, że model ma więcej danych do nauki, co przekłada się na lepsze dopasowanie do wzorców w danych. Z kolei mniejsze proporcje danych uczących prowadzą do gorszej efektywności, co może być wynikiem niedostatecznej liczby próbek w procesie treningu.
 
 \subsection{Różne metryki}
 W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 10\) oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
@@ -411,12 +406,6 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
 \end{table}
 
 Wyniki wskazują na najlepszą skuteczność klasyfikatora przy zastosowaniu metryki euklidesowej, uzyskując miarę Accuracy równą 0{,}8864. Metryka uliczna, choć również dała zadowalający wynik (Accuracy = 0{,}8767), okazała się nieco mniej efektywna w porównaniu do metryki euklidesowej. Z kolei metryka Czybyszewa zwróciła najgorszy wynik.
-
-
-Wstępne wyniki miary Accuracy dla próbnych klasyfikacji na ograniczonym zbiorze tekstów (podać parametry i kryteria
-wyboru wg punktów 3.-8. z opisu Projektu 1.). 
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 05 wg Harmonogramu Zajęć
-na WIKAMP KSR.}
 
 
 \section{Dyskusja, wnioski, sprawozdanie końcowe}
