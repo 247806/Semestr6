@@ -9,7 +9,8 @@ public class Main {
 
         int k = 10;
         double proportion = 0.6;
-        KNN knn = new KNN(k, proportion);
+        String metric = "Euklidesowa";
+        KNN knn = new KNN(k, proportion, metric);
 
     }
 }

@@ -1,5 +1,4 @@
 module ksr {
-    requires javafx.controls;
     requires javafx.fxml;
 
     requires org.kordamp.bootstrapfx.core;
@@ -8,6 +7,8 @@ module ksr {
     requires com.fasterxml.jackson.databind;
     requires commons.lang3;
     requires jdk.compiler;
+    requires com.jfoenix;
+    requires javafx.controls;
 
     opens ksr to javafx.fxml;
     exports ksr;

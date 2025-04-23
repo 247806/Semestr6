@@ -6,7 +6,7 @@ import java.util.List;
 
 public class QualityMeasures {
 
-    public void calculateAccuracy(List<Article> testSet) {
+    public double calculateAccuracy(List<Article> testSet) {
         int correctPredictions = 0;
         for (Article testArticle : testSet) {
             if (testArticle.getPredictedPlace().equals(testArticle.getPlace())) {
@@ -14,9 +14,11 @@ public class QualityMeasures {
             }
         }
         System.out.println((double) correctPredictions / testSet.size());
+        return (double) correctPredictions / testSet.size();
+
     }
 
-    public void calculateQualityForPlace(List<Article> testSet, String place){
+    public Double[] calculateQualityForPlace(List<Article> testSet, String place){
         double precision = calculatePrecision(testSet, place);
         double recall = calculateRecall(testSet, place);
         double f1Score = calculateF1Score(precision, recall);
@@ -25,6 +27,7 @@ public class QualityMeasures {
         System.out.println("Precision: " + precision);
         System.out.println("Recall: " + recall);
         System.out.println("F1 Score: " + f1Score);
+        return new Double[]{precision, recall, f1Score};
     }
 
 

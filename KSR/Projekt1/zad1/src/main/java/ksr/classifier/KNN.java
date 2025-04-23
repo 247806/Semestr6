@@ -7,6 +7,7 @@ import ksr.extraction.Normalization;
 import ksr.loading.Article;
 import ksr.metrics.*;
 import ksr.utils.ArticleData;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,18 +30,31 @@ public class KNN {
     private final NGramMethod ngramMethod = new NGramMethod();
     private final QualityMeasures qualityMeasures = new QualityMeasures();
 
-    public KNN(int k,double proportion) throws IOException {
-        this.K = k;
-        this.SET_PROPORTION = proportion;
+    @Getter
+    public double accuracy;
+
+    @Getter
+    public Double [][] qualityMeasure = new Double[6][3];
+
+    public KNN(int k,double proportion, String metric) throws IOException {
+        K = k;
+        SET_PROPORTION = proportion;
 
         System.out.println("K: " + K);
         System.out.println("Proporcja zbioru treningowego: " + SET_PROPORTION);
+        System.out.println("Metryka: " + metric);
 
         allArticles = loadReutersArticles("src/main/resources/articles");
         this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
-        Metrics metrics = new EuclideanMetrics();
+        Metrics metrics = switch (metric) {
+            case "Euklidesowa" -> new EuclideanMetrics();
+            case "Uliczna" -> new ManhattanMetrics();
+            case "Czebyszewa" -> new CzebyszewMetrics();
+            default -> throw new IllegalArgumentException("Unknown metric: " + metric);
+        };
+
 
 //        int counter = 1;
 //        for (Article article : allArticles) {
@@ -74,15 +88,18 @@ public class KNN {
             classifyArticle(article, metrics);
         }
 
-        qualityMeasures.calculateAccuracy(testSet);
-        qualityMeasures.calculateQualityForPlace(testSet, "usa");
-        qualityMeasures.calculateQualityForPlace(testSet, "uk");
-        qualityMeasures.calculateQualityForPlace(testSet, "canada");
-        qualityMeasures.calculateQualityForPlace(testSet, "france");
-        qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
-        qualityMeasures.calculateQualityForPlace(testSet, "japan");
+        accuracy = qualityMeasures.calculateAccuracy(testSet);
+        System.out.println("Accuracy: " + accuracy);
+        qualityMeasure[0] = qualityMeasures.calculateQualityForPlace(testSet, "usa");
+        qualityMeasure[1] = qualityMeasures.calculateQualityForPlace(testSet, "uk");
+        qualityMeasure[2] = qualityMeasures.calculateQualityForPlace(testSet, "canada");
+        qualityMeasure[3] = qualityMeasures.calculateQualityForPlace(testSet, "france");
+        qualityMeasure[4] = qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
+        qualityMeasure[5] = qualityMeasures.calculateQualityForPlace(testSet, "japan");
 
-        for (Article article : testSet) {;
+        System.out.println("All quality measure: " + Arrays.deepToString(qualityMeasure));
+
+        for (Article article : testSet) {
             if (Objects.equals(article.getPlace(), "west-germany")) {
                 System.out.println(article.getPredictedPlace());
             }
