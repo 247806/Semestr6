@@ -1,20 +1,20 @@
-import struct
+import os
 import tkinter as tk
-from tkinter import ttk, filedialog
-import numpy as np
+from tkinter import ttk
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from ttkthemes import ThemedTk
+
+import calculateParams as cp
 import continousSignal
 import discretSignal
-import calculateParams as cp
-
-import signalOperation as so
-from ttkthemes import ThemedTk
-import os
 import ioModule
+import signalOperation as so
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
-from sampling import sampling
 from quantization import clippQuant, roundQuant
+from sampling import sampling
 
 signal_1 = None
 time_1 = None
@@ -22,13 +22,23 @@ signal_2 = None
 time_2 = None
 signal_3 = None
 time_3 = None
+signal_samp_1 = None
+time_samp_1 = None
+singal_samp_2 = None
+time_samp_2 = None
+T_1 = None
+T_2 = None
+
 
 def function_type(A, T, t1, d, kw, ts, p, signal):
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, d, 1 / sample_rate)
+    print('dupa')
+    print(time)
 
     if signal_type.get() == "Sygnał sinusoidalny":
         signal = continousSignal.sinusoidal(A, T, time)
+        #signal = continousSignal.testFunction(time)
     elif signal_type.get() == "Sygnał prostokątny symetryczny":
         signal = continousSignal.squareSymetric(A, T, t1, kw, time)
     elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany jednopołówkowo':
@@ -53,10 +63,17 @@ def function_type(A, T, t1, d, kw, ts, p, signal):
     return time, signal
 
 def generate_signal():
-    global signal_1, time_1, signal_2, time_2
+    global signal_1, time_1, signal_2, time_2, T_1, T_2
 
     A = float(amplitude_entry.get())
-    T = float(duty_cycle_entry_t.get()) if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] else None
+    if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"]:
+        T = float(duty_cycle_entry_t.get())
+        if signal_notebook.index(signal_notebook.select()) == 1:
+            T_2 = T
+        elif signal_notebook.index(signal_notebook.select()) == 0:
+            T_1 = T
+    else:
+        None
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
     kw = float(duty_cycle_entry.get()) if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"] else None
@@ -82,11 +99,31 @@ def generate_signal():
         d = full_periods * T
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
-    singal_samp, time_samp = sampling(signal_1, time_1, sample_rate=10)
-    plot_signal_samp(time_samp, singal_samp, sam_frame_1)
-    time_quant, signal_quant = clippQuant(singal_samp, time_samp)
-    plot_signal_quant(time_quant, signal_quant,  "test", quad1_frame_1, histogram_frame_3,time_1, signal_1)
-    plot_signal_quant(time_samp, singal_samp, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
+
+
+
+def samplingFun(sample_rate):
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2
+
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        signal_samp_2, time_samp_2 = sampling(signal_2, time_2, int(sample_rate), T_2)
+        plot_signal_samp(time_samp_2, signal_samp_2, sam_frame_2)
+    else:
+        signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1)
+        plot_signal_samp(time_samp_1, signal_samp_1, sam_frame_1)
+
+def quantizationFun(num_levels):
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        signal_quant = clippQuant(singal_samp_2, int(num_levels))
+        signal_quant_2 = roundQuant(singal_samp_2, int(num_levels))
+        plot_signal_quant(time_samp_2, signal_quant, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_signal_quant(time_samp_2, signal_quant_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2)
+    else:
+        signal_quant = clippQuant(signal_samp_1, int(num_levels))
+        signal_quant_2 = roundQuant(signal_samp_1, int(num_levels))
+        plot_signal_quant(time_samp_1, signal_quant, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(time_samp_1, signal_quant_2, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
@@ -382,10 +419,12 @@ main_notebook.grid(row=0, column=0, padx=10, pady=10)
 tab_generate = ttk.Frame(main_notebook)
 tab_operations = ttk.Frame(main_notebook)
 tab_save = ttk.Frame(main_notebook)
+tab_sampAndQuant = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
 main_notebook.add(tab_operations, text="Operacje matematyczne")
 main_notebook.add(tab_save, text="Zapis i odczyt")
+main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
 
 # --- GENEROWANIE ---
 ttk.Label(tab_generate, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
@@ -407,15 +446,18 @@ sample_rate_entry = ttk.Entry(tab_generate, textvariable=sample_rate_var)
 sample_rate_entry.grid(row=1, column=1, padx=5, pady=5)
 
 ttk.Label(tab_generate, text="Amplituda (A):").grid(row=2, column=0, padx=5, pady=5)
-amplitude_entry = ttk.Entry(tab_generate)
+amplitude_var = tk.StringVar(value="1")
+amplitude_entry = ttk.Entry(tab_generate, textvariable=amplitude_var)
 amplitude_entry.grid(row=2, column=1, padx=5, pady=5)
 
 ttk.Label(tab_generate, text="Czas początkowy (t1):").grid(row=4, column=0, padx=5, pady=5)
-start_time_entry = ttk.Entry(tab_generate)
+start_time_var = tk.StringVar(value="0")
+start_time_entry = ttk.Entry(tab_generate, textvariable=start_time_var)
 start_time_entry.grid(row=4, column=1, padx=5, pady=5)
 
 ttk.Label(tab_generate, text="Czas trwania (d):").grid(row=5, column=0, padx=5, pady=5)
-duration_entry = ttk.Entry(tab_generate)
+duration_var = tk.StringVar(value="5")
+duration_entry = ttk.Entry(tab_generate, textvariable=duration_var)
 duration_entry.grid(row=5, column=1, padx=5, pady=5)
 
 duty_cycle_label = ttk.Label(tab_generate, text="Współczynnik wypełnienia (kw):")
@@ -425,7 +467,8 @@ duty_cycle_label_ts = ttk.Label(tab_generate, text="Czas skoku (ts):")
 duty_cycle_entry_ts = ttk.Entry(tab_generate)
 
 duty_cycle_label_t = ttk.Label(tab_generate, text="Okres (T):")
-duty_cycle_entry_t = ttk.Entry(tab_generate)
+duty_cycle_var = tk.StringVar(value="1")
+duty_cycle_entry_t = ttk.Entry(tab_generate, textvariable=duty_cycle_var)
 
 duty_cycle_label_p = ttk.Label(tab_generate, text="Prawdopodobieństwo (p):")
 duty_cycle_entry_p = ttk.Entry(tab_generate)
@@ -458,6 +501,19 @@ ttk.Button(tab_operations, text="Podziel", command=lambda: select_signals_for_op
 ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
 ttk.Button(tab_save, text="Wczytaj sygnał", command=lambda: load_signal(0)).grid(row=1, column=1, padx=5, pady=5)
 ttk.Button(tab_save, text="Wyświetl dane", command=lambda: load_signal(1)).grid(row=2, column=0, padx=5, pady=5)
+
+# --- PRÓBKOWANIE I KWANTYZACJA ---
+ttk.Label(tab_sampAndQuant, text="Częstotliwość próbkowania").grid(row=1, column=0, padx=50, pady=50)
+sample_rate_fun_var = tk.StringVar(value="10")
+sample_rate_fun_entry = ttk.Entry(tab_sampAndQuant, textvariable=sample_rate_fun_var)
+sample_rate_fun_entry.grid(row=1, column=1, padx=5, pady=5)
+ttk.Button(tab_sampAndQuant, text="Próbkuj", command=lambda: samplingFun(sample_rate_fun_entry.get())).grid(row=3, column=0, padx=10, pady=10)
+
+ttk.Label(tab_sampAndQuant, text="Liczba poziomów kwantyzacji").grid(row=2, column=0, padx=50, pady=50)
+num_levels_var = tk.StringVar(value="10")
+num_levels_entry = ttk.Entry(tab_sampAndQuant, textvariable=num_levels_var)
+num_levels_entry.grid(row=2, column=1, padx=5, pady=5)
+ttk.Button(tab_sampAndQuant, text="Kwantyzuj", command=lambda: quantizationFun(num_levels_entry.get())).grid(row=3, column=1, padx=10, pady=10)
 
 # --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)

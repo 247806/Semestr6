@@ -1,48 +1,50 @@
 import numpy as np
 
 
-def clippQuant(signal, time):
-    # new_time = []
-    # for value in time:
-    #     new_time.append(round(value - 0.001, 3))
-    #     new_time.append(round(value, 3))
-    #      # Dodajemy element mniejszy o 0.001
-    # new_time = new_time[1:]
-    # new_signal = []
-    # for value in signal:
-    #     new_signal.append(value)
-    #     new_signal.append(value)
-    #
-    # new_signal = new_signal[:-1]
-    #
+def clippQuant(signal, num_levels):
+    # new_signal = np.floor(signal)
+    # print("normal quant")
     # print(new_signal)
-    # print(new_time)
+    # return new_signal
 
-    new_time = np.round(time, 3)
-    new_signal = np.round(signal, 3)
-    print(new_signal)
-    print(new_time)
-    return new_time, new_signal
+    # Znajdź maksymalną i minimalną wartość sygnału
+    signal_min = np.min(signal)
+    signal_max = np.max(signal)
 
-def roundQuant(signal, time):
-    # new_time = []
-    # for value in time:
-    #     new_time.append(round(value - 0.001, 3))
-    #     new_time.append(round(value, 3))
-    #      # Dodajemy element mniejszy o 0.001
-    # new_time = new_time[1:]
-    # new_signal = []
-    # for value in signal:
-    #     new_signal.append(value)
-    #     new_signal.append(value)
-    #
-    # new_signal = new_signal[:-1]
-    #
+    # Przekształć sygnał do zakresu od 0 do 1
+    signal_normalized = (signal - signal_min) / (signal_max - signal_min)
+
+    # Kwantyzacja do określonej liczby poziomów
+    step = 1.0 / (num_levels - 1)  # Oblicz wielkość kroku kwantyzacji
+    quantized_signal = np.floor(signal_normalized / step) * step
+
+    # Przekształć z powrotem do oryginalnego zakresu
+    quantized_signal = quantized_signal * (signal_max - signal_min) + signal_min
+
+    print("Kwantyzowany sygnał:")
+    print(quantized_signal)
+    return quantized_signal
+
+def roundQuant(signal, num_levels):
+    # new_signal = np.round(signal)
+    # print("round quant")
     # print(new_signal)
-    # print(new_time)
+    # return new_signal
 
-    new_time = np.floor(time)+0.5
-    new_signal = np.floor(signal)+0.5
-    print(new_signal)
-    print(new_time)
-    return new_time, new_signal
+    # Znajdź maksymalną i minimalną wartość sygnału
+    signal_min = np.min(signal)
+    signal_max = np.max(signal)
+
+    # Przekształć sygnał do zakresu od 0 do 1
+    signal_normalized = (signal - signal_min) / (signal_max - signal_min)
+
+    # Kwantyzacja do określonej liczby poziomów
+    step = 1.0 / (num_levels - 1)  # Oblicz wielkość kroku kwantyzacji
+    quantized_signal = np.round(signal_normalized / step) * step
+
+    # Przekształć z powrotem do oryginalnego zakresu
+    quantized_signal = quantized_signal * (signal_max - signal_min) + signal_min
+
+    print("Kwantyzowany sygnał:")
+    print(quantized_signal)
+    return quantized_signal

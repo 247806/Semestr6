@@ -1,5 +1,8 @@
 import numpy as np
 
+def testFunction(time):
+    return time
+
 def random_uniform_signal(A, time):
     signal = np.random.uniform(-A, A, size=len(time))
     return signal
