@@ -10,7 +10,8 @@ def sampling(signal, time, sample_rate, T):
     print('dupa')
     print(T)
     print(d)
-    time_samp = np.arange(t1, d, 1 / sample_rate)
+    print(time)
+    time_samp = np.arange(t1, t1 + d, 1 / sample_rate)
 
     signal_samp = continousSignal.sinusoidal(A, T, time_samp)
     print(len(signal_samp))

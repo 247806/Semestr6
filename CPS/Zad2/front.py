@@ -14,6 +14,7 @@ import ioModule
 import signalOperation as so
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
+from reconstructionSignal import zeroOrderHold, firstOrderHold, sinc_interp, valueFunc
 from sampling import sampling
 
 signal_1 = None
@@ -32,7 +33,7 @@ T_2 = None
 
 def function_type(A, T, t1, d, kw, ts, p, signal):
     sample_rate = float(sample_rate_entry.get())
-    time = np.arange(t1, d, 1 / sample_rate)
+    time = np.arange(t1, t1 + d, 1 / sample_rate)
     print('dupa')
     print(time)
 
@@ -112,6 +113,12 @@ def samplingFun(sample_rate):
         signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1)
         plot_signal_samp(time_samp_1, signal_samp_1, sam_frame_1)
 
+    # t = np.linspace(3, 5, 5000)
+    # #time_temp, signal_temp = valueFunc(t, signal_samp_1, time_samp_1 )
+    # reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1) for ti in t])
+    #
+    # plot_signal_quant(t, reconstructed_values, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
+
 def quantizationFun(num_levels):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2
     if signal_notebook.index(signal_notebook.select()) == 1:
@@ -124,6 +131,28 @@ def quantizationFun(num_levels):
         signal_quant_2 = roundQuant(signal_samp_1, int(num_levels))
         plot_signal_quant(time_samp_1, signal_quant, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
         plot_signal_quant(time_samp_1, signal_quant_2, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
+
+def reconstructionFun(param):
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2
+
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        time_temp, signal_temp = zeroOrderHold(signal_samp_2, time_samp_2 )
+        plot_signal_quant(time_temp, signal_temp, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2)
+        time_temp, signal_temp = firstOrderHold(signal_samp_2, time_samp_2 )
+        plot_signal_quant(time_temp, signal_temp, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2)
+        t = np.linspace(3, 5, 5000)
+        reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
+        plot_signal_quant(t, reconstructed_values, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
+    else:
+        time_temp, signal_temp = zeroOrderHold(signal_samp_1, time_samp_1 )
+        plot_signal_quant(time_temp, signal_temp, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
+        time_temp, signal_temp = firstOrderHold(signal_samp_1, time_samp_1 )
+        plot_signal_quant(time_temp, signal_temp, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
+        len = np.round(abs(time_samp_1[-1] - time_samp_1[0]))*1000
+        print(len)
+        t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
+        reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
+        plot_signal_quant(t, reconstructed_values, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
@@ -420,11 +449,13 @@ tab_generate = ttk.Frame(main_notebook)
 tab_operations = ttk.Frame(main_notebook)
 tab_save = ttk.Frame(main_notebook)
 tab_sampAndQuant = ttk.Frame(main_notebook)
+tab_reconstruction = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
 main_notebook.add(tab_operations, text="Operacje matematyczne")
 main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
+main_notebook.add(tab_reconstruction, text="Rekonstrukcja")
 
 # --- GENEROWANIE ---
 ttk.Label(tab_generate, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
@@ -515,6 +546,14 @@ num_levels_entry = ttk.Entry(tab_sampAndQuant, textvariable=num_levels_var)
 num_levels_entry.grid(row=2, column=1, padx=5, pady=5)
 ttk.Button(tab_sampAndQuant, text="Kwantyzuj", command=lambda: quantizationFun(num_levels_entry.get())).grid(row=3, column=1, padx=10, pady=10)
 
+# --- RECONSTRUKCJA ---
+ttk.Label(tab_reconstruction, text="Parametr funkcji sinc").grid(row=1, column=0, padx=50, pady=50)
+param_var = tk.StringVar(value="10")
+param_entry = ttk.Entry(tab_reconstruction, textvariable=param_var)
+param_entry.grid(row=1, column=1, padx=5, pady=5)
+ttk.Button(tab_reconstruction, text="Zrekonstruuj", command=lambda: reconstructionFun(param_var.get())).grid(row=2, column=0, padx=10, pady=10)
+
+
 # --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)
 signal_notebook.grid(row=0, column=2, rowspan=10, columnspan=10, padx=10, pady=10)
@@ -534,16 +573,25 @@ histogram_frame_1 = ttk.Frame(notebook)
 param_frame_1 = ttk.Frame(notebook)
 sam_frame_1 = ttk.Frame(notebook)
 quad_frame = ttk.Notebook(notebook)
+rec_frame = ttk.Notebook(notebook)
 notebook.add(plot_frame_1, text="Wykres")
 notebook.add(histogram_frame_1, text="Histogram")
 notebook.add(param_frame_1, text="Parametry")
 notebook.add(sam_frame_1, text="Próbkowanie")
 notebook.add(quad_frame, text="Kwantyzacja")
+notebook.add(rec_frame, text="Rekonstrukcja")
 
 quad1_frame_1 = ttk.Frame(quad_frame)
 quad2_frame_1 = ttk.Frame(quad_frame)
 quad_frame.add(quad1_frame_1, text="Kwantyzacja z obcięciem")
 quad_frame.add(quad2_frame_1, text="Kwantyzacja z zaokrągleniem")
+
+rec1_frame_1 = ttk.Frame(rec_frame)
+rec2_frame_1 = ttk.Frame(rec_frame)
+rec3_frame_1 = ttk.Frame(rec_frame)
+rec_frame.add(rec1_frame_1, text="Zero-order hold")
+rec_frame.add(rec2_frame_1, text="First-order hold")
+rec_frame.add(rec3_frame_1, text="Sinc Interpolation")
 
 notebook = ttk.Notebook(signal_frame_2)
 notebook.pack(expand=True, fill='both')
@@ -552,16 +600,25 @@ histogram_frame_2 = ttk.Frame(notebook)
 param_frame_2 = ttk.Frame(notebook)
 sam_frame_2 = ttk.Frame(notebook)
 quad_frame = ttk.Notebook(notebook)
+rec_frame = ttk.Notebook(notebook)
 notebook.add(plot_frame_2, text="Wykres")
 notebook.add(histogram_frame_2, text="Histogram")
 notebook.add(param_frame_2, text="Parametry")
 notebook.add(sam_frame_2, text="Próbkowanie")
 notebook.add(quad_frame, text="Kwantyzacja")
+notebook.add(rec_frame, text="Rekonstrukcja")
 
 quad1_frame_2 = ttk.Frame(quad_frame)
 quad2_frame_2 = ttk.Frame(quad_frame)
 quad_frame.add(quad1_frame_2, text="Kwantyzacja z obcięciem")
 quad_frame.add(quad2_frame_2, text="Kwantyzacja z zaokrągleniem")
+
+rec1_frame_2 = ttk.Frame(rec_frame)
+rec2_frame_2 = ttk.Frame(rec_frame)
+rec3_frame_2 = ttk.Frame(rec_frame)
+rec_frame.add(rec1_frame_2, text="Zero-order hold")
+rec_frame.add(rec2_frame_2, text="First-order hold")
+rec_frame.add(rec3_frame_2, text="Sinc Interpolation")
 
 
 notebook = ttk.Notebook(signal_frame_3)
