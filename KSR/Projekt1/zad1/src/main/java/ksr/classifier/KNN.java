@@ -69,6 +69,7 @@ public class KNN {
                 List<Object> normalizedFeature = normalization.normalize(article.getFeatures());
                 article.setFeatures(normalizedFeature);
             }
+            Collections.shuffle(allArticles);
             splitData(allArticles);
             saveFeaturesToFile(allArticles, "allArticles.json");
             if (!numbers.isEmpty()) {
@@ -79,7 +80,6 @@ public class KNN {
         } else {
             List <Article> allArticlesLoaded = loadArticlesFromJson("allArticles.json");
             splitData(allArticlesLoaded);
-//            saveFeaturesToFile(allArticlesLoaded, "allArticles.json");
             if (!numbers.isEmpty()) {
                 this.testSet = deleteFeature(testSet, numbers);
                 this.trainingSet = deleteFeature(trainingSet, numbers);
@@ -89,7 +89,7 @@ public class KNN {
 
         int counter2 = 1;
         for (Article article : testSet) {
-            System.out.println(counter2++ + " / " + testSet.size());
+//            System.out.println(counter2++ + " / " + testSet.size());
             classifyArticle(article, metrics);
         }
 
@@ -114,59 +114,41 @@ public class KNN {
     }
 
     private void classifyArticle(Article article, Metrics metrics) {
-        Map<Article, Double> distances = new HashMap<>();
-        for (Article trainingArticle : trainingSet) {
-            double distance = metrics.calculate(article, trainingArticle, ngramMethod);
-            distances.put(trainingArticle, distance);
-        }
+        Map<Article, Double> distances = trainingSet.stream()
+                .collect(Collectors.toMap(
+                        trainingArticle -> trainingArticle,
+                        trainingArticle -> metrics.calculate(article, trainingArticle, ngramMethod)
+                ));
 
         List<Map.Entry<Article, Double>> sortedDistances = new ArrayList<>(distances.entrySet());
         sortedDistances.sort(Map.Entry.comparingByValue());
 
         // Wybieranie K najbliższych artykułów
-        List<Article> nearestNeighbors = new ArrayList<>();
-        for (int i = 0; i < K; i++) {
-            nearestNeighbors.add(sortedDistances.get(i).getKey());
-        }
+        List<Article> nearestNeighbors = sortedDistances.stream().limit(K).map(Map.Entry::getKey).collect(Collectors.toList());
 
         // Liczenie liczby wystąpień miejsca (place) wśród K najbliższych sąsiadów
-        Map<String, Integer> placeCounts = new HashMap<>();
-        for (Article neighbor : nearestNeighbors) {
-            String place = neighbor.getPlace();
-            placeCounts.put(place, placeCounts.getOrDefault(place, 0) + 1);
-        }
-//        System.out.println("Zliczone miejsca: " + placeCounts);
+        Map<String, Long> placeCounts = nearestNeighbors.stream()
+                .collect(Collectors.groupingBy(Article::getPlace, Collectors.counting()));
 
-        // Sortowanie miejsc według liczby wystąpień
+        long maxValue = placeCounts.values().stream().max(Long::compareTo).orElse(0L);
 
-        List<Map.Entry<String, Integer>> placeCountsList = new ArrayList<>(placeCounts.entrySet());
-        placeCountsList.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+        List<String> placeCountsList = placeCounts.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
         if (placeCountsList.size() > 1) {
-            if (placeCountsList.get(0).getValue() > placeCountsList.get(1).getValue()) {
-                String predictedPlace = placeCountsList.getFirst().getKey();
-                article.setPredictedPlace(predictedPlace);
-            } else {
+            String predictedPlace = nearestNeighbors.stream().collect(Collectors.groupingBy(
+                    Article::getPlace,
+                    Collectors.summingDouble(article1 -> 1.0 / distances.get(article1)) // Odwrotność odległości
+                    )).entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .get()
+                    .getKey();
+            article.setPredictedPlace(predictedPlace);
 
-                Map<String, Double> placeWeights = new HashMap<>();
-                for (int i = 0; i < nearestNeighbors.size(); i++) {
-                    Article neighbor = sortedDistances.get(i).getKey();
-                    String place = neighbor.getPlace();
-                    double weight = 1.0 / sortedDistances.get(i).getValue();  // Odwrotność odległości, im mniejsza odległość, tym większa waga
-                    placeWeights.put(place, placeWeights.getOrDefault(place, 0.0) + weight);
-                }
-                // Wybór miejsca z największą wagą
-                String predictedPlace = placeWeights.entrySet().stream()
-                        .max(Map.Entry.comparingByValue())
-                        .get()
-                        .getKey();
-
-                // Ustawienie przewidywanego miejsca w artykule
-                article.setPredictedPlace(predictedPlace);
-
-            }
         } else {
-            String predictedPlace = placeCountsList.getFirst().getKey();
+            String predictedPlace = placeCountsList.getFirst();
             article.setPredictedPlace(predictedPlace);
         }
 
@@ -174,34 +156,16 @@ public class KNN {
     }
 
     private void splitData(List<Article> allArticles) {
-        Map<String, List<Article>> articlesPerCountry = allArticles.stream()
-                .collect(Collectors.groupingBy(Article::getPlace));
-
-        for (Map.Entry<String, List<Article>> entry : articlesPerCountry.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue().size());
-            List<Article> articles = entry.getValue();
-//            Collections.shuffle(articles);
-
-            int splitIndex = (int) (articles.size() * SET_PROPORTION);
-            this.trainingSet.addAll(articles.subList(0, splitIndex));
-            this.testSet.addAll(articles.subList(splitIndex, articles.size()));
-        }
-
+        allArticles.stream().collect(Collectors.groupingBy(Article::getPlace)).forEach(
+                (place, articles) -> {
+                    int splitIndex = (int) (articles.size() * SET_PROPORTION);
+                    this.trainingSet.addAll(articles.subList(0, splitIndex));
+                    this.testSet.addAll(articles.subList(splitIndex, articles.size()));
+                }
+        );
 
         System.out.println("Zbiór treningowy: " + trainingSet.size());
         System.out.println("Zbiór testowy: " + testSet.size());
-        Map<String, List<Article>> articlesTraining = this.trainingSet.stream()
-                .collect(Collectors.groupingBy(Article::getPlace));
-        Map<String, List<Article>> articlesTest = this.testSet.stream()
-                .collect(Collectors.groupingBy(Article::getPlace));
-
-        for (Map.Entry<String, List<Article>> entry : articlesTraining.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue().size());
-        }
-
-        for (Map.Entry<String, List<Article>> entry : articlesTest.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue().size());
-        }
 
     }
 
@@ -235,15 +199,13 @@ public class KNN {
             int counter = 0;
             List<Object> features = a.getFeatures();
             for (Integer i : numbers) {
-                features.remove((int)i - counter);
+                features.remove(i - counter);
                 counter++;
             }
             a.setFeatures(features);
             newList.add(a);
         }
 
-        articles.forEach(a -> System.out.println(a.getFeatures()));
-        newList.forEach(a -> System.out.println(a.getFeatures()));
         return newList;
     }
 

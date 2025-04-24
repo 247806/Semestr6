@@ -5,6 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import ksr.classifier.KNN;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +135,16 @@ public class HelloController {
             error.setText("Błąd: " + e.getMessage());
         }
 
+    }
+
+    @FXML
+    protected void onResetButtonClick() {
+        File file = new File("allArticles.json");
+        if (file.exists()) {
+            file.delete();
+        } else {
+            error.setText("Wartości jeszcze nie zostały ustalone.");
+        }
     }
 
     public List<Integer> getSelectedOptions() {
