@@ -31,6 +31,16 @@ singal_samp_2 = None
 time_samp_2 = None
 T_1 = None
 T_2 = None
+signal_ko_1 = None
+signal_ko_2 = None
+signal_kz_1 = None
+signal_kz_2 = None
+signal_rz_1 = None
+signal_rz_2 = None
+signal_rp_1 = None
+signal_rp_2 = None
+signal_rs_1 = None
+signal_rs_2 = None
 
 
 def function_type(A, T, t1, d, kw, ts, p, signal):
@@ -115,55 +125,118 @@ def samplingFun(sample_rate):
         signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1)
         plot_signal_samp(time_samp_1, signal_samp_1, sam_frame_1)
 
-    # t = np.linspace(3, 5, 5000)
-    # #time_temp, signal_temp = valueFunc(t, signal_samp_1, time_samp_1 )
-    # reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1) for ti in t])
-    #
-    # plot_signal_quant(t, reconstructed_values, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
-
 def quantizationFun(num_levels):
-    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
     if signal_notebook.index(signal_notebook.select()) == 1:
-        signal_quant = clippQuant(singal_samp_2, int(num_levels))
-        signal_quant_2 = roundQuant(singal_samp_2, int(num_levels))
-        plot_signal_quant(time_samp_2, signal_quant, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2)
-        plot_signal_quant(time_samp_2, signal_quant_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2)
+        signal_ko_2 = clippQuant(singal_samp_2, int(num_levels))
+        signal_kz_2 = roundQuant(singal_samp_2, int(num_levels))
+        plot_signal_quant(time_samp_2, signal_ko_2, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_signal_quant(time_samp_2, signal_kz_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2)
     else:
-        signal_quant = clippQuant(signal_samp_1, int(num_levels))
-        signal_quant_2 = roundQuant(signal_samp_1, int(num_levels))
-        plot_signal_quant(time_samp_1, signal_quant, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
-        plot_signal_quant(time_samp_1, signal_quant_2, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
+        signal_ko_1 = clippQuant(signal_samp_1, int(num_levels))
+        signal_kz_1 = roundQuant(signal_samp_1, int(num_levels))
+        plot_signal_quant(time_samp_1, signal_ko_1, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(time_samp_1, signal_kz_1, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
 
 def reconstructionFun(param):
-    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_2
 
     if signal_notebook.index(signal_notebook.select()) == 1:
-        time_temp, signal_temp = zeroOrderHold(signal_samp_2, time_samp_2 )
-        plot_signal_quant(time_temp, signal_temp, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2)
-        time_temp, signal_temp = firstOrderHold(signal_samp_2, time_samp_2 )
-        plot_signal_quant(time_temp, signal_temp, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2)
+        time_temp, signal_rz_2 = zeroOrderHold(signal_samp_2, time_samp_2 )
+        plot_signal_quant(time_temp, signal_rz_2, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2)
+        time_temp, signal_rp_2 = firstOrderHold(signal_samp_2, time_samp_2 )
+        plot_signal_quant(time_temp, signal_rp_2, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2)
         t = np.linspace(3, 5, 5000)
-        reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
-        plot_signal_quant(t, reconstructed_values, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
+        signal_rs_2 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
+        plot_signal_quant(t, signal_rs_2, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
     else:
-        time_temp, signal_temp = zeroOrderHold(signal_samp_1, time_samp_1 )
-        plot_signal_quant(time_temp, signal_temp, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
-        time_temp_1, signal_temp_2 = firstOrderHold(signal_samp_1, time_samp_1 )
-        plot_signal_quant(time_temp_1, signal_temp_2, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
+        time_temp, signal_rz_1 = zeroOrderHold(signal_samp_1, time_samp_1 )
+        plot_signal_quant(time_temp, signal_rz_1, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
+        time_temp_1, signal_rp_1 = firstOrderHold(signal_samp_1, time_samp_1 )
+        plot_signal_quant(time_temp_1, signal_rp_1, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
         len = np.round(abs(time_samp_1[-1] - time_samp_1[0]))*1000
         print(len)
         t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
-        reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
-        plot_signal_quant(t, reconstructed_values, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
-    temp = mse(signal_1, signal_temp_2)
-    temp2 = snr(signal_1, signal_temp_2)
-    temp3 = psnr(signal_1, signal_temp_2)
-    temp4 = max_diff(signal_1, signal_temp_2)
-    print(f"MSE: {temp}")
-    print(f"SNR: {temp2}")
-    print(f"PSNR: {temp3}")
-    print(f"MD: {temp4}")
+        signal_rs_1 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
+        plot_signal_quant(t, signal_rs_1, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
 
+def similarityCheck(orginal, reconstructed):
+    temp = mse(orginal, reconstructed)
+    temp2 = snr(orginal, reconstructed)
+    temp3 = psnr(orginal, reconstructed)
+    temp4 = max_diff(orginal, reconstructed)
+
+    return temp, temp2, temp3, temp4
+
+def similaryCheckFun():
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_2,  signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
+    if signal_sim.get() == "Sygnał 1":
+        orginal = signal_1
+    elif signal_sim.get() == "Sygnał 2":
+        orginal = signal_2
+    elif signal_sim.get() == "Sygnał 3":
+        orginal = signal_3
+    elif signal_sim.get() == "Sygnał 1 Próbkowanie":
+        orginal = signal_samp_1
+    elif signal_sim.get() == "Sygnał 1 Kwantyzacja z obcięciem":
+        orginal = signal_ko_1
+    elif signal_sim.get() == "Sygnał 1 Kwantyzacja z zaokrągleniem":
+        orginal = signal_kz_1
+    elif signal_sim.get() == "Sygnał 1 Rekonstrukcja zerowego rzędu":
+        orginal = signal_rz_1
+    elif signal_sim.get() == "Sygnał 1 Rekonstrukcja pierwszego rzędu":
+        orginal = signal_rp_1
+    elif signal_sim.get() == "Sygnał 1 Rekonstrukcja funkcja sinc":
+        orginal = signal_rs_1
+    elif signal_sim.get() == "Sygnał 2 Próbkowanie":
+        orginal = signal_samp_2
+    elif signal_sim.get() == "Sygnał 2 Kwantyzacja z obcięciem":
+        orginal = signal_ko_2
+    elif signal_sim.get() == "Sygnał 2 Kwantyzacja z zaokrągleniem":
+        orginal = signal_kz_2
+    elif signal_sim.get() == "Sygnał 2 Rekonstrukcja zerowego rzędu":
+        orginal = signal_rz_2
+    elif signal_sim.get() == "Sygnał 2 Rekonstrukcja pierwszego rzędu":
+        orginal = signal_rp_2
+    elif signal_sim.get() == "Sygnał 2 Rekonstrukcja funkcja sinc":
+        orginal = signal_rs_2
+
+    if signal_sim_2.get() == "Sygnał 1":
+        reconstructed = signal_1
+    elif signal_sim_2.get() == "Sygnał 2":
+        reconstructed = signal_2
+    elif signal_sim_2.get() == "Sygnał 3":
+        reconstructed = signal_3
+    elif signal_sim_2.get() == "Sygnał 1 Próbkowanie":
+        reconstructed = signal_samp_1
+    elif signal_sim_2.get() == "Sygnał 1 Kwantyzacja z obcięciem":
+        reconstructed = signal_ko_1
+    elif signal_sim_2.get() == "Sygnał 1 Kwantyzacja z zaokrągleniem":
+        reconstructed = signal_kz_1
+    elif signal_sim_2.get() == "Sygnał 1 Rekonstrukcja zerowego rzędu":
+        reconstructed = signal_rz_1
+    elif signal_sim_2.get() == "Sygnał 1 Rekonstrukcja pierwszego rzędu":
+        reconstructed = signal_rp_1
+    elif signal_sim_2.get() == "Sygnał 1 Rekonstrukcja funkcja sinc":
+        reconstructed = signal_rs_1
+    elif signal_sim_2.get() == "Sygnał 2 Próbkowanie":
+        reconstructed = signal_samp_2
+    elif signal_sim_2.get() == "Sygnał 2 Kwantyzacja z obcięciem":
+        reconstructed = signal_ko_2
+    elif signal_sim_2.get() == "Sygnał 2 Kwantyzacja z zaokrągleniem":
+        reconstructed = signal_kz_2
+    elif signal_sim_2.get() == "Sygnał 2 Rekonstrukcja zerowego rzędu":
+        reconstructed = signal_rz_2
+    elif signal_sim_2.get() == "Sygnał 2 Rekonstrukcja pierwszego rzędu":
+        reconstructed = signal_rp_2
+    elif signal_sim_2.get() == "Sygnał 2 Rekonstrukcja funkcja sinc":
+        reconstructed = signal_rs_2
+
+    temp, temp1, temp2, temp3 = similarityCheck(orginal, reconstructed)
+    print("temp: ", temp)
+    print("temp1: ", temp1)
+    print("temp2: ", temp2)
+    print('temp3:', temp3)
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
@@ -447,7 +520,7 @@ root.tk.call("source", tcl_path)
 root.set_theme("arc")  # Możesz zmienić "arc" na inny motyw
 print(root.get_themes())
 root.title("Generator sygnałów")
-root.geometry("1200x600")
+root.geometry("1320x600")
 root.resizable(False, False)
 
 
@@ -461,12 +534,14 @@ tab_operations = ttk.Frame(main_notebook)
 tab_save = ttk.Frame(main_notebook)
 tab_sampAndQuant = ttk.Frame(main_notebook)
 tab_reconstruction = ttk.Frame(main_notebook)
+tab_similarity = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
 main_notebook.add(tab_operations, text="Operacje matematyczne")
 main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
 main_notebook.add(tab_reconstruction, text="Rekonstrukcja")
+main_notebook.add(tab_similarity, text="Porównanie")
 
 # --- GENEROWANIE ---
 ttk.Label(tab_generate, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
@@ -564,6 +639,46 @@ param_entry = ttk.Entry(tab_reconstruction, textvariable=param_var)
 param_entry.grid(row=1, column=1, padx=5, pady=5)
 ttk.Button(tab_reconstruction, text="Zrekonstruuj", command=lambda: reconstructionFun(param_var.get())).grid(row=2, column=0, padx=10, pady=10)
 
+# --- PORÓWNANIE ---
+ttk.Label(tab_similarity, text="Pierwszy sygnał:").grid(row=0, column=0, padx=5, pady=5)
+signal_sim = ttk.Combobox(tab_similarity,
+                               values=["Sygnał 1", "Sygnał 2", "Sygnał 3",
+                                       "Sygnał 1 Próbkowanie",
+                                       "Sygnał 1 Kwantyzacja z obcięciem",
+                                       "Sygnał 1 Kwantyzacja z zaokrągleniem",
+                                       "Sygnał 1 Rekonstrukcja zerowego rzędu",
+                                       "Sygnał 1 Rekonstrukcja pierwszego rzędu",
+                                       "Sygnał 1 Rekonstrukcja funkcja sinc",
+                                       "Sygnał 2 Próbkowanie",
+                                       "Sygnał 2 Kwantyzacja z obcięciem",
+                                       "Sygnał 2 Kwantyzacja z zaokrągleniem",
+                                       "Sygnał 2 Rekonstrukcja zerowego rzędu",
+                                       "Sygnał 2 Rekonstrukcja pierwszego rzędu",
+                                       "Sygnał 2 Rekonstrukcja funkcja sinc"],
+                               state="readonly", width=50)
+signal_sim.grid(row=1, column=0, padx=5, pady=5)
+signal_sim.bind("<<ComboboxSelected>>")
+
+ttk.Label(tab_similarity, text="Drugi sygnał:").grid(row=0, column=1, padx=5, pady=5)
+signal_sim_2 = ttk.Combobox(tab_similarity,
+                               values=["Sygnał 1", "Sygnał 2", "Sygnał 3",
+                                       "Sygnał 1 Próbkowanie",
+                                       "Sygnał 1 Kwantyzacja z obcięciem",
+                                       "Sygnał 1 Kwantyzacja z zaokrągleniem",
+                                       "Sygnał 1 Rekonstrukcja zerowego rzędu",
+                                       "Sygnał 1 Rekonstrukcja pierwszego rzędu",
+                                       "Sygnał 1 Rekonstrukcja funkcja sinc",
+                                       "Sygnał 2 Próbkowanie",
+                                       "Sygnał 2 Kwantyzacja z obcięciem",
+                                       "Sygnał 2 Kwantyzacja z zaokrągleniem",
+                                       "Sygnał 2 Rekonstrukcja zerowego rzędu",
+                                       "Sygnał 2 Rekonstrukcja pierwszego rzędu",
+                                       "Sygnał 2 Rekonstrukcja funkcja sinc"],
+                               state="readonly", width=50)
+signal_sim_2.grid(row=1, column=1, padx=5, pady=5)
+signal_sim_2.bind("<<ComboboxSelected>>")
+
+ttk.Button(tab_similarity, text="Porównaj", command=lambda: similaryCheckFun()).grid(row=2, column=0, padx=10, pady=10)
 
 # --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)
