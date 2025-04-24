@@ -3,7 +3,7 @@ import numpy as np
 def operate_signals(operation, signal_1, time_1, signal_2, time_2):
     if signal_1 is None or signal_2 is None:
         print("Brak dwóch sygnałów do wykonania operacji.")
-        return
+        return None
 
     signal_3 = np.copy(signal_1)
     time_3 = np.copy(time_1)
@@ -14,7 +14,7 @@ def operate_signals(operation, signal_1, time_1, signal_2, time_2):
 
     if min_time >= max_time:
         print("Brak wspólnego przedziału czasowego.")
-        return
+        return None
 
     common_idx_1 = np.where((time_1 >= min_time) & (time_1 <= max_time))
     common_idx_2 = np.where((time_2 >= min_time) & (time_2 <= max_time))
@@ -40,7 +40,7 @@ def operate_signals(operation, signal_1, time_1, signal_2, time_2):
             result_signal = np.where(signal_2_aligned != 0, signal_1_interpolated / signal_2_aligned, 0)
     else:
         print("Nieznana operacja.")
-        return
+        return None
 
     mask = (time_3 >= min_time) & (time_3 <= max_time)
     if result_signal.shape[0] != mask.sum():

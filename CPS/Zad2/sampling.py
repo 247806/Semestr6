@@ -7,7 +7,7 @@ def sampling(signal, time, sample_rate, T):
     A = max(abs(s) for s in signal)
     t1 = time[0]
     d = np.round(abs(time[-1] - time[0]),2)
-    print('dupa')
+    print('Sampling')
     print(T)
     print(d)
     print(time)

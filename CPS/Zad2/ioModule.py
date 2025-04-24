@@ -40,7 +40,7 @@ def save_signal(signal, time):
 def load_signal():
     file_path = filedialog.askopenfilename(filetypes=[("Binary Files", "*.bin"), ("All Files", "*.*")])
     if not file_path:
-        return
+        return 0
 
     time_temp, signal_temp = [], []
 

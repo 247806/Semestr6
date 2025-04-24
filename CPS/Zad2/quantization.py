@@ -2,11 +2,6 @@ import numpy as np
 
 
 def clippQuant(signal, num_levels):
-    # new_signal = np.floor(signal)
-    # print("normal quant")
-    # print(new_signal)
-    # return new_signal
-
     # Znajdź maksymalną i minimalną wartość sygnału
     signal_min = np.min(signal)
     signal_max = np.max(signal)
@@ -26,11 +21,6 @@ def clippQuant(signal, num_levels):
     return quantized_signal
 
 def roundQuant(signal, num_levels):
-    # new_signal = np.round(signal)
-    # print("round quant")
-    # print(new_signal)
-    # return new_signal
-
     # Znajdź maksymalną i minimalną wartość sygnału
     signal_min = np.min(signal)
     signal_max = np.max(signal)

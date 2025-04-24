@@ -4,7 +4,6 @@ from tkinter import ttk
 
 import matplotlib.pyplot as plt
 import numpy as np
-from jupyter_lsp.specs import md
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from ttkthemes import ThemedTk
 
@@ -15,7 +14,7 @@ import ioModule
 import signalOperation as so
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
-from reconstructionSignal import zeroOrderHold, firstOrderHold, sinc_interp, valueFunc
+from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
 from similarityMeasure import mse, snr, psnr, max_diff
 
@@ -46,8 +45,6 @@ signal_rs_2 = None
 def function_type(A, T, t1, d, kw, ts, p, signal):
     sample_rate = float(sample_rate_entry.get())
     time = np.arange(t1, t1 + d, 1 / sample_rate)
-    print('dupa')
-    print(time)
 
     if signal_type.get() == "Sygnał sinusoidalny":
         signal = continousSignal.sinusoidal(A, T, time)
@@ -86,7 +83,7 @@ def generate_signal():
         elif signal_notebook.index(signal_notebook.select()) == 0:
             T_1 = T
     else:
-        None
+        T = 0
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
     kw = float(duty_cycle_entry.get()) if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"] else None
@@ -112,9 +109,6 @@ def generate_signal():
         d = full_periods * T
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
 
-
-
-
 def samplingFun(sample_rate):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2
 
@@ -139,34 +133,38 @@ def quantizationFun(num_levels):
         plot_signal_quant(time_samp_1, signal_kz_1, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
 
 def reconstructionFun(param):
-    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_2
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_1
+
 
     if signal_notebook.index(signal_notebook.select()) == 1:
-        time_temp, signal_rz_2 = zeroOrderHold(signal_samp_2, time_samp_2 )
+        time_temp, signal_rz_2 = zeroOrderHold(signal_samp_2, time_samp_2, time_2)
         plot_signal_quant(time_temp, signal_rz_2, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2)
         time_temp, signal_rp_2 = firstOrderHold(signal_samp_2, time_samp_2 )
         plot_signal_quant(time_temp, signal_rp_2, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2)
-        t = np.linspace(3, 5, 5000)
+        len = np.round(abs(time_samp_2[-1] - time_samp_2[0]))*1000
+        t = np.linspace(time_samp_2[0], time_samp_2[-1], int(len))
         signal_rs_2 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
         plot_signal_quant(t, signal_rs_2, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
     else:
-        time_temp, signal_rz_1 = zeroOrderHold(signal_samp_1, time_samp_1 )
+        time_temp, signal_rz_1 = zeroOrderHold(signal_samp_1, time_samp_1, time_1)
         plot_signal_quant(time_temp, signal_rz_1, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
         time_temp_1, signal_rp_1 = firstOrderHold(signal_samp_1, time_samp_1 )
         plot_signal_quant(time_temp_1, signal_rp_1, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
         len = np.round(abs(time_samp_1[-1] - time_samp_1[0]))*1000
-        print(len)
         t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
         signal_rs_1 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
         plot_signal_quant(t, signal_rs_1, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
 
-def similarityCheck(orginal, reconstructed):
-    temp = mse(orginal, reconstructed)
-    temp2 = snr(orginal, reconstructed)
-    temp3 = psnr(orginal, reconstructed)
-    temp4 = max_diff(orginal, reconstructed)
+def similarityCheck():
+    temp, temp2, temp3, temp4 = similaryCheckFun()
 
-    return temp, temp2, temp3, temp4
+    ttk.Label(tab_similarity, text=f"MSE: {temp:.3f}").grid(row=3, column=0, padx=10, pady=10)
+
+    ttk.Label(tab_similarity, text=f"SNR: {temp2:.3f}").grid(row=4, column=0, padx=10, pady=10)
+
+    ttk.Label(tab_similarity, text=f"PSNR: {temp3:.3f}").grid(row=5, column=0, padx=10, pady=10)
+
+    ttk.Label(tab_similarity, text=f"MD: {temp4:.3f}").grid(row=6, column=0, padx=10, pady=10)
 
 def similaryCheckFun():
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_2,  signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
@@ -232,11 +230,13 @@ def similaryCheckFun():
     elif signal_sim_2.get() == "Sygnał 2 Rekonstrukcja funkcja sinc":
         reconstructed = signal_rs_2
 
-    temp, temp1, temp2, temp3 = similarityCheck(orginal, reconstructed)
-    print("temp: ", temp)
-    print("temp1: ", temp1)
-    print("temp2: ", temp2)
-    print('temp3:', temp3)
+    temp = mse(orginal, reconstructed)
+    temp2 = snr(orginal, reconstructed)
+    temp3 = psnr(orginal, reconstructed)
+    temp4 = max_diff(orginal, reconstructed)
+
+    return temp, temp2, temp3, temp4
+
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
@@ -297,19 +297,19 @@ def create_parameters_tab(param, signal, time):
         eff_power_label.pack(padx=5, pady=5)
 
     else:
-        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_dis(signal, time):.3f}")
+        avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_dis(signal):.3f}")
         avg_label.pack(padx=5, pady=5)
 
-        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal, time):.3f}")
+        abs_avg_label = ttk.Label(param, text=f"Średnia bezwzględna: {cp.abs_avg_dis(signal):.3f}")
         abs_avg_label.pack(padx=5, pady=5)
 
-        power_label = ttk.Label(param, text=f"Moc: {cp.power_dis(signal, time):.3f}")
+        power_label = ttk.Label(param, text=f"Moc: {cp.power_dis(signal):.3f}")
         power_label.pack(padx=5, pady=5)
 
-        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_dis(signal, time):.3f}")
+        dev_label = ttk.Label(param, text=f"Wariancja: {cp.dev_dis(signal):.3f}")
         dev_label.pack(padx=5, pady=5)
 
-        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal, time):.3f}")
+        eff_power_label = ttk.Label(param, text=f"Wartość skuteczna: {cp.eff_power_dis(signal):.3f}")
         eff_power_label.pack(padx=5, pady=5)
 
 def plot_empty_chart():
@@ -520,7 +520,7 @@ root.tk.call("source", tcl_path)
 root.set_theme("arc")  # Możesz zmienić "arc" na inny motyw
 print(root.get_themes())
 root.title("Generator sygnałów")
-root.geometry("1320x600")
+root.geometry("1360x600")
 root.resizable(False, False)
 
 
@@ -678,7 +678,7 @@ signal_sim_2 = ttk.Combobox(tab_similarity,
 signal_sim_2.grid(row=1, column=1, padx=5, pady=5)
 signal_sim_2.bind("<<ComboboxSelected>>")
 
-ttk.Button(tab_similarity, text="Porównaj", command=lambda: similaryCheckFun()).grid(row=2, column=0, padx=10, pady=10)
+ttk.Button(tab_similarity, text="Porównaj", command=lambda: similarityCheck()).grid(row=2, column=0, padx=10, pady=10)
 
 # --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)

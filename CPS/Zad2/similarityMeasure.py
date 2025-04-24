@@ -1,7 +1,12 @@
-import numpy as np
 import math
 
 def mse(original, reconstructed):
+    if original is None:
+        print("original is None")
+        return 0
+    if reconstructed is None:
+        print("reconstructed is None")
+        return 0
     if len(reconstructed) != len(original):
         print("Lists must be of the same length.")
         return 0
@@ -44,10 +49,10 @@ def max_diff(original, reconstructed):
         print("Lists must be of the same length.")
         return 0
 
-    max_diff = float('-inf')
+    max_diffs = float('-inf')
     for i in range(len(reconstructed)):
         diff = abs(reconstructed[i] - original[i])
-        if diff > max_diff:
-            max_diff = diff
+        if diff > max_diffs:
+            max_diffs = diff
 
-    return max_diff
+    return max_diffs
