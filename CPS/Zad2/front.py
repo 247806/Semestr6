@@ -4,6 +4,7 @@ from tkinter import ttk
 
 import matplotlib.pyplot as plt
 import numpy as np
+from jupyter_lsp.specs import md
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from ttkthemes import ThemedTk
 
@@ -16,6 +17,7 @@ from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_q
 from quantization import clippQuant, roundQuant
 from reconstructionSignal import zeroOrderHold, firstOrderHold, sinc_interp, valueFunc
 from sampling import sampling
+from similarityMeasure import mse, snr, psnr, max_diff
 
 signal_1 = None
 time_1 = None
@@ -146,13 +148,22 @@ def reconstructionFun(param):
     else:
         time_temp, signal_temp = zeroOrderHold(signal_samp_1, time_samp_1 )
         plot_signal_quant(time_temp, signal_temp, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
-        time_temp, signal_temp = firstOrderHold(signal_samp_1, time_samp_1 )
-        plot_signal_quant(time_temp, signal_temp, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
+        time_temp_1, signal_temp_2 = firstOrderHold(signal_samp_1, time_samp_1 )
+        plot_signal_quant(time_temp_1, signal_temp_2, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
         len = np.round(abs(time_samp_1[-1] - time_samp_1[0]))*1000
         print(len)
         t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
         reconstructed_values = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
         plot_signal_quant(t, reconstructed_values, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
+    temp = mse(signal_1, signal_temp_2)
+    temp2 = snr(signal_1, signal_temp_2)
+    temp3 = psnr(signal_1, signal_temp_2)
+    temp4 = max_diff(signal_1, signal_temp_2)
+    print(f"MSE: {temp}")
+    print(f"SNR: {temp2}")
+    print(f"PSNR: {temp3}")
+    print(f"MD: {temp4}")
+
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
