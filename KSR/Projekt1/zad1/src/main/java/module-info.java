@@ -9,6 +9,7 @@ module ksr {
     requires jdk.compiler;
     requires com.jfoenix;
     requires javafx.controls;
+    requires org.controlsfx.controls;
 
     opens ksr to javafx.fxml;
     exports ksr;

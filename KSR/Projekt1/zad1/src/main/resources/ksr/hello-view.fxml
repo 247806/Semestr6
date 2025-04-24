@@ -6,8 +6,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
-<VBox alignment="CENTER" prefHeight="500.0" prefWidth="600.0" spacing="30.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ksr.HelloController">
+<?import org.controlsfx.control.CheckListView?>
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ksr.HelloController">
 
     <children>
 
@@ -28,7 +28,7 @@
 
                         <HBox spacing="10.0">
                             <children>
-                                <Label text="Podaj proporcje:" />
+                                <Label text="Podaj proporcje [0.01 - 0.99] (zbiór treningowy):" />
                                 <TextField fx:id="proportionTextField" alignment="CENTER" prefWidth="60.0" />
                             </children>
                         </HBox>
@@ -57,10 +57,15 @@
                         <Label fx:id="f1Score" text="" />
                     </children>
                 </VBox>
-
             </children>
         </HBox>
-      <Label fx:id="error" text="" style="-fx-text-fill: red;"/>
+
+
+        <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Usuń cechy:" />
+        <CheckListView fx:id="checkListView" prefHeight="500.0" prefWidth="200.0" />
+
+
+        <Label fx:id="error" text="" style="-fx-text-fill: red;"/>
 
         <!-- Przycisk Start na dole -->
         <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />

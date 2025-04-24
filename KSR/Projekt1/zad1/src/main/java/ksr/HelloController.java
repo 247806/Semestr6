@@ -6,7 +6,11 @@ import javafx.scene.control.Label;
 import ksr.classifier.KNN;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.scene.control.TextField;
+import org.controlsfx.control.CheckListView;
 
 public class HelloController {
     @FXML
@@ -36,6 +40,9 @@ public class HelloController {
     @FXML
     private Label error;
 
+    @FXML
+    private CheckListView<String> checkListView;
+
     private KNN knn;
 
 
@@ -43,6 +50,9 @@ public class HelloController {
     private void initialize() {
         metric.getItems().addAll("Euklidesowa", "Uliczna", "Czebyszewa");
         country.getItems().addAll("USA", "Canada", "United Kingdom", "France", "West-Germany", "Japan");
+        checkListView.getItems().addAll("Długość tekstu", "Dominująca waluta", "Nazwy miejsca", "Liczba unikalnych słów",
+                "Średnia długość słowa", "Liczba słów kluczowych w pierwszych 3 zdaniach", "Liczba słów kluczowych zaczynających się wielką literą",
+                "Pierwsze słowo kluczowe w tekście", "Liczba słów kluczowych", "Względna liczba słów kluczowych", "Nazwiska");
 
         country.setOnAction(event -> {
             String selectedCountry = country.getValue(); // pobieramy wybrany kraj
@@ -110,10 +120,11 @@ public class HelloController {
             }
 
             // Utworzenie obiektu KNN
-            knn = new KNN(k, proportion, selectedMetric);
+            knn = new KNN(k, proportion, selectedMetric, getSelectedOptions());
 
             // Wyświetlanie wyników
             accuracy.setText(String.format("Accuracy: %.2f%%", knn.getAccuracy() * 100));
+
 
         } catch (NumberFormatException e) {
             // Obsługa błędu w przypadku błędnych danych numerycznych
@@ -124,4 +135,9 @@ public class HelloController {
         }
 
     }
+
+    public List<Integer> getSelectedOptions() {
+        return new ArrayList<>(checkListView.getCheckModel().getCheckedIndices());
+    }
+
 }

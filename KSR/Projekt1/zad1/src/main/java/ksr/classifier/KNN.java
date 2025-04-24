@@ -16,19 +16,15 @@ import java.util.stream.Collectors;
 
 import static ksr.extraction.KeyWordsLoader.*;
 import static ksr.extraction.StopListFilter.loadStopList;
+import static ksr.extraction.StopListFilter.removeStopWords;
 import static ksr.loading.Load.loadReutersArticles;
 
 public class KNN {
-    private final List<Article> trainingSet = new ArrayList<>();
-    private final List<Article> testSet = new ArrayList<>();
-    private final List<Article> allArticles;
-    private final Set<String> stopWords;
-    private static int K = 10;
-    private static double SET_PROPORTION = 0.6;
-    private List<List<Object>> features = new ArrayList<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private List<Article> trainingSet = new ArrayList<>();
+    private List<Article> testSet = new ArrayList<>();
+    private final int K;
+    private final double SET_PROPORTION;
     private final NGramMethod ngramMethod = new NGramMethod();
-    private final QualityMeasures qualityMeasures = new QualityMeasures();
 
     @Getter
     public double accuracy;
@@ -36,7 +32,7 @@ public class KNN {
     @Getter
     public Double [][] qualityMeasure = new Double[6][3];
 
-    public KNN(int k,double proportion, String metric) throws IOException {
+    public KNN(int k,double proportion, String metric, List<Integer> numbers) throws IOException {
         K = k;
         SET_PROPORTION = proportion;
 
@@ -44,8 +40,8 @@ public class KNN {
         System.out.println("Proporcja zbioru treningowego: " + SET_PROPORTION);
         System.out.println("Metryka: " + metric);
 
-        allArticles = loadReutersArticles("src/main/resources/articles");
-        this.stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
+        List<Article> allArticles = loadReutersArticles("src/main/resources/articles");
+        Set<String> stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
         FeatureExtractor featureExtractor = new FeatureExtractor(getCities(), getCurrencies(), getNames(), allKeyWords());
         Normalization normalization = new Normalization();
         Metrics metrics = switch (metric) {
@@ -56,31 +52,40 @@ public class KNN {
         };
 
 
-//        int counter = 1;
-//        for (Article article : allArticles) {
-//            System.out.println(counter++ + " / " + allArticles.size());
-//            removeStopWords(article.getBody(), stopWords);
-//            List<Object> feature = featureExtractor.extractFeatures(article.getBody());
-//            article.setFeatures(feature);
-//            features.add(feature);
-//        }
-//
-//        normalization.preprocess(features);
-//        for (Article article : allArticles) {
-//            List<Object> normalizedFeature = normalization.normalize(article.getFeatures());
-//            article.setFeatures(normalizedFeature);
-//        }
-//
-//        splitData(allArticles);
-//
-//
-//        saveFeaturesToFile(allArticles, "allArticles.json");
-        List <Article> allArticlesLoaded = loadArticlesFromJson("allArticles.json");
-        List<Integer> numbers = new ArrayList<>(List.of(1,2, 4));
-//        System.out.println(allArticlesLoaded.getFirst().getFeatures());
-        List<Article> newAllArticles = deleteFeature(allArticlesLoaded, numbers);
-//        System.out.println(newAllArticles.getFirst().getFeatures());
-        splitData(newAllArticles); // uwazac zeby nie właczyc z splitData z linii 55
+        if (!new File("allArticles.json").exists()) {
+            System.out.println("Nie znaleziono pliku allArticles.json. Proszę najpierw uruchomić kod do przetwarzania artykułów.");
+            int counter = 1;
+            List<List<Object>> features = new ArrayList<>();
+            for (Article article : allArticles) {
+                System.out.println(counter++ + " / " + allArticles.size());
+                removeStopWords(article.getBody(), stopWords);
+                List<Object> feature = featureExtractor.extractFeatures(article.getBody());
+                article.setFeatures(feature);
+                features.add(feature);
+            }
+
+            normalization.preprocess(features);
+            for (Article article : allArticles) {
+                List<Object> normalizedFeature = normalization.normalize(article.getFeatures());
+                article.setFeatures(normalizedFeature);
+            }
+            splitData(allArticles);
+            saveFeaturesToFile(allArticles, "allArticles.json");
+            if (!numbers.isEmpty()) {
+                this.testSet = deleteFeature(testSet, numbers);
+                this.trainingSet = deleteFeature(trainingSet, numbers);
+            }
+
+        } else {
+            List <Article> allArticlesLoaded = loadArticlesFromJson("allArticles.json");
+            splitData(allArticlesLoaded);
+//            saveFeaturesToFile(allArticlesLoaded, "allArticles.json");
+            if (!numbers.isEmpty()) {
+                this.testSet = deleteFeature(testSet, numbers);
+                this.trainingSet = deleteFeature(trainingSet, numbers);
+            }
+        }
+
 
         int counter2 = 1;
         for (Article article : testSet) {
@@ -88,6 +93,7 @@ public class KNN {
             classifyArticle(article, metrics);
         }
 
+        QualityMeasures qualityMeasures = new QualityMeasures();
         accuracy = qualityMeasures.calculateAccuracy(testSet);
         System.out.println("Accuracy: " + accuracy);
         qualityMeasure[0] = qualityMeasures.calculateQualityForPlace(testSet, "usa");
@@ -229,12 +235,15 @@ public class KNN {
             int counter = 0;
             List<Object> features = a.getFeatures();
             for (Integer i : numbers) {
-                features.remove((int) i - counter);
+                features.remove((int)i - counter);
                 counter++;
             }
             a.setFeatures(features);
             newList.add(a);
         }
+
+        articles.forEach(a -> System.out.println(a.getFeatures()));
+        newList.forEach(a -> System.out.println(a.getFeatures()));
         return newList;
     }
 
