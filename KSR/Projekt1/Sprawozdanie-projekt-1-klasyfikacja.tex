@@ -6,6 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[polish]{babel}
 \usepackage{graphicx}
+\usepackage{float}
 %{Informatyka stosowana 2020, I st., semestr VI}
 
 
@@ -377,9 +378,9 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     PPV\(_C\) & 0,4794 & 0,4794 & 0,6500 &  0,7222 & 0,7585& 0,7536& 0,7938\\ \hline
     TPR\(_C\) & 0,4646 & 0,4646 & 0,4800 &  0,4800& 0,4831& 0,4800& 0,4738\\ \hline
     F1\(_C\) & 0,4719 & 0,4719 & 0,5522 &  0,5767& 0,5902& 0,5865& 0,5934\\ \hline
-    PPV\(_UK\) & 0,6799 & 0,6799 & 0,7692 & 0,8036& 0,8465& 0,8543& 0,8408\\ \hline
-    TPR\(_UK\) & 0,6160 & 0,6160 & 0,6077 &  0,6105& 0,5939& 0,5829& 0,5691\\ \hline
-    F1\(_UK\) & 0,6464 & 0,6464 & 0,6790 &  0,6939& 0,6981& 0,6929& 0,6787\\ \hline
+    PPV\(_{UK}\) & 0,6799 & 0,6799 & 0,7692 & 0,8036& 0,8465& 0,8543& 0,8408\\ \hline
+    TPR\(_{UK}\) & 0,6160 & 0,6160 & 0,6077 &  0,6105& 0,5939& 0,5829& 0,5691\\ \hline
+    F1\(_{UK}\) & 0,6464 & 0,6464 & 0,6790 &  0,6939& 0,6981& 0,6929& 0,6787\\ \hline
     PPV\(_F\) & 0,6087 & 0,6087 & 0,7403 & 0,7600& 0,8000& 0,7746& 0,7123\\ \hline
     TPR\(_F\) & 0,5545 & 0,5545 & 0,5644 & 0,5644& 0,5545& 0,5446& 0,5149\\ \hline
     F1\(_F\) & 0,5803 & 0,5803 & 0,6404 &  0,6477& 0,6550& 0,6395& 0,5977\\ \hline
@@ -392,7 +393,7 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji}
 \end{table}
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
     \hline
@@ -404,9 +405,9 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     PPV\(_C\) & 0,7956& 0,7988& 0,7758\\ \hline
     TPR\(_C\) & 0,4431& 0,4154& 0,3938\\ \hline
     F1\(_C\) & 0,5692& 0,5466& 0,5224\\ \hline
-    PPV\(_UK\) & 0,8120& 0,7960& 0,7860\\ \hline
-    TPR\(_UK\) & 0,5608& 0,5497& 0,5276\\ \hline
-    F1\(_UK\) & 0,6634& 0,6503& 0,6314\\ \hline
+    PPV\(_{UK}\) & 0,8120& 0,7960& 0,7860\\ \hline
+    TPR\(_{UK}\) & 0,5608& 0,5497& 0,5276\\ \hline
+    F1\(_{UK}\) & 0,6634& 0,6503& 0,6314\\ \hline
     PPV\(_F\) & 0,7188& 0,7241 & 0,7436\\ \hline
     TPR\(_F\) & 0,4554& 0,4158 & 0,2871\\ \hline
     F1\(_F\) & 0,5576& 0,5283 & 0,4143\\ \hline
@@ -419,18 +420,17 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji (cd.)}
 \end{table}
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{ksr/img/ACC - K.png}
     \caption{Zależność accuracy do parametru k}
     \label{fig:moj-obraz}
 \end{figure}
-% Na podstawie wyników można zaobserwować, że miara Accuracy rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 10\), osiągając maksimum równe 0{,}8924. Dalsze zwiększanie wartości \(k\) prowadzi jednak do spadku dokładności klasyfikatora. Może to świadczyć o nadmiernym uogólnieniu modelu przy zbyt dużej liczbie sąsiadów, co skutkuje mniejszą precyzją klasyfikacji.
 
 \subsection{Różny podział zbioru pomiędzy uczący, a testowy}
 W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: \(k\) = 9, metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). Wartości w tabeli pod kolumną "Podział zbioru" opisują ile jest artykułów w zbiorze uczącym względem liczby wszystkich artykułów.
 
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c}
     \hline
@@ -442,9 +442,9 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
     PPV\(_C\) & 0,8310 & 0,7650 & 0,7500 & 0,7770 & 0,7255\\ \hline
     TPR\(_C\) & 0,4104 & 0,4692 & 0,4877 & 0,4713 & 0,4512\\ \hline
     F1\(_C\) & 0,5495 & 0,5817 & 0,5910 & 0,5867 & 0,5564\\ \hline
-    PPV\(_UK\) & 0,8046 & 0,8111 & 0,8590& 0,8390 & 0,8197\\ \hline
-    TPR\(_UK\) & 0,5153 & 0,5757 & 0,5916 & 0,6324 & 0,5495\\ \hline
-    F1\(_UK\) & 0,6283 & 0,6734 & 0,7007 & 0,7212 & 0,6579\\ \hline
+    PPV\(_{UK}\) & 0,8046 & 0,8111 & 0,8590& 0,8390 & 0,8197\\ \hline
+    TPR\(_{UK}\) & 0,5153 & 0,5757 & 0,5916 & 0,6324 & 0,5495\\ \hline
+    F1\(_{UK}\) & 0,6283 & 0,6734 & 0,7007 & 0,7212 & 0,6579\\ \hline
     PPV\(_F\) & 0,7589 & 0,7807 & 0,8025 & 0,7358 & 0,8000\\ \hline
     TPR\(_F\) & 0,3761 & 0,5057 & 0,5159 & 0,5132 & 0,4615\\ \hline
     F1\(_F\) & 0,5030 & 0,6138 & 0,6280 & 0,6047 & 0,5854\\ \hline
@@ -457,13 +457,18 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu podziału zbiorów na jakość klasyfikacji}
 \end{table}
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{ksr/img/ACC - podział.png}
+    \caption{Zależność accuracy do podziału zbiorów }
+    \label{fig:moj-obraz}
+\end{figure}
 % Wyniki wskazują na istotny wpływ proporcji podziału zbioru na dokładność klasyfikacji. W miarę zwiększania udziału zbioru uczącego w całości danych, skuteczność klasyfikatora rośnie, osiągając najwyższą wartość przy podziale 80\% danych do zbioru uczącego. Zwiększenie tego udziału powoduje, że model ma więcej danych do nauki, co przekłada się na lepsze dopasowanie do wzorców w danych. Z kolei mniejsze proporcje danych uczących prowadzą do gorszej efektywności, co może być wynikiem niedostatecznej liczby próbek w procesie treningu.
 
 \subsection{Różne metryki}
 W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 9\) oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
 
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
     \hline
@@ -475,9 +480,9 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
     PPV\(_C\) & 0,7585& 0,7986 & 1,0000\\ \hline
     TPR\(_C\) &  0,4831& 0,3538 & 0,0092\\ \hline
     F1\(_C\) & 0,5902& 0,4904 & 0,0183\\ \hline
-    PPV\(_UK\) & 0,8465& 0,8221 & 1,0000\\ \hline
-    TPR\(_UK\) & 0,5939& 0,5746 & 0,0221\\ \hline
-    F1\(_UK\) & 0,6981& 0,6764 & 0,0432\\ \hline
+    PPV\(_{UK}\) & 0,8465& 0,8221 & 1,0000\\ \hline
+    TPR\(_{UK}\) & 0,5939& 0,5746 & 0,0221\\ \hline
+    F1\(_{UK}\) & 0,6981& 0,6764 & 0,0432\\ \hline
     PPV\(_F\) & 0,8000& 0,8679 & 0,0000\\ \hline
     TPR\(_F\) & 0,5545& 0,4554 & 0,0000\\ \hline
     F1\(_F\) & 0,6550& 0,5974 & 0,0000\\ \hline
@@ -491,10 +496,106 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
     \caption{Wyniki miar przy badaniu wpływu metryk na jakość klasyfikacji}
 \end{table}
 % Wyniki wskazują na najlepszą skuteczność klasyfikatora przy zastosowaniu metryki euklidesowej, uzyskując miarę Accuracy równą 0{,}8864. Metryka uliczna, choć również dała zadowalający wynik (Accuracy = 0{,}8767), okazała się nieco mniej efektywna w porównaniu do metryki euklidesowej. Z kolei metryka Czybyszewa zwróciła najgorszy wynik.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{ksr/img/ACC - metryka.png}
+    \caption{Zależność accuracy do wybranej metryki}
+    \label{fig:moj-obraz}
+\end{figure}
 
+\subsection{Dobór cech}
+W poniższej tabeli przestawiono wpływ usunięcia różnych cech z wektora podstawowego na dokładność klasykikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 9\), metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
+Wykorzystane zostały cztery podzbiory cech, w których z głównego wektora usunięto:
+\begin{enumerate}
+    \item Dwie cechy tekstowe i dwie liczbowe - nazwiska, pierwsze słowo kluczowe w tekście, liczba słów kluczowych, liczba unikalnych słów
+    \[
+    v_1 = [ 0.04584717607973422, dlrs, [ florida, florida], 0.5597984105446793, 
+    \]
+    \[
+         0.047619047619047616, 0.036312849162011177, 0.15584415584415584 ]
+    \]
+    \item Cztery cechy tekstowe - dominująca waluta, pierwsze słowo kluczowe w tekście, nazwy miejsca, nazwiska
+    \[
+    v_2 = [ 0.04584717607973422, 0.09576427255985268, 0.5597984105446793, 
+    \]
+    \[
+          0.047619047619047616, 0.036312849162011177, 0.058823529411764705, 
+    \]
+    \[
+        0.15584415584415584 ]
+    \]
+    \item Cztery cechy liczbowe - długość tekstu, średnia długość słowa, liczba słów kluczowych w pierwszych 3 zdaniach, liczba słów zaczynających się wielką literą.
+    \[
+    v_3 = [  dlrs, [ florida, florida], 0.09576427255985268, florida,
+\]
+\[
+     0.058823529411764705, 0.15584415584415584, [] ]
+\]
+    \item Dwie cechy tekstowe i dwie liczbowe - dominująca waluta, nazwy miejsca, liczba słów kluczowych, względna liczba słów kluczowych
+    \[
+    v_4 = [ 0.04584717607973422, 0.09576427255985268, 0.5597984105446793, 
+\]
+\[
+     0.047619047619047616, 0.036312849162011177, florida, [] ]
+\]
 
+\end{enumerate}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Podzbiór cech} & \textbf{\(v1\)} & \textbf{\(v2\)} & \textbf{\(v3\)} & \textbf{\(v4\)}  \\ \hline
+    ACC [\%] & 88,36 & 79,21 & 89,42 & 87,90\\ \hline
+    PPV\(_U\) & 0,9006& 0,8896 & 0,9073 & 0,8883 \\ \hline
+    TPR\(_U\) & 0,9754 & 0,9672 & 0,9801 & 0,9848\\ \hline
+    F1\(_U\)  & 0,9354 & 0,9268 & 0,9423 & 0,9341\\ \hline
+    PPV\(_C\) & 0,7413 & 0,2162 & 0,7523 & 0,8013\\ \hline
+    TPR\(_C\) & 0,4585 & 0,0246 & 0,4954 & 0,3723\\ \hline
+    F1\(_C\) & 0,5665 & 0,0442 & 0,5974 & 0,5084\\ \hline
+    PPV\(_{UK}\) & 0,8150 & 0,2817 & 0,8659 & 0,8259\\ \hline
+    TPR\(_{UK}\) & 0,5718 & 0,0552 & 0,5884 & 0,5110\\ \hline
+    F1\(_{UK}\) & 0,6721 & 0,0924 & 0,7007 & 0,6314\\ \hline
+    PPV\(_F\) & 0,8800 & 0,5000 & 0,7887 & 0,7143\\ \hline
+    TPR\(_F\) & 0,4356 & 0,0099 & 0,5545 & 0,4950\\ \hline
+    F1\(_F\) & 0,5828 & 0,0194 & 0,6512 & 0,5848\\ \hline
+    PPV\(_W\) & 0,6905 & 0,5588 & 0,8462 & 0,7692\\ \hline
+    TPR\(_W\) & 0,2248 & 0,1473 & 0,1705 & 0,1550\\ \hline
+    F1\(_W\) & 0,3392 & 0,2331 & 0,2839 & 0,2581\\ \hline
+    PPV\(_J\) &0,7624 & 0,3030 & 0,8235 & 0,8402\\ \hline
+    TPR\(_J\) & 0,8235 & 0,0535 & 0,8994 & 0,7594\\ \hline
+    F1\(_J\) & 0,7918 & 0,0909 & 0,8593 & 0,7978\\ \hline
+    \end{tabular}
+    \caption{Wyniki miar przy badaniu wpływu doboru cech na jakość klasyfikacji}
+\end{table}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{ksr/img/ACC - cechy.png}
+    \caption{Zależność accuracy do wybranej podzbioru cech}
+    \label{fig:moj-obraz}
+\end{figure}
 \section{Dyskusja, wnioski, sprawozdanie końcowe}
+\subsection{Wpływ parametru k na jakość klasyfikacji}
+Na podstawie rysunku 1 można zaobserwować, że miara \(accuracy\) rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 9\), osiągając wówczas wartość maksymalną. Dalsze zwiększanie parametru \(k\) prowadzi do stopniowego pogorszenia dokładności klasyfikatora. Aby jednak w pełni ocenić wpływ parametru \(k\) na jakość klasyfikacji, należy również przeanalizować metryki \(recall\), \(precision\) oraz \(F1\), które są obliczane oddzielnie dla każdej klasy. \\
+Analiza danych z tabel 2 i 3 wskazuje, że wartość \(precision\) dla klasy USA maleje wraz ze wzrostem \(k\), natomiast dla pozostałych klas zachowuje się nieregularnie. Wartości skrajne, takie jak 1 lub 0, pojawiają się w przypadkach, gdy liczba zaklasyfikowanych dokumentów do danej klasy jest bardzo mała. Na przykład, precyzja dla klasy Niemcy Zachodnie wynosi 1 przy \(k = 65\), a 0 przy \(k = 100\), co oznacza, że przy większym \(k\) żaden artykuł nie został zaklasyfikowany jako należący do tej klasy. Takie zachowanie wynika z przewagi liczebnej klasy USA, co skutkuje częstszym przypisywaniem dokumentów właśnie do niej. \\ 
+Dla miary \(recall\) obserwuje się stopniowy wzrost dla klasy USA i Japonii, co oznacza coraz lepsze rozpoznawanie dokumentów należących do tych klas. Dla pozostałych klas czułość utrzymuje się na stabilnym poziomie przy małych wartościach \(k\), po czym maleje przy większych wartościach. W skrajnych przypadkach, jak dla klasy Niemiec Zachodnich, \(recall\) osiąga 0, co świadczy o całkowitym braku przypisań do tej klasy.\\
+Zaobserwowane zjawiska wynikają głównie z dominacji klasy USA, która stanowi około 79\% wszystkich dokumentów w zbiorze. Sytuacja ta pokazuje, że wysoka wartość jednej z miar, np. \(recall\) czy \(precision\), nie zawsze świadczy o dobrej jakości klasyfikatora. W takich przypadkach szczególnie użyteczna jest miara \(F1\), która pozwala ocenić równowagę pomiędzy precyzją a czułością. Najwyższe wartości \(F1\)-miary uzyskano przy \(k = 9\) dla czterech klas, natomiast dla klasy Niemiec Zachodnich i Japonii wartości maksymalne występują odpowiednio przy \(k = 5\) oraz \(k = 15\). \\
+Na podstawie przeprowadzonych analiz można stwierdzić, że optymalna wartość parametru \(k\) powinna być ustalana nie tylko na podstawie miary \(accuracy\), ale również z uwzględnieniem metryk klasyfikacyjnych obliczanych osobno dla każdej klasy. W przypadku tego doświadzenia jest to k z zakresu 5 - 15.
 
+\subsection{Wpływ podziału zbiorów na jakość klasyfikacji}
+Na rysunku 2 został zaprezentowany wpływ różnego podziału zbioru na uczący oraz testowy. Można zauważyć, że wraz ze wzrostem procentowego udziału zbioru treningowego, miara \(accuracy\) stopniowo rośnie do wartości 89{,}27\% przy podziale 70/30, po czym nieznacznie spada dla proporcji 90/10. Różnice te są jednak niewielkie – maksymalna różnica między najlepszym a najgorszym wynikiem wynosi ok. 1,3 p.p. \\
+Dla klasy dominującej (USA) miary jakości klasyfikacji (\(precision\), \(recall\), \(F1\)) są bardzo wysokie i stabilne niezależnie od proporcji danych, co wynika z dużej liczebności tej klasy w zbiorze. \\
+W przypadku pozostałych klas, które są mniej liczebne, sytuacja jest bardziej złożona. Miara \(precision\) zachowuje się niestabilnie – wartości rosną i maleją w zależności od podziału danych. Natomiast miara \(recall\) zazwyczaj wzrasta do momentu osiągnięcia proporcji 50/50 lub 70/30, po czym nieco spada. \\
+Na podstawie powyższych obserwacji można stwierdzić, że optymalny kompromis pomiędzy liczbą przykładów uczących a jakością klasyfikacji występuje przy podziale 70/30 lub 50/50. Natomiast zbyt mała liczebność zbioru uczącego jest najbardziej niekorzystna dla klas z najmiejszą liczbą obiektów, w przypadku tego doświadczenia jest to Francja oraz Niemcy Zachodnie.
+\subsection{Wpływ wyboru metryki na jakość klasyfikacji}
+
+\subsection{Wpływ doboru cech na jakość klasyfikacji}
+
+\subsection{Wnioski}
+\begin{itemize}
+    \item Zbyt duża liczba obiektów danej klasy w stosunku do innych obiektów pogarsza jakość klasyfikacji metodą KNN.
+    \item Wartość parametru k ma znaczący wpływ na jakość klasyfikacji metodą KNN, dlatego należy starannie go określić.
+    \item W celu określenia jakości klasyfikacji metodą KNN należy uwzględnić wszystkie miary jakości klasyfikacji.
+\end{itemize}
 Wyniki kolejnych eksperymentów wg punktów 2.-8. opisu projektu 1.  Każdorazowo
 podane parametry, dla których przeprowadzana eksperyment. 
 Wykresy (np. słupowe) i tabele wyników
