@@ -56,8 +56,8 @@ public class HelloController {
                 "Pierwsze słowo kluczowe w tekście", "Liczba słów kluczowych", "Względna liczba słów kluczowych", "Nazwiska");
 
         country.setOnAction(event -> {
-            String selectedCountry = country.getValue(); // pobieramy wybrany kraj
-            System.out.println("Wybrano kraj: " + selectedCountry);
+            String selectedCountry = country.getValue();
+//            System.out.println("Wybrano kraj: " + selectedCountry);
 
             int countryType = switch (selectedCountry) {
                 case "USA" -> 0;
@@ -120,18 +120,13 @@ public class HelloController {
                 throw new IllegalArgumentException("Musisz wybrać metrykę.");
             }
 
-            // Utworzenie obiektu KNN
             knn = new KNN(k, proportion, selectedMetric, getSelectedOptions());
 
-            // Wyświetlanie wyników
             accuracy.setText(String.format("Accuracy: %.2f%%", knn.getAccuracy() * 100));
 
-
         } catch (NumberFormatException e) {
-            // Obsługa błędu w przypadku błędnych danych numerycznych
             error.setText("Błąd: Wprowadź poprawne liczby dla K i proporcji.");
         } catch (IllegalArgumentException e) {
-            // Obsługa błędów związanych z nieprawidłowymi danymi
             error.setText("Błąd: " + e.getMessage());
         }
 

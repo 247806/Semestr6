@@ -13,7 +13,7 @@ public class QualityMeasures {
                 correctPredictions++;
             }
         }
-        System.out.println((double) correctPredictions / testSet.size());
+//        System.out.println((double) correctPredictions / testSet.size());
         return (double) correctPredictions / testSet.size();
 
     }
@@ -23,10 +23,10 @@ public class QualityMeasures {
         double recall = calculateRecall(testSet, place);
         double f1Score = calculateF1Score(precision, recall);
 
-        System.out.println("Quality measures for place: " + place);
-        System.out.println("Precision: " + precision);
-        System.out.println("Recall: " + recall);
-        System.out.println("F1 Score: " + f1Score);
+//        System.out.println("Quality measures for place: "+ place);
+//        System.out.println("Precision: " + precision);
+//        System.out.println("Recall: " + recall);
+//        System.out.println("F1 Score: " + f1Score);
         return new Double[]{precision, recall, f1Score};
     }
 
@@ -43,7 +43,7 @@ public class QualityMeasures {
                 }
             }
         }
-        return (double) truePositives / (truePositives + falsePositives);
+        return (truePositives + falsePositives) == 0 ? 0.0 : (double) truePositives / (truePositives + falsePositives);
     }
 
     private double calculateRecall(List<Article> testSet, String place) {

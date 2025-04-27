@@ -3,18 +3,16 @@ package ksr.extraction;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class KeyWordsLoader {
     private static Set<String> loadWords(String filePath) {
         Set<String> cities = new HashSet<>();
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(filePath));
-            for (String line : lines) {
-                if (!line.trim().isEmpty()) {
-                    cities.add(line.trim()); // Usuwa zbędne spacje i dodaje miasto do zbioru
-                }
-            }
+        try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
+            lines.map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .forEach(cities::add);
         } catch (IOException e) {
             e.printStackTrace();
         }

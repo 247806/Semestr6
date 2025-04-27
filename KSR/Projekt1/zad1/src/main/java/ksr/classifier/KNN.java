@@ -33,13 +33,9 @@ public class KNN {
     public Double [][] qualityMeasure = new Double[6][3];
 
     public KNN(int k,double proportion, String metric, List<Integer> numbers) throws IOException {
-        long start = System.nanoTime();
+//        long start = System.nanoTime();
         K = k;
         SET_PROPORTION = proportion;
-
-        System.out.println("K: " + K);
-        System.out.println("Proporcja zbioru treningowego: " + SET_PROPORTION);
-        System.out.println("Metryka: " + metric);
 
         List<Article> allArticles = loadReutersArticles("src/main/resources/articles");
         Set<String> stopWords = loadStopList("src/main/resources/stop_words/stop_words_english.txt");
@@ -54,11 +50,10 @@ public class KNN {
 
 
         if (!new File("allArticles.json").exists()) {
-            System.out.println("Nie znaleziono pliku allArticles.json. Proszę najpierw uruchomić kod do przetwarzania artykułów.");
-            int counter = 1;
+//            int counter = 1;
             List<List<Object>> features = new ArrayList<>();
             for (Article article : allArticles) {
-                System.out.println(counter++ + " / " + allArticles.size());
+//                System.out.println(counter++ + " / " + allArticles.size());
                 removeStopWords(article.getBody(), stopWords);
                 List<Object> feature = featureExtractor.extractFeatures(article.getBody());
                 article.setFeatures(feature);
@@ -87,19 +82,12 @@ public class KNN {
             }
         }
 
+        testSet.parallelStream().forEach(article -> classifyArticle(article, metrics));
 
-        int counter2 = 1;
-        testSet.parallelStream().forEach(article -> {
-            classifyArticle(article, metrics);
-        });
-//        for (Article article : testSet) {
-////            System.out.println(counter2++ + " / " + testSet.size());
-//            classifyArticle(article, metrics);
-//        }
 
         QualityMeasures qualityMeasures = new QualityMeasures();
         accuracy = qualityMeasures.calculateAccuracy(testSet);
-        System.out.println("Accuracy: " + accuracy);
+//        System.out.println("Accuracy: " + accuracy);
         qualityMeasure[0] = qualityMeasures.calculateQualityForPlace(testSet, "usa");
         qualityMeasure[1] = qualityMeasures.calculateQualityForPlace(testSet, "uk");
         qualityMeasure[2] = qualityMeasures.calculateQualityForPlace(testSet, "canada");
@@ -107,42 +95,38 @@ public class KNN {
         qualityMeasure[4] = qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
         qualityMeasure[5] = qualityMeasures.calculateQualityForPlace(testSet, "japan");
 
-        System.out.println("All quality measure: " + Arrays.deepToString(qualityMeasure));
-//
-//        for (Article article : testSet) {
-//            if (Objects.equals(article.getPlace(), "west-germany")) {
-//                System.out.println(article.getPredictedPlace());
-//            }
-//        }
-        long end = System.nanoTime();
-        long duration = end - start;
+//        System.out.println("All quality measure: " + Arrays.deepToString(qualityMeasure));
 
-        System.out.println("Czas wykonania: " + duration / 1_000_000 + " ms");
+//        long end = System.nanoTime();
+//        long duration = end - start;
+//
+//        System.out.println("Czas wykonania: " + duration / 1_000_000 + " ms");
 
     }
 
     private void classifyArticle(Article article, Metrics metrics) {
+        // Obliczanie odległości do wszystkich artykułów w zbiorze treningowym
         List<Map.Entry<Article, Double>> distances = trainingSet.stream()
                 .map(trainingArticle -> Map.entry(trainingArticle, metrics.calculate(article, trainingArticle, ngramMethod)))
-                .collect(Collectors.toList());
+                .sorted(Map.Entry.comparingByValue()).toList();
 
-        distances.sort(Map.Entry.comparingByValue());
-
+        // Wybieranie K najbliższych sąsiadów
         List<Article> nearestNeighbors = distances.stream()
                 .limit(K)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
-        // Liczenie liczby wystąpień miejsca (place) wśród K najbliższych sąsiadów
+        // Liczenie liczby wystąpień kraju wśród K najbliższych sąsiadów
         Map<String, Long> placeCounts = nearestNeighbors.stream()
                 .collect(Collectors.groupingBy(Article::getPlace, Collectors.counting()));
 
         long maxValue = placeCounts.values().stream().max(Long::compareTo).orElse(0L);
 
+        // Wybieranie krajów o największej liczbie wystąpień
         List<String> placeCountsList = placeCounts.entrySet().stream()
                 .filter(entry -> entry.getValue() == maxValue)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
         if (placeCountsList.size() > 1) {
             String predictedPlace = nearestNeighbors.stream().collect(Collectors.groupingBy(
@@ -175,9 +159,8 @@ public class KNN {
                 }
         );
 
-        System.out.println("Zbiór treningowy: " + trainingSet.size());
-        System.out.println("Zbiór testowy: " + testSet.size());
-
+//        System.out.println("Zbiór treningowy: " + trainingSet.size());
+//        System.out.println("Zbiór testowy: " + testSet.size());
     }
 
     public void saveFeaturesToFile(List<Article> articles, String filePath) throws IOException {
@@ -196,7 +179,7 @@ public class KNN {
 
         List<Article> articles = new ArrayList<>();
         for (ArticleData entry : data) {
-            Article article = new Article("", entry.getPlace()); // jeśli nie zapisujesz body, zostaw pusty
+            Article article = new Article("", entry.getPlace());
             article.setFeatures(entry.getFeatures());
             articles.add(article);
         }

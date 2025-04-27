@@ -22,7 +22,6 @@ public class FeatureExtractor {
 
     public List<Object> extractFeatures(String text) {
         List<Object> features = new ArrayList<>();
-//        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
 
         // 1. Długość tekstu (liczba słów o długości >= 3)
 //        String[] words = text.split("\\s+");
