@@ -18,6 +18,24 @@ public class QualityMeasures {
 
     }
 
+    public Double[] calculateAverageQuality(Double [][] qualityMeasure) {
+        double precisionSum = 0;
+        double recallSum = 0;
+        double f1ScoreSum = 0;
+
+        for (int i = 0; i < 6; i++) {
+            precisionSum += qualityMeasure[i][0];
+            recallSum += qualityMeasure[i][1];
+            f1ScoreSum += qualityMeasure[i][2];
+        }
+
+        double averagePrecision = precisionSum / 6;
+        double averageRecall = recallSum / 6;
+        double averageF1Score = f1ScoreSum / 6;
+
+        return new Double[]{averagePrecision, averageRecall, averageF1Score};
+    }
+
     public Double[] calculateQualityForPlace(List<Article> testSet, String place){
         double precision = calculatePrecision(testSet, place);
         double recall = calculateRecall(testSet, place);

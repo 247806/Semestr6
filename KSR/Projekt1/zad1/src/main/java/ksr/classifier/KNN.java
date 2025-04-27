@@ -30,7 +30,9 @@ public class KNN {
     public double accuracy;
 
     @Getter
-    public Double [][] qualityMeasure = new Double[6][3];
+    public Double [][] qualityMeasure = new Double[7][3];
+    @Getter
+    public Double [] averageQualityMeasure;
 
     public KNN(int k,double proportion, String metric, List<Integer> numbers) throws IOException {
 //        long start = System.nanoTime();
@@ -94,8 +96,9 @@ public class KNN {
         qualityMeasure[3] = qualityMeasures.calculateQualityForPlace(testSet, "france");
         qualityMeasure[4] = qualityMeasures.calculateQualityForPlace(testSet, "west-germany");
         qualityMeasure[5] = qualityMeasures.calculateQualityForPlace(testSet, "japan");
-
-//        System.out.println("All quality measure: " + Arrays.deepToString(qualityMeasure));
+        qualityMeasure[6] = qualityMeasures.calculateAverageQuality(qualityMeasure);
+//        averageQualityMeasure = qualityMeasures.calculateAverageQuality(qualityMeasure);
+        System.out.println("All quality measure: " + Arrays.deepToString(qualityMeasure));
 
 //        long end = System.nanoTime();
 //        long duration = end - start;

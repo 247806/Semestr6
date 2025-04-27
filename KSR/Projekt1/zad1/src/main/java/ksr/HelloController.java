@@ -50,7 +50,7 @@ public class HelloController {
     @FXML
     private void initialize() {
         metric.getItems().addAll("Euklidesowa", "Uliczna", "Czebyszewa");
-        country.getItems().addAll("USA", "Canada", "United Kingdom", "France", "West-Germany", "Japan");
+        country.getItems().addAll("USA", "Canada", "United Kingdom", "France", "West-Germany", "Japan", "Average");
         checkListView.getItems().addAll("Długość tekstu", "Dominująca waluta", "Nazwy miejsca", "Liczba unikalnych słów",
                 "Średnia długość słowa", "Liczba słów kluczowych w pierwszych 3 zdaniach", "Liczba słów kluczowych zaczynających się wielką literą",
                 "Pierwsze słowo kluczowe w tekście", "Liczba słów kluczowych", "Względna liczba słów kluczowych", "Nazwiska");
@@ -66,6 +66,7 @@ public class HelloController {
                 case "France" -> 3;
                 case "West-Germany" -> 4;
                 case "Japan" -> 5;
+                case "Average" -> 6;
                 default -> throw new IllegalArgumentException("Unsupported country: " + selectedCountry);
             };
 
@@ -92,9 +93,9 @@ public class HelloController {
                     f1 = knn.getQualityMeasure()[countryType][2];
                 }
 
-                precision.setText(String.format("Precision: %.2f%%", prec * 100));
-                recall.setText(String.format("Recall: %.2f%%", rec * 100));
-                f1Score.setText(String.format("F1 Score: %.2f%%", f1 * 100));
+                precision.setText(String.format("Precision: %.4f", prec * 1));
+                recall.setText(String.format("Recall: %.4f", rec * 1));
+                f1Score.setText(String.format("F1 Score: %.4f", f1 * 1));
             }
         });
     }
