@@ -94,13 +94,13 @@ def generate_signal():
     if signal_notebook.index(signal_notebook.select()) == 1:
         time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2)
         plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
-        create_parameters_tab(param_frame_2, signal_2, time_2)
+        create_parameters_tab(param_frame_2, signal_2, time_2, signal_type.get())
         plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
 
     else:
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
         plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
-        create_parameters_tab(param_frame_1, signal_1, time_1)
+        create_parameters_tab(param_frame_1, signal_1, time_1, signal_type.get())
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
 
 
@@ -114,10 +114,14 @@ def samplingFun(sample_rate):
 
     if signal_notebook.index(signal_notebook.select()) == 1:
         signal_samp_2, time_samp_2 = sampling(signal_2, time_2, int(sample_rate), T_2)
-        plot_signal_samp(time_samp_2, signal_samp_2, sam_frame_2)
+        plot_signal_samp(time_samp_2, signal_samp_2, plot_frame_samp_2)
+        plot_histogram(histogram_frame_samp_2, signal_samp_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_samp_2, signal_samp_2, time_1, "Szum impulsowy")
     else:
         signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1)
-        plot_signal_samp(time_samp_1, signal_samp_1, sam_frame_1)
+        plot_signal_samp(time_samp_1, signal_samp_1, plot_frame_samp_1)
+        plot_histogram(histogram_frame_samp_1, signal_samp_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_samp_1, signal_samp_1, time_1, "Szum impulsowy")
 
 def quantizationFun(num_levels):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
@@ -126,11 +130,19 @@ def quantizationFun(num_levels):
         signal_kz_2 = roundQuant(singal_samp_2, int(num_levels))
         plot_signal_quant(time_samp_2, signal_ko_2, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2)
         plot_signal_quant(time_samp_2, signal_kz_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_histogram(histogram_frame_2_quand_1, signal_ko_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2_quand_1, signal_ko_2, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_2_quand_2, signal_kz_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2_quand_2, signal_kz_2, time_1, "Szum impulsowy")
     else:
         signal_ko_1 = clippQuant(signal_samp_1, int(num_levels))
         signal_kz_1 = roundQuant(signal_samp_1, int(num_levels))
         plot_signal_quant(time_samp_1, signal_ko_1, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
         plot_signal_quant(time_samp_1, signal_kz_1, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_histogram(histogram_frame_1_quand_1, signal_ko_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1_quand_1, signal_ko_1, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_1_quand_2, signal_kz_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1_quand_2, signal_kz_1, time_1, "Szum impulsowy")
 
 def reconstructionFun(param):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_1
@@ -145,6 +157,12 @@ def reconstructionFun(param):
         t = np.linspace(time_samp_2[0], time_samp_2[-1], int(len))
         signal_rs_2 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
         plot_signal_quant(t, signal_rs_2, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
+        plot_histogram(histogram_frame_2_rec_1, signal_rz_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2_rec_1, signal_rz_2, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_2_rec_2, signal_rp_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2_rec_2, signal_rp_2, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_2_rec_3, signal_rs_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2_rec_3, signal_rs_2, time_1, "Szum impulsowy")
     else:
         time_temp, signal_rz_1 = zeroOrderHold(signal_samp_1, time_samp_1, time_1)
         plot_signal_quant(time_temp, signal_rz_1, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
@@ -154,6 +172,12 @@ def reconstructionFun(param):
         t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
         signal_rs_1 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
         plot_signal_quant(t, signal_rs_1, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_histogram(histogram_frame_1_rec_1, signal_rz_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1_rec_1, signal_rz_1, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_1_rec_2, signal_rp_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1_rec_2, signal_rp_1, time_1, "Szum impulsowy")
+        plot_histogram(histogram_frame_1_rec_3, signal_rs_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1_rec_3, signal_rs_1, time_1, "Szum impulsowy")
 
 def similarityCheck():
     temp, temp2, temp3, temp4 = similaryCheckFun()
@@ -237,7 +261,6 @@ def similaryCheckFun():
 
     return temp, temp2, temp3, temp4
 
-
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
@@ -276,11 +299,11 @@ def toggle_fields():
         duty_cycle_label_t.grid(row=3, column=0, padx=5, pady=5)
         duty_cycle_entry_t.grid(row=3, column=1, padx=5, pady=5)
 
-def create_parameters_tab(param, signal, time):
+def create_parameters_tab(param, signal, time, type):
     for widget in param.winfo_children():
         widget.destroy()
 
-    if signal_type.get() not in ["Impuls jednostkowy", "Szum impulsowy"]:
+    if type not in ["Impuls jednostkowy", "Szum impulsowy"]:
         avg_label = ttk.Label(param, text=f"Średnia: {cp.avg_cont(signal, time):.3f}")
         avg_label.pack(padx=5, pady=5)
 
@@ -328,10 +351,10 @@ def plot_empty_chart():
     canvas = FigureCanvasTkAgg(fig, master=plot_frame_3)
     canvas.get_tk_widget().pack()
     canvas.draw()
-    canvas = FigureCanvasTkAgg(fig, master=sam_frame_1)
+    canvas = FigureCanvasTkAgg(fig, master=plot_frame_samp_1)
     canvas.get_tk_widget().pack()
     canvas.draw()
-    canvas = FigureCanvasTkAgg(fig, master=sam_frame_2)
+    canvas = FigureCanvasTkAgg(fig, master=plot_frame_samp_2)
     canvas.get_tk_widget().pack()
     canvas.draw()
     canvas = FigureCanvasTkAgg(fig, master=quad1_frame_1)
@@ -344,6 +367,24 @@ def plot_empty_chart():
     canvas.get_tk_widget().pack()
     canvas.draw()
     canvas = FigureCanvasTkAgg(fig, master=quad2_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec1_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec2_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec3_frame_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec1_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec2_frame_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=rec3_frame_2)
     canvas.get_tk_widget().pack()
     canvas.draw()
 
@@ -359,6 +400,42 @@ def plot_empty_chart():
     canvas.get_tk_widget().pack()
     canvas.draw()
     canvas = FigureCanvasTkAgg(fig, master=histogram_frame_3)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_samp_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_samp_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1_quand_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2_quand_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1_quand_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2_quand_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1_rec_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1_rec_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_1_rec_3)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2_rec_1)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2_rec_2)
+    canvas.get_tk_widget().pack()
+    canvas.draw()
+    canvas = FigureCanvasTkAgg(fig, master=histogram_frame_2_rec_3)
     canvas.get_tk_widget().pack()
     canvas.draw()
 
@@ -380,7 +457,7 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
         signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
         plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
         plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
-        create_parameters_tab(param_frame_3, signal_3, time_3)
+        create_parameters_tab(param_frame_3, signal_3, time_3, signal_type.get())
 
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
@@ -394,7 +471,7 @@ def operate_signals(operation):
         signal_3, time_3 = so.operate_signals(operation, signal_1, time_1, signal_2, time_2)
         plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
         plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
-        create_parameters_tab(param_frame_3, signal_3, time_3)
+        create_parameters_tab(param_frame_3, signal_3, time_3, signal_type.get())
 
 def save_signal():
     global signal_1, time_1
@@ -437,7 +514,7 @@ def load_signal(type):
 
     if type == 0:
         plot_signal(time, signal, "Załadowany sygnał", plot, histogram)
-        create_parameters_tab(param, signal, time)
+        create_parameters_tab(param, signal, time, signal_type.get())
         plot_histogram(histogram, signal, int(bins_var.get()))
     else:
         display_data_in_popup(time, signal, start_time, sampling_rate, num_samples, max_amplitude)
@@ -520,7 +597,7 @@ root.tk.call("source", tcl_path)
 root.set_theme("arc")  # Możesz zmienić "arc" na inny motyw
 print(root.get_themes())
 root.title("Generator sygnałów")
-root.geometry("1360x600")
+root.geometry("1510x600")
 root.resizable(False, False)
 
 
@@ -694,58 +771,139 @@ signal_notebook.add(signal_frame_3, text="Wynik")
 
 notebook = ttk.Notebook(signal_frame_1)
 notebook.pack(expand=True, fill='both')
-plot_frame_1 = ttk.Frame(notebook)
-histogram_frame_1 = ttk.Frame(notebook)
-param_frame_1 = ttk.Frame(notebook)
-sam_frame_1 = ttk.Frame(notebook)
-quad_frame = ttk.Notebook(notebook)
-rec_frame = ttk.Notebook(notebook)
-notebook.add(plot_frame_1, text="Wykres")
-notebook.add(histogram_frame_1, text="Histogram")
-notebook.add(param_frame_1, text="Parametry")
-notebook.add(sam_frame_1, text="Próbkowanie")
-notebook.add(quad_frame, text="Kwantyzacja")
-notebook.add(rec_frame, text="Rekonstrukcja")
 
-quad1_frame_1 = ttk.Frame(quad_frame)
-quad2_frame_1 = ttk.Frame(quad_frame)
-quad_frame.add(quad1_frame_1, text="Kwantyzacja z obcięciem")
-quad_frame.add(quad2_frame_1, text="Kwantyzacja z zaokrągleniem")
+sygnal_frame = ttk.Notebook(notebook)
+sam_frame = ttk.Notebook(notebook)
+quad_frame_1 = ttk.Notebook(notebook)
+quad_frame_2 = ttk.Notebook(notebook)
+rec_frame_1 = ttk.Notebook(notebook)
+rec_frame_2 = ttk.Notebook(notebook)
+rec_frame_3 = ttk.Notebook(notebook)
 
-rec1_frame_1 = ttk.Frame(rec_frame)
-rec2_frame_1 = ttk.Frame(rec_frame)
-rec3_frame_1 = ttk.Frame(rec_frame)
-rec_frame.add(rec1_frame_1, text="Zero-order hold")
-rec_frame.add(rec2_frame_1, text="First-order hold")
-rec_frame.add(rec3_frame_1, text="Sinc Interpolation")
+notebook.add(sygnal_frame, text="Sygnał")
+notebook.add(sam_frame, text="Próbkowanie")
+notebook.add(quad_frame_1, text="Kwantyzacja z obcięciem")
+notebook.add(quad_frame_2, text="Kwantyzacja z zaokrągleniem")
+notebook.add(rec_frame_1, text="Rekonstrukcja ZOH")
+notebook.add(rec_frame_2, text="Rekonstrukcja FOH")
+notebook.add(rec_frame_3, text="Rekonstrukcja Sinc")
+
+plot_frame_1 = ttk.Frame(sygnal_frame)
+histogram_frame_1 = ttk.Frame(sygnal_frame)
+param_frame_1 = ttk.Frame(sygnal_frame)
+sygnal_frame.add(plot_frame_1, text="Wykres")
+sygnal_frame.add(histogram_frame_1, text="Histogram")
+sygnal_frame.add(param_frame_1, text="Parametry")
+
+plot_frame_samp_1 = ttk.Frame(sam_frame)
+histogram_frame_samp_1 = ttk.Frame(sam_frame)
+param_frame_samp_1 = ttk.Frame(sam_frame)
+sam_frame.add(plot_frame_samp_1, text="Wykres")
+sam_frame.add(histogram_frame_samp_1, text="Histogram")
+sam_frame.add(param_frame_samp_1, text="Parametry")
+
+quad1_frame_1 = ttk.Frame(quad_frame_1)
+histogram_frame_1_quand_1 = ttk.Frame(quad_frame_1)
+param_frame_1_quand_1 = ttk.Frame(quad_frame_1)
+quad_frame_1.add(quad1_frame_1, text="Wykres")
+quad_frame_1.add(histogram_frame_1_quand_1, text="Histogram")
+quad_frame_1.add(param_frame_1_quand_1, text="Parametry")
+
+quad2_frame_1 = ttk.Frame(quad_frame_2)
+histogram_frame_1_quand_2 = ttk.Frame(quad_frame_2)
+param_frame_1_quand_2 = ttk.Frame(quad_frame_2)
+quad_frame_2.add(quad2_frame_1, text="Wykres")
+quad_frame_2.add(histogram_frame_1_quand_2, text="Histogram")
+quad_frame_2.add(param_frame_1_quand_2, text="Parametry")
+
+rec1_frame_1 = ttk.Frame(rec_frame_1)
+histogram_frame_1_rec_1 = ttk.Frame(rec_frame_1)
+param_frame_1_rec_1 = ttk.Frame(rec_frame_1)
+rec_frame_1.add(rec1_frame_1, text="Wykres")
+rec_frame_1.add(histogram_frame_1_rec_1, text="Histogram")
+rec_frame_1.add(param_frame_1_rec_1, text="Parametry")
+
+rec2_frame_1 = ttk.Frame(rec_frame_2)
+histogram_frame_1_rec_2 = ttk.Frame(rec_frame_2)
+param_frame_1_rec_2 = ttk.Frame(rec_frame_2)
+rec_frame_2.add(rec2_frame_1, text="Wykres")
+rec_frame_2.add(histogram_frame_1_rec_2, text="Histogram")
+rec_frame_2.add(param_frame_1_rec_2, text="Parametry")
+
+rec3_frame_1 = ttk.Frame(rec_frame_3)
+histogram_frame_1_rec_3 = ttk.Frame(rec_frame_3)
+param_frame_1_rec_3 = ttk.Frame(rec_frame_3)
+rec_frame_3.add(rec3_frame_1, text="Wykres")
+rec_frame_3.add(histogram_frame_1_rec_3, text="Histogram")
+rec_frame_3.add(param_frame_1_rec_3, text="Parametry")
+
 
 notebook = ttk.Notebook(signal_frame_2)
 notebook.pack(expand=True, fill='both')
-plot_frame_2 = ttk.Frame(notebook)
-histogram_frame_2 = ttk.Frame(notebook)
-param_frame_2 = ttk.Frame(notebook)
-sam_frame_2 = ttk.Frame(notebook)
-quad_frame = ttk.Notebook(notebook)
-rec_frame = ttk.Notebook(notebook)
-notebook.add(plot_frame_2, text="Wykres")
-notebook.add(histogram_frame_2, text="Histogram")
-notebook.add(param_frame_2, text="Parametry")
-notebook.add(sam_frame_2, text="Próbkowanie")
-notebook.add(quad_frame, text="Kwantyzacja")
-notebook.add(rec_frame, text="Rekonstrukcja")
+sam_frame = ttk.Notebook(notebook)
+quad_frame_1 = ttk.Notebook(notebook)
+quad_frame_2 = ttk.Notebook(notebook)
+rec_frame_1 = ttk.Notebook(notebook)
+rec_frame_2 = ttk.Notebook(notebook)
+rec_frame_3 = ttk.Notebook(notebook)
+sygnal_frame = ttk.Notebook(notebook)
 
-quad1_frame_2 = ttk.Frame(quad_frame)
-quad2_frame_2 = ttk.Frame(quad_frame)
-quad_frame.add(quad1_frame_2, text="Kwantyzacja z obcięciem")
-quad_frame.add(quad2_frame_2, text="Kwantyzacja z zaokrągleniem")
+notebook.add(sygnal_frame, text="Sygnał")
+notebook.add(sam_frame, text="Próbkowanie")
+notebook.add(quad_frame_1, text="Kwantyzacja z obcięciem")
+notebook.add(quad_frame_2, text="Kwantyzacja z zaokrągleniem")
+notebook.add(rec_frame_1, text="Rekonstrukcja ZOH")
+notebook.add(rec_frame_2, text="Rekonstrukcja FOH")
+notebook.add(rec_frame_3, text="Rekonstrukcja Sinc")
 
-rec1_frame_2 = ttk.Frame(rec_frame)
-rec2_frame_2 = ttk.Frame(rec_frame)
-rec3_frame_2 = ttk.Frame(rec_frame)
-rec_frame.add(rec1_frame_2, text="Zero-order hold")
-rec_frame.add(rec2_frame_2, text="First-order hold")
-rec_frame.add(rec3_frame_2, text="Sinc Interpolation")
+plot_frame_2 = ttk.Frame(sygnal_frame)
+histogram_frame_2 = ttk.Frame(sygnal_frame)
+param_frame_2 = ttk.Frame(sygnal_frame)
+sygnal_frame.add(plot_frame_2, text="Wykres")
+sygnal_frame.add(histogram_frame_2, text="Histogram")
+sygnal_frame.add(param_frame_2, text="Parametry")
 
+plot_frame_samp_2 = ttk.Frame(sam_frame)
+histogram_frame_samp_2 = ttk.Frame(sam_frame)
+param_frame_samp_2 = ttk.Frame(sam_frame)
+sam_frame.add(plot_frame_samp_2, text="Wykres")
+sam_frame.add(histogram_frame_samp_2, text="Histogram")
+sam_frame.add(param_frame_samp_2, text="Parametry")
+
+quad1_frame_2 = ttk.Frame(quad_frame_1)
+histogram_frame_2_quand_1 = ttk.Frame(quad_frame_1)
+param_frame_2_quand_1 = ttk.Frame(quad_frame_1)
+quad_frame_1.add(quad1_frame_2, text="Wykres")
+quad_frame_1.add(histogram_frame_2_quand_1, text="Histogram")
+quad_frame_1.add(param_frame_2_quand_1, text="Parametry")
+
+quad2_frame_2 = ttk.Frame(quad_frame_2)
+histogram_frame_2_quand_2 = ttk.Frame(quad_frame_2)
+param_frame_2_quand_2 = ttk.Frame(quad_frame_2)
+quad_frame_2.add(quad2_frame_2, text="Wykres")
+quad_frame_2.add(histogram_frame_2_quand_2, text="Histogram")
+quad_frame_2.add(param_frame_2_quand_2, text="Parametry")
+
+rec1_frame_2 = ttk.Frame(rec_frame_1)
+histogram_frame_2_rec_1 = ttk.Frame(rec_frame_1)
+param_frame_2_rec_1 = ttk.Frame(rec_frame_1)
+rec_frame_1.add(rec1_frame_2, text="Wykres")
+rec_frame_1.add(histogram_frame_2_rec_1, text="Histogram")
+rec_frame_1.add(param_frame_2_rec_1, text="Parametry")
+
+rec2_frame_2 = ttk.Frame(rec_frame_2)
+histogram_frame_2_rec_2 = ttk.Frame(rec_frame_2)
+param_frame_2_rec_2 = ttk.Frame(rec_frame_2)
+rec_frame_2.add(rec2_frame_2, text="Wykres")
+rec_frame_2.add(histogram_frame_2_rec_2, text="Histogram")
+rec_frame_2.add(param_frame_2_rec_2, text="Parametry")
+
+rec3_frame_2 = ttk.Frame(rec_frame_3)
+histogram_frame_2_rec_3 = ttk.Frame(rec_frame_3)
+param_frame_2_rec_3 = ttk.Frame(rec_frame_3)
+rec_frame_3.add(rec3_frame_2, text="Wykres")
+rec_frame_3.add(histogram_frame_2_rec_3, text="Histogram")
+rec_frame_3.add(param_frame_2_rec_3, text="Parametry")
 
 notebook = ttk.Notebook(signal_frame_3)
 notebook.pack(expand=True, fill='both')
