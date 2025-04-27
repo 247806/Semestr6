@@ -22,8 +22,7 @@
 
 
 \section{Cel projektu}
-\indent Celem projektu jest przygotowanie aplikacji, która będzie dokonywała klasyfikacji zbioru dokumentów tekstowych metodą k-NN. Jej zadaniem będzie przydzielenie obiektu do odpowiedniej klasy. W trakcie działania programu konieczne będzie dokonanie ekstrakcji wektorów cech z artykułów dostępnych pod linkiem: 
-\url{https://archive.ics.uci.edu/dataset/137/reuters+21578+text+categorization+collection}. \\
+\indent Celem projektu jest przygotowanie aplikacji, która będzie dokonywała klasyfikacji zbioru dokumentów tekstowych metodą k-NN. Jej zadaniem będzie przydzielenie obiektu do odpowiedniej klasy. W trakcie działania programu konieczne będzie dokonanie ekstrakcji wektorów cech ze zboiru artykułów Reuters \cite{reuters}. \\
 
 \section{Klasyfikacja nadzorowana metodą $k$-NN.  Ekstrakcja cech, wektory cech}
 Metoda k-NN (k-Nearest Neighbors) jest algorytmem leniwym, co oznacza, że nie tworzy wewnętrznej reprezentacji danych uczących, tylko przechowuje wszystkie wzorce uczące. Dopiero po pojawieniu się wzorca testowego, dla którego wyznaczana jest odległość względem wszystkich wzorców uczących, algorytm poszukuje rozwiązania. \cite{knn}. Algorytm k-NN wymaga dwóch kluczowych parametrów, metryki, za pomocą, której wyznacza odległości obiektu testującego od wszystkich wzorców uczących oraz liczby sąsiadów k, czyli elementów do których badany element ma najbliżej. Decyzja klasyfikacyjna opiera się na najczęstszej klasie wśród k najbliższych sąsiadów. W przypadku naszego projektu odległość pomiędzy obiektami oznacza skalę podobieństwa tekstów.
@@ -350,11 +349,11 @@ Wówczas odległość euklidesowa pomiędzy wektorami wynosi:
 \]
 
 \section{Wyniki klasyfikacji dla różnych parametrów wejściowych}
-W niniejszej sekcji przeprowadzono eksperymenty polegające na przeprowadzeniu klasyfikacji tekstów dla zbioru składającego się z 13441 artykułów, przy czym są to artykuły, które posiadają etykietę tylko jednego kraju (USA, UK, Kanada, Francja, Niemcy Zachodnie, Japonia) oraz nieposiadają pustego tekstu. Celem tego badania było przeprowadzenie analizy wpływu parametrów wejściowych algorytmu k-najbliższych sąsiadów na skuteczność klasyfikatora opisaną jako dokładność (accuracy). \\
-Badanie przeprowadzono w oparciu o różne warianty konfiguracji parametów wejściowych, zgodnie z punktami 3–8 zawartymi w opisie Projektu 1. Uwzględniono m.in. różne wartości parametru \(k\), różny podział zbioru pomiędzy uczący, a testowy oraz różne metryki. Eksperymenty polegają na tym, że w każdym z nich będzie zmieniany tylko jeden parametr, którego wpływ będzie aktualnie badany.
-Oznaczenia użyte w tabelach to: ACC - opisane w (13),  \( \text{PPV}_x \) - (14), \( \text{TPR}_x \) - (15), \( \text{F1}_x \) - (16), U - teksty o Stanach Zjednoczonych, UK - teksty o Wielkiej Brytanii, C - teksty o Kanadzie, J - teksty o Japonii, F - teksty o Francji, W - teksty o Niemczech Zachodnich.
+W tej sekcji przeprowadzono eksperymenty polegające na przeprowadzeniu klasyfikacji tekstów dla zbioru składającego się z 13441 artykułów, przy czym są to artykuły, które posiadają etykietę tylko jednego kraju (USA, Wielka Brytania, Kanada, Francja, Niemcy Zachodnie, Japonia) oraz nieposiadają pustego tekstu. Celem tego badania było przeprowadzenie analizy wpływu parametrów wejściowych algorytmu k-najbliższych sąsiadów na jakość klasyfikatora, którą można ocenić poprzez cztery miary (\(accuracy\), \(precision\), \(recall\), \(F1\). \\
+Badanie przeprowadzono w oparciu o różne warianty konfiguracji parametów wejściowych, zgodnie z punktami 3–8 zawartymi w opisie Projektu 1. Uwzględniono m.in. różne wartości parametru \(k\), różny podział zbioru pomiędzy uczący, a testowy,różne metryki oraz różne podzbiory cech. Eksperymenty polegają na tym, że w każdym z nich będzie zmieniany tylko jeden parametr, którego wpływ będzie aktualnie badany.
+Oznaczenia użyte w tabelach to: ACC - opisane w (13),  \( \text{PPV}_x \) - (14), \( \text{TPR}_x \) - (15), \( \text{F1}_x \) - (16), U - teksty o Stanach Zjednoczonych, UK - teksty o Wielkiej Brytanii, C - teksty o Kanadzie, J - teksty o Japonii, F - teksty o Francji, W - teksty o Niemczech Zachodnich, a - średnia z wszystkich tekstów.
 \\
-Przykładowy wektor z wyekstrahowanymi cechami:
+Losowy wektor wyciągnięty z programu po ekstrakcji i normalizacji cech, który jest wykorzystywany w procesie klasyfikacji, wygląda następująco:
 \[
     v = [ 0.04584717607973422, dlrs, [ florida, florida], 0.09576427255985268,
 \]
@@ -390,6 +389,9 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     PPV\(_J\) & 0,7805 & 0,7805 & 0,8168 & 0,8168& 0,8168& 0,8116& 0,7870\\ \hline
     TPR\(_J\) & 0,8556 & 0,8556 & 0,8824 &  0,8824& 0,8824& 0,8984& 0,9091\\ \hline
     F1\(_J\) & 0,8163 & 0,8163 & 0,8483 &  0,8483& 0,8483& 0,8528& 0,8437\\ \hline
+    PPV\(_a\) & 0,6559 & 0,6559 & 0,7465 & 0,7829 & 0,8338 & 0,8410 & 0,8116\\ \hline
+    TPR\(_a\) & 0,6103 & 0,6103 & 0,6180 & 0,6161 & 0,6094 & 0,6041 & 0,5810\\ \hline
+    F1\(_a\) & 0,6258 & 0,6258 & 0,6608 & 0,6666 & 0,6679 & 0,6593 & 0,6213\\ \hline
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji}
 \end{table}
@@ -417,6 +419,9 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     PPV\(_J\) & 0,7907& 0,7870& 0,7778\\ \hline
     TPR\(_J\) & 0,9091& 0,9091& 0,8984\\ \hline
     F1\(_J\) & 0,8458& 0,8437& 0,8387\\ \hline
+    PPV\(_a\) & 0,8358 & 0,8334 & 0,6620\\ \hline
+    TPR\(_a\) & 0,5620 & 0,5464 & 0,5146\\ \hline
+    F1\(_a\) & 0,6031 & 0,5866 & 0,5557\\ \hline
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji (cd.)}
 \end{table}
@@ -454,6 +459,9 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
     PPV\(_J\) & 0,8145 & 0,8333 & 0,8140 & 0,8140 & 0,8269\\ \hline
     TPR\(_J\) & 0,8571 & 0,8563 & 0,9013 & 0,9013 & 0,9149\\ \hline
     F1\(_J\) & 0,8353 & 0,8446 & 0,8554 & 0,8554 & 0,8687\\ \hline
+    PPV\(_a\) & 0,8139 & 0,8207 & 0,8228 & 0,8182 & 0,7961 \\ \hline
+    TPR\(_a\) & 0,5301 & 0,5900 & 0,6050 & 0,6053 & 0,5949\\ \hline
+    F1\(_a\) & 0,5870 & 0,6521 & 0,6627 & 0,6614 & 0,6558\\ \hline
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu podziału zbiorów na jakość klasyfikacji}
 \end{table}
@@ -463,7 +471,6 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
     \caption{Zależność accuracy do podziału zbiorów }
     \label{fig:moj-obraz}
 \end{figure}
-% Wyniki wskazują na istotny wpływ proporcji podziału zbioru na dokładność klasyfikacji. W miarę zwiększania udziału zbioru uczącego w całości danych, skuteczność klasyfikatora rośnie, osiągając najwyższą wartość przy podziale 80\% danych do zbioru uczącego. Zwiększenie tego udziału powoduje, że model ma więcej danych do nauki, co przekłada się na lepsze dopasowanie do wzorców w danych. Z kolei mniejsze proporcje danych uczących prowadzą do gorszej efektywności, co może być wynikiem niedostatecznej liczby próbek w procesie treningu.
 
 \subsection{Różne metryki}
 W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 9\) oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
@@ -472,7 +479,7 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
     \centering
     \begin{tabular}{|c|c|c|c|}
     \hline
-    \textbf{Parametr k} & \textbf{Euklidesowa} & \textbf{Uliczna} & \textbf{Czebyszewa}  \\ \hline
+    \textbf{Metryka} & \textbf{Euklidesowa} & \textbf{Uliczna} & \textbf{Czebyszewa}  \\ \hline
     ACC [\%] & 89,27 & 88,12 & 79,96\\ \hline
     PPV\(_U\) & 0,9061 & 0,8893 & 0,7988\\ \hline
     TPR\(_U\) & 0,9796& 0,9850 & 0,9998\\ \hline
@@ -492,6 +499,9 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
     PPV\(_J\) & 0,8168& 0,8289 & 0,8889\\ \hline
     TPR\(_J\) & 0,8824& 0,8289 & 0,0856\\ \hline
     F1\(_J\) & 0,8483 & 0,8289 & 0,1561\\ \hline
+    PPV\(_a\) & 0,8338 & 0,8202 & 0,6146\\ \hline
+    TPR\(_a\) &  0,6094 & 0,5394 & 0,1861\\ \hline
+    F1\(_a\) & 0,6679 & 0,6002 & 0,1843\\ \hline
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu metryk na jakość klasyfikacji}
 \end{table}
@@ -560,6 +570,9 @@ Wykorzystane zostały cztery podzbiory cech, w których z głównego wektora usu
     PPV\(_J\) &  0,8168 &0,7635 & 0,3030 & 0,8053 & 0,8430\\ \hline
     TPR\(_J\) & 0,8824 &0,8289 & 0,0535 & 0,8182 & 0,7754\\ \hline
     F1\(_J\) & 0,8483 & 0,7949 & 0,0909 & 0,8117 & 0,8078\\ \hline
+    PPV\(_a\) & 0,8338 & 0,7906 & 0,4446 & 0,8555 & 0,7842 \\ \hline
+    TPR\(_a\) &  0,6094 & 0,5800 & 0,2123 & 0,5726 & 0,5435\\ \hline
+    F1\(_a\) & 0,6679 & 0,6458 & 0,2278 & 0,6442 & 0,6143\\ \hline
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu doboru cech na jakość klasyfikacji}
 \end{table}
@@ -573,7 +586,7 @@ Wykorzystane zostały cztery podzbiory cech, w których z głównego wektora usu
 \subsection{Wpływ parametru k na jakość klasyfikacji}
 Na podstawie rysunku 1 można zaobserwować, że miara \(accuracy\) rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 9\), osiągając wówczas wartość maksymalną. Dalsze zwiększanie parametru \(k\) prowadzi do stopniowego pogorszenia dokładności klasyfikatora. Aby jednak w pełni ocenić wpływ parametru \(k\) na jakość klasyfikacji, należy również przeanalizować metryki \(recall\), \(precision\) oraz \(F1\), które są obliczane oddzielnie dla każdej klasy. \\
 Analiza danych z tabel 2 i 3 wskazuje, że wartość \(precision\) dla klasy USA maleje wraz ze wzrostem \(k\), natomiast dla pozostałych klas zachowuje się nieregularnie. Wartości skrajne, takie jak 1 lub 0, pojawiają się w przypadkach, gdy liczba zaklasyfikowanych dokumentów do danej klasy jest bardzo mała. Na przykład, precyzja dla klasy Niemcy Zachodnie wynosi 1 przy \(k = 65\), a 0 przy \(k = 100\), co oznacza, że przy większym \(k\) żaden artykuł nie został zaklasyfikowany jako należący do tej klasy. Takie zachowanie wynika z przewagi liczebnej klasy USA, co skutkuje częstszym przypisywaniem dokumentów właśnie do niej. \\ 
-Dla miary \(recall\) obserwuje się stopniowy wzrost dla klasy USA i Japonii, co oznacza coraz lepsze rozpoznawanie dokumentów należących do tych klas. Dla pozostałych klas czułość utrzymuje się na stabilnym poziomie przy małych wartościach \(k\), po czym maleje przy większych wartościach. W skrajnych przypadkach, jak dla klasy Niemiec Zachodnich, \(recall\) osiąga 0, co świadczy o całkowitym braku przypisań do tej klasy.\\
+Dla miary \(recall\) obserwuje się stopniowy wzrost dla klasy USA i Japonii, co oznacza coraz lepsze rozpoznawanie dokumentów należących do tych klas. Dla pozostałych klas czułość utrzymuje się na stabilnym poziomie przy małych wartościach \(k\), po czym maleje przy większych wartościach. W skrajnych przypadkach, jak dla klasy Niemiec Zachodnich, \(recall\) osiąga 0, co świadczy o całkowitym braku prawidłowych przypisań do tej klasy.\\
 Zaobserwowane zjawiska wynikają głównie z dominacji klasy USA, która stanowi około 79\% wszystkich dokumentów w zbiorze. Sytuacja ta pokazuje, że wysoka wartość jednej z miar, np. \(recall\) czy \(precision\), nie zawsze świadczy o dobrej jakości klasyfikatora. W takich przypadkach szczególnie użyteczna jest miara \(F1\), która pozwala ocenić równowagę pomiędzy precyzją a czułością. Najwyższe wartości \(F1\)-miary uzyskano przy \(k = 9\) dla czterech klas, natomiast dla klasy Niemiec Zachodnich i Japonii wartości maksymalne występują odpowiednio przy \(k = 5\) oraz \(k = 15\). \\
 Na podstawie przeprowadzonych analiz można stwierdzić, że optymalna wartość parametru \(k\) powinna być ustalana nie tylko na podstawie miary \(accuracy\), ale również z uwzględnieniem metryk klasyfikacyjnych obliczanych osobno dla każdej klasy. W przypadku tego doświadzenia jest to k z zakresu 5 - 15.
 
@@ -632,9 +645,10 @@ podać merytoryczne (ale nie czasowe) przyczyny tych braków.
 
 
 \begin{thebibliography}{0}
+\bibitem{reuters} Reuters-21578 Text Categorization Collection,\url{https://archive.ics.uci.edu/dataset/137/reuters+21578+text+categorization+collection} [dostęp 27.04.2025r.]
 \bibitem{knn} Metoda k-NN \url{https://home.agh.edu.pl/~horzyk/lectures/miw/KNN.pdf} [dostęp: 28.03.2025r.]
 \bibitem{tab} Wikipedia, Tablica pomyłek, \url{https://pl.wikipedia.org/wiki/Tablica_pomy%C5%82ek}. [dostęp: 28.03.2025r.]
-\bibitem{niewiadomski08} A. Niewiadomski, Methods for the Linguistic Summarization of Data: Applications of Fuzzy Sets and Their Extensions, Akademicka Oficyna Wydawnicza EXIT, Warszawa, 2008.
+\bibitem{wyklad} A.Niewiadomski, Materiały wykładowe do przedmiotu Komputerowe Systemy Rozpoznawaniam, ksr-wyklad-2009 \url{https://ftims.edu.p.lodz.pl/mod/folder/view.php?id=135292} [dostęp 27.04.2025r.]
 \end{thebibliography}
 
 Literatura zawiera wyłącznie źródła recenzowane i/lub o potwierdzonej wiarygodności,
