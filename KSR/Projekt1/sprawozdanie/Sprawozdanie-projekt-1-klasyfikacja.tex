@@ -393,14 +393,45 @@ W poniższej tabeli przedstawiono wpływ różnych wartości parametru \(k\) na 
     \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji}
 \end{table}
 
-Tabela dla kolejnych wielkości parametru k jest dostępna w załączniku o nazwie tabela\_k\_accuracy.png.
-
-\begin{figure}[H]
+\begin{table}[H]
     \centering
-    \includegraphics[width=\textwidth]{ksr/img/ACC - K.png}
-    \caption{Zależność accuracy do parametru k}
-    \label{fig:moj-obraz}
-\end{figure}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Parametr k} & \textbf{\(40\)} & \textbf{\(65\)} & \textbf{\(100\)}  \\ \hline
+    ACC [\%] & 88,42 & 88,08 & 87,50 \\ \hline
+    PPV\(_U\) & 0,8980 & 0,8945 & 0,8887 \\ \hline
+    TPR\(_U\) & 0,9801 & 0,9803 & 0,9803 \\ \hline
+    F1\(_U\) & 0,9372 & 0,9355 & 0,9323 \\ \hline
+    PPV\(_C\) & 0,7959 & 0,7988 & 0,7758 \\ \hline
+    TPR\(_C\) & 0,4431 & 0,4154 & 0,3938 \\ \hline
+    F1\(_C\) & 0,5692 & 0,5466 & 0,5224 \\ \hline
+    PPV\(_{UK}\) & 0,8182 & 0,7960 & 0,7860 \\ \hline
+    TPR\(_{UK}\) & 0,5608 & 0,5497 & 0,5276 \\ \hline
+    F1\(_{UK}\) & 0,6634 & 0,6503 & 0,6314 \\ \hline
+    PPV\(_F\) & 0,7188 & 0,7241 & 0,7436\\ \hline
+    TPR\(_F\) & 0,4554 & 0,4158 & 0,2871\\ \hline
+    F1\(_F\) & 0,5576 & 0,5283 & 0,4143\\ \hline
+    PPV\(_W\) & 1,0000 & 1,0000 & 0,0000 \\ \hline
+    TPR\(_W\) & 0,0233 & 0,0078 & 0,0000 \\ \hline
+    F1\(_W\) & 0,0455 & 0,0154 & 0,0000 \\ \hline
+    PPV\(_J\) & 0,7907 & 0,7870 & 0,7778 \\ \hline
+    TPR\(_J\) & 0,9091 & 0,9091 & 0,8984 \\ \hline
+    F1\(_J\) & 0,8458 & 0,8437 & 0,8387 \\ \hline
+    PPV\(_a\) & 0,8358 & 0,8834 & 0,6620 \\ \hline
+    TPR\(_a\) & 0,5620 & 0,5464 & 0,5146 \\ \hline
+    F1\(_a\) & 0,6031 & 0,5866 & 0,5557\\ \hline
+    \end{tabular}
+    \caption{Wyniki miar przy badaniu wpływu liczby \(k\) na jakość klasyfikacji (cd.)}
+\end{table}
+
+Wykres prezentujący zależność \(accuracy\) od parametru k jest dostępny w załączniku o nazwie accuracy\_k.png.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{ksr/img/ACC - K.png}
+%     \caption{Zależność accuracy do parametru k}
+%     \label{fig:moj-obraz}
+% \end{figure}
 
 \subsection{Różny podział zbioru pomiędzy uczący, a testowy}
 W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: \(k\) = 9, metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\).
@@ -439,6 +470,7 @@ W poniższej tabeli przedstawiono wpływ proporcji podziału zbioru na dokładno
 
 Wykres prezentujący zależność \(accuracy\) od podziału zbioru jest dostępny w załączniku o nazwie accuracy\_podzial.png.
 
+
 \subsection{Różne metryki}
 W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 9\) oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
 
@@ -472,12 +504,15 @@ W poniższej tabeli przedstawiono wpływ różnych metryk na dokładność klasy
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu metryk na jakość klasyfikacji}
 \end{table}\
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{ksr/img/ACC - metryka.png}
-    \caption{Zależność accuracy do wybranej metryki}
-    \label{fig:moj-obraz}
-\end{figure}
+
+Wykres prezentujący zależność \(accuracy\) od metryki jest dostępny w załączniku o nazwie accuracy\_metryka.png.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{ksr/img/ACC - metryka.png}
+%     \caption{Zależność accuracy do wybranej metryki}
+%     \label{fig:moj-obraz}
+% \end{figure}
 
 \subsection{Dobór cech}
 W poniższej tabeli przestawiono wpływ usunięcia różnych cech z wektora podstawowego na dokładność klasyfikacji tekstów. Eksperymenty przeprowadzono przy stałych pozostałych ustawieniach: podziale zbioru danych na 60\% zbioru uczącego i 40\% zbioru testowego \(k = 9\), metryce euklidesowej oraz zakresie długości n-gramów od \(n_1 = 2\) do \(n_2 = 4\). \\
@@ -542,35 +577,39 @@ Wykorzystane zostały cztery podzbiory cech, w których z głównego wektora usu
     \end{tabular}
     \caption{Wyniki miar przy badaniu wpływu doboru cech na jakość klasyfikacji}
 \end{table}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{ksr/img/ACC - cechy.png}
-    \caption{Zależność accuracy do wybranej podzbioru cech}
-    \label{fig:moj-obraz}
-\end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{ksr/img/ACC - cechy.png}
+%     \caption{Zależność accuracy do wybranej podzbioru cech}
+%     \label{fig:moj-obraz}
+% \end{figure}
+
+Wykres prezentujący zależność \(accuracy\) od podziału zbioru jest dostępny w załączniku o nazwie accuracy\_cechy.png.
+
 \section{Dyskusja, wnioski, sprawozdanie końcowe}
 \subsection{Wpływ parametru k na jakość klasyfikacji}
-Na podstawie rysunku 1 można zaobserwować, że miara \(accuracy\) rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 9\), osiągając wówczas wartość maksymalną. Dalsze zwiększanie parametru \(k\) prowadzi do stopniowego pogorszenia dokładności klasyfikatora. Aby jednak w pełni ocenić wpływ parametru \(k\) na jakość klasyfikacji, należy również przeanalizować miary \(recall\), \(precision\) oraz \(F1\), które są obliczane oddzielnie dla każdej klasy. \\
-Analiza danych z tabel 2 i tabeli dostępnej w załączniku (tabela\_k\_accuracy.png) wskazuje, że wartość \(precision\) dla klasy USA maleje wraz ze wzrostem \(k\), natomiast dla pozostałych klas zachowuje się nieregularnie. Wartości skrajne, takie jak 1 lub 0, pojawiają się w przypadkach, gdy liczba zaklasyfikowanych dokumentów do danej klasy jest bardzo mała. Na przykład, precyzja dla klasy Niemcy Zachodnie wynosi 1 przy \(k = 65\), a 0 przy \(k = 100\), co oznacza, że przy większym \(k\) żaden artykuł nie został zaklasyfikowany jako należący do tej klasy. Takie zachowanie wynika z przewagi liczebnej klasy USA, co skutkuje częstszym przypisywaniem dokumentów właśnie do niej. \\ 
+Na podstawie rysunku dostępnego w załączniku pod nazwą accuracy\_k.png można zaobserwować, że miara \(accuracy\) rośnie wraz ze wzrostem parametru \(k\) do wartości \(k = 9\), osiągając wówczas wartość maksymalną. Dalsze zwiększanie parametru \(k\) prowadzi do stopniowego pogorszenia dokładności klasyfikatora. Aby jednak w pełni ocenić wpływ parametru \(k\) na jakość klasyfikacji, należy również przeanalizować miary \(recall\), \(precision\) oraz \(F1\), które są obliczane oddzielnie dla każdej klasy. \\
+Analiza danych z tabel 2 i 3 wskazuje, że wartość \(precision\) dla klasy USA maleje wraz ze wzrostem \(k\), natomiast dla pozostałych klas zachowuje się nieregularnie. Wartości skrajne, takie jak 1 lub 0, pojawiają się w przypadkach, gdy liczba zaklasyfikowanych dokumentów do danej klasy jest bardzo mała. Na przykład, precyzja dla klasy Niemcy Zachodnie wynosi 1 przy \(k = 65\), a 0 przy \(k = 100\), co oznacza, że przy większym \(k\) żaden artykuł nie został zaklasyfikowany jako należący do tej klasy. Takie zachowanie wynika z przewagi liczebnej klasy USA, co skutkuje częstszym przypisywaniem dokumentów właśnie do niej. \\ 
 Dla miary \(recall\) obserwuje się stopniowy wzrost dla klasy USA i Japonii, co oznacza coraz lepsze rozpoznawanie dokumentów należących do tych klas. Dla pozostałych klas czułość utrzymuje się na stabilnym poziomie przy małych wartościach \(k\), po czym maleje przy większych wartościach. W skrajnych przypadkach, jak dla klasy Niemiec Zachodnich, \(recall\) osiąga 0, co świadczy o całkowitym braku prawidłowych przypisań do tej klasy.\\
-Zaobserwowane zjawiska wynikają głównie z dominacji klasy USA, która stanowi około 79\% wszystkich dokumentów w zbiorze. Sytuacja ta pokazuje, że wysoka wartość jednej z miar, np. \(recall\) czy \(precision\), nie zawsze świadczy o dobrej jakości klasyfikatora. W takich przypadkach szczególnie użyteczna jest miara \(F1\), która pozwala ocenić równowagę pomiędzy precyzją a czułością. Najwyższe wartości \(F1\)-miary uzyskano przy \(k = 9\) dla czterech klas, natomiast dla klasy Niemiec Zachodnich i Japonii wartości maksymalne występują odpowiednio przy \(k = 5\) oraz \(k = 15\). \\
+Zaobserwowane zjawiska wynikają głównie z dominacji klasy USA, która stanowi około 79\% wszystkich dokumentów w zbiorze. Sytuacja ta pokazuje, że wysoka wartość jednej z miar, np. \(recall\) czy \(precision\), nie zawsze świadczy o dobrej jakości klasyfikatora. W takich przypadkach szczególnie użyteczna jest miara \(F1\), która pozwala ocenić równowagę pomiędzy precyzją a czułością. Najwyższe wartości tej miary uzyskano przy \(k = 9\) dla czterech klas, natomiast dla klasy Niemiec Zachodnich i Japonii wartości maksymalne występują odpowiednio przy \(k = 5\) oraz \(k = 15\). \\
 Na podstawie przeprowadzonych analiz można stwierdzić, że optymalna wartość parametru \(k\) powinna być ustalana nie tylko na podstawie miary \(accuracy\), ale również z uwzględnieniem metryk klasyfikacyjnych obliczanych osobno dla każdej klasy. W przypadku tego doświadzenia jest to k z zakresu 5 - 15.
 
 \subsection{Wpływ podziału zbiorów na jakość klasyfikacji}
-Na rysunku dostępnym w załączniku (accuracy\_podzial.png) został zaprezentowany wpływ różnego podziału zbioru na uczący oraz testowy. Można zauważyć, że wraz ze wzrostem procentowego udziału zbioru treningowego, miara \(accuracy\) stopniowo rośnie do wartości 89{,}27\% przy podziale 70/30, po czym nieznacznie spada dla proporcji 90/10. Różnice te są jednak niewielkie – maksymalna różnica między najlepszym a najgorszym wynikiem wynosi ok. 1,3 p.p. \\
+Na rysunku dostępnym w załączniku o nazwie accuracy\_podzial.png został zaprezentowany wpływ różnego podziału zbioru na uczący oraz testowy. Można zauważyć, że wraz ze wzrostem procentowego udziału zbioru treningowego, miara \(accuracy\) stopniowo rośnie do wartości 89{,}27\% przy podziale 70/30, po czym nieznacznie spada dla proporcji 90/10. Różnice te są jednak niewielkie – maksymalna różnica między najlepszym a najgorszym wynikiem wynosi ok. 1,3 p.p. \\
 Dla klasy dominującej (USA) miary jakości klasyfikacji (\(precision\), \(recall\), \(F1\)) są bardzo wysokie i stabilne niezależnie od proporcji danych, co wynika z dużej liczebności tej klasy w zbiorze. \\
 W przypadku pozostałych klas, które są mniej liczebne, sytuacja jest bardziej złożona. Miara \(precision\) zachowuje się niestabilnie – wartości rosną i maleją w zależności od podziału danych. Natomiast miara \(recall\) zazwyczaj wzrasta do momentu osiągnięcia proporcji 50/50 lub 70/30, po czym nieco spada. \\
 Na podstawie powyższych obserwacji można stwierdzić, że optymalny kompromis pomiędzy liczbą przykładów uczących a jakością klasyfikacji występuje przy podziale 70/30 lub 50/50. Natomiast zbyt mała liczebność zbioru uczącego jest najbardziej niekorzystna dla klas z najmiejszą liczbą obiektów, w przypadku tego doświadczenia jest to Francja oraz Niemcy Zachodnie.
 
 \subsection{Wpływ wyboru metryki na jakość klasyfikacji}
-Na rysunku 2 przedstawiono porównanie wartości \(accuracy\) przy użyciu różnych metryk odległości. Można zauważyć, że dla metryki euklidesowej uzyskano najlepszy wynik, nieco niższy (o ok. 1 p.p.) dla metryki ulicznej oraz znacznie niższy (o ok. 10 p.p.) dla metryki Czebyszewa.\\
-W przypadku klasy dominującej (USA), zgodnie z tabelą 4, zmiana metryk z euklidesowej na uliczną, a następnie na Czebyszewa prowadzi do pogorszenia miary \(precision\), ale jednocześnie do poprawy miary \(recall\), jednak miara \(F1\) wskazuje jednoznacznie, że najlepszą równowagę pomiędzy precyzją a czułością osiągnięto dla metryki Euklidesowej. \\
+Na rysunku dostępnym w załączniku o nazwie accuracy\_metryka.png przedstawiono porównanie wartości \(accuracy\) przy użyciu różnych metryk odległości. Można zauważyć, że dla metryki euklidesowej uzyskano najlepszy wynik, nieco niższy (o ok. 1 p.p.) dla metryki ulicznej oraz znacznie niższy (o ok. 10 p.p.) dla metryki Czebyszewa.\\
+W przypadku klasy dominującej (USA), zgodnie z tabelą 5, zmiana metryk z euklidesowej na uliczną, a następnie na Czebyszewa prowadzi do pogorszenia miary \(precision\), ale jednocześnie do poprawy miary \(recall\), jednak miara \(F1\) wskazuje jednoznacznie, że najlepszą równowagę pomiędzy precyzją a czułością osiągnięto dla metryki Euklidesowej. \\
 Metryka uliczna, choć osiąga niższe wyniki dokładności niż euklidesowa, wykazuje w niektórych przypadkach lepszą precycję kosztem nieco niższej czułości. Niemniej jednak ogólny poziom \(F1\) pozostaje niższy niż dla metryki euklidesowej. \\
 Z kolei metryka Czebyszewa dla klas mniej licznych niż USA prowadzi do skrajnych wyników. Przykładowo, dla Kanady precyzja osiąga wartość 1, podczas gdy dla Francji wynosi 0. Jednocześnie w przypadku czułości wartości są bardzo niskie lub bliskie zeru. Jest to związane z dużą czułością metryki Czebyszewa na brak podobieństwa pojedynczych cech składowych wektorów cech. Dla przykładu, dziewięć cech może wskazywać na duże podobieństwo pomiędzy artykułami, jednak jedna cecha o zerowym podobieństwie znacząco obniża wynik całkowity. W konsekwencji większość tekstów jest klasyfikowana jako USA, czyli do klasy dominującej liczebnie.
 
 \subsection{Wpływ doboru cech na jakość klasyfikacji}
-Na rysunku 3 przedstawiono wykres wartości \(accuracy\) przy użyciu różnych podzbiorów cech. Można zauważyć, że w przypadku usunięcia dwóch cech tekstowych i dwóch liczbowych oraz  wszystkich cech liczbowych spadek dokładności klasyfikatora nie jest znaczący - w najgorszym przypadku wynosi ok. 1.7 p.p. Wyraźne pogorszenie dokładności obserwuje się natomiast po usunięciu wszystkich cech tekstowych. \\
-Zgodnie z tabelą 5, dla wektora cech \(v1\) miary \(precision\), \(recall\) oraz \(F1\) dla większości krajów spadają. Natomiast dla wektora \(v4\) zmiany tych miar są bardziej nieregularne, w niektórych przypadkach obserwuje się wyraźne spadki, a w innych — poprawę, np. precyzji dla Kanady. Na tej postawie można dojść do wniosku, że cechy tekstowe, których brak obserwujemy w wektorze \(v4\) mają istotniejszy wpływ na jakość klasyfikacji. \\
+Na rysunku dostępnym w załączniku pod nazwą accuracy\_cechy.png przedstawiono wykres wartości \(accuracy\) przy użyciu różnych podzbiorów cech. Można zauważyć, że w przypadku usunięcia dwóch cech tekstowych i dwóch liczbowych oraz  wszystkich cech liczbowych spadek dokładności klasyfikatora nie jest znaczący - w najgorszym przypadku wynosi ok. 1.7 p.p. Wyraźne pogorszenie dokładności obserwuje się natomiast po usunięciu wszystkich cech tekstowych. \\
+Zgodnie z tabelą 6, dla wektora cech \(v1\) miary \(precision\), \(recall\) oraz \(F1\) dla większości krajów spadają. Natomiast dla wektora \(v4\) zmiany tych miar są bardziej nieregularne, w niektórych przypadkach obserwuje się wyraźne spadki, a w innych — poprawę, np. precyzji dla Kanady. Na tej postawie można dojść do wniosku, że cechy tekstowe, których brak obserwujemy w wektorze \(v4\) mają istotniejszy wpływ na jakość klasyfikacji. \\
 Usunięcie wszystkich cech liczbowych \(v3\) wpływa w niewielkim stopniu na wartości miar jakości klasyfikacji dla większości krajów. Wyjątkiem jest Wielka Brytania, dla której precyzja znacząco wzrasta przy jednoczesnym spadku czułości, co ostatecznie obniża wartość miary \(F1\). \\
 W przypadku usunięcia wszystkich cech tekstowych \(v2\) wartości miar jakości klasyfikacji dla wszystkich krajów, poza USA, drastycznie spadają. Na podstawie powyższych obserwacji można stwierdzić, że cechy tekstowe mają kluczowy wpływ na skuteczność klasyfikacji metodą KNN.
 
@@ -585,11 +624,6 @@ W przypadku usunięcia wszystkich cech tekstowych \(v2\) wartości miar jakości
 \end{itemize}
 
 
-\section{Braki w realizacji projektu 1.}
-Wymienić wg opisu Projektu 1. wszystkie niezrealizowane obowiązkowe elementy projektu, ewentualnie
-podać merytoryczne (ale nie czasowe) przyczyny tych braków. 
-
-
 \begin{thebibliography}{0}
 \bibitem{reuters} Reuters-21578 Text Categorization Collection,\url{https://archive.ics.uci.edu/dataset/137/reuters+21578+text+categorization+collection} [dostęp 27.04.2025r.]
 \bibitem{knn} Metoda k-NN \url{https://home.agh.edu.pl/~horzyk/lectures/miw/KNN.pdf} [dostęp: 28.03.2025r.]
@@ -597,6 +631,4 @@ podać merytoryczne (ale nie czasowe) przyczyny tych braków.
 \bibitem{wyklad} A.Niewiadomski, Materiały wykładowe do przedmiotu Komputerowe Systemy Rozpoznawaniam, ksr-wyklad-2009 \url{https://ftims.edu.p.lodz.pl/mod/folder/view.php?id=135292} [dostęp 27.04.2025r.]
 \end{thebibliography}
 
-Literatura zawiera wyłącznie źródła recenzowane i/lub o potwierdzonej wiarygodności,
-możliwe do weryfikacji i cytowane w sprawozdaniu. 
 \end{document}
