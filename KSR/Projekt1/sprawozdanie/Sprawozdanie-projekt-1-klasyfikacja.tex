@@ -611,7 +611,8 @@ Z kolei metryka Czebyszewa dla klas mniej licznych niż USA prowadzi do skrajnyc
 Na rysunku dostępnym w załączniku pod nazwą accuracy\_cechy.png przedstawiono wykres wartości \(accuracy\) przy użyciu różnych podzbiorów cech. Można zauważyć, że w przypadku usunięcia dwóch cech tekstowych i dwóch liczbowych oraz  wszystkich cech liczbowych spadek dokładności klasyfikatora nie jest znaczący - w najgorszym przypadku wynosi ok. 1.7 p.p. Wyraźne pogorszenie dokładności obserwuje się natomiast po usunięciu wszystkich cech tekstowych. \\
 Zgodnie z tabelą 6, dla wektora cech \(v1\) miary \(precision\), \(recall\) oraz \(F1\) dla większości krajów spadają. Natomiast dla wektora \(v4\) zmiany tych miar są bardziej nieregularne, w niektórych przypadkach obserwuje się wyraźne spadki, a w innych — poprawę, np. precyzji dla Kanady. Na tej postawie można dojść do wniosku, że cechy tekstowe, których brak obserwujemy w wektorze \(v4\) mają istotniejszy wpływ na jakość klasyfikacji. \\
 Usunięcie wszystkich cech liczbowych \(v3\) wpływa w niewielkim stopniu na wartości miar jakości klasyfikacji dla większości krajów. Wyjątkiem jest Wielka Brytania, dla której precyzja znacząco wzrasta przy jednoczesnym spadku czułości, co ostatecznie obniża wartość miary \(F1\). \\
-W przypadku usunięcia wszystkich cech tekstowych \(v2\) wartości miar jakości klasyfikacji dla wszystkich krajów, poza USA, drastycznie spadają. Na podstawie powyższych obserwacji można stwierdzić, że cechy tekstowe mają kluczowy wpływ na skuteczność klasyfikacji metodą KNN.
+W przypadku usunięcia wszystkich cech tekstowych \(v2\) wartości miar jakości klasyfikacji dla wszystkich krajów, poza USA, drastycznie spadają.
+Na podstawie powyższych obserwacji można stwierdzić, że cechy tekstowe i ich poprawny dobór, mają kluczowy wpływ na skuteczność klasyfikacji metodą KNN, ponieważ to cechy tekstowe identyfikują charakterystyczne elementy artykułów.
 
 \subsection{Wnioski}
 \begin{itemize}
@@ -620,7 +621,7 @@ W przypadku usunięcia wszystkich cech tekstowych \(v2\) wartości miar jakości
     \item Wnioski o jakości klasyfikacji nie powinny być oparte wyłącznie na wartości \(accuracy\), ponieważ w przypadku nierównomiernego rozkładu klas może ona być myląca. Warto analizować również \(precison\), \(recall\) i \(F1\).
     \item Wybór metryki odległości wpływa na wyniki klasyfikacji — metryki takie jak uliczna lub Euklidesowa dają bardziej stabilne wyniki w porównaniu do metryki Czebyszewa, która jest bardziej podatna na duże różnice w pojedynczych cechach.
     \item Cechy tekstowe dostarczają istotniejszych informacji o klasyfikowanych obiektach niż cechy liczbowe, co jest widoczne poprzez większe pogorszenie jakości klasyfikacji po ich usunięciu.
-    \item Etap doboru cech powinnien być przeprowadzana ostrożnie, ponieważ prawidłowy dobór cech jest konieczny do uzyskania wysokiej jakości klasyfikacji metodą KNN.
+    \item Etap doboru cech powinnien być przeprowadzony ostrożnie, ponieważ prawidłowy dobór cech jest konieczny do uzyskania wysokiej jakości klasyfikacji metodą KNN.
 \end{itemize}
 
 
