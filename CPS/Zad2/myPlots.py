@@ -52,6 +52,7 @@ def plot_signal_quant(time, signal, signal_types, plot, histogram, time_all, sig
     ax.set_xlabel("Czas [s]")
     ax.set_ylabel("Amplituda")
     ax.grid()
+    ax.set_ylim([min(signal) * 1.1, max(signal) * 1.1])
     canvas = FigureCanvasTkAgg(fig, master=plot)
     canvas.draw()
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)

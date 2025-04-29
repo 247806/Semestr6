@@ -56,3 +56,6 @@ def max_diff(original, reconstructed):
             max_diffs = diff
 
     return max_diffs
+
+def enob(original, reconstructed):
+    return (snr(original, reconstructed) - 1.76) / 6.02
