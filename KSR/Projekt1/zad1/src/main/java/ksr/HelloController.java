@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.control.TextField;
 import org.controlsfx.control.CheckListView;
@@ -44,7 +45,12 @@ public class HelloController {
     @FXML
     private CheckListView<String> checkListView;
 
+    @FXML
+    private Label counterLabel;
+
     private KNN knn;
+
+    private AtomicInteger counter = new AtomicInteger(0);;
 
 
     @FXML
@@ -132,6 +138,8 @@ public class HelloController {
         }
 
     }
+
+
 
     @FXML
     protected void onResetButtonClick() {

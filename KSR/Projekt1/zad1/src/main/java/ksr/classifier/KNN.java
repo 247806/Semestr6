@@ -2,6 +2,9 @@ package ksr.classifier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
+import ksr.HelloController;
 import ksr.extraction.FeatureExtractor;
 import ksr.extraction.Normalization;
 import ksr.loading.Article;
@@ -12,6 +15,7 @@ import lombok.Getter;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static ksr.extraction.KeyWordsLoader.*;
@@ -28,6 +32,8 @@ public class KNN {
 
     @Getter
     public double accuracy;
+
+    HelloController controller = new HelloController();
 
     @Getter
     public Double [][] qualityMeasure = new Double[7][3];
@@ -84,8 +90,20 @@ public class KNN {
             }
         }
 
-        testSet.parallelStream().forEach(article -> classifyArticle(article, metrics));
+        AtomicInteger counter = new AtomicInteger(0);
 
+        testSet.forEach(article -> {
+
+            counter.incrementAndGet();
+            System.out.println(counter + " / " + testSet.size());
+            classifyArticle(article, metrics);
+        });
+
+//        testSet.forEach(article -> {
+//            int iteration = counter.incrementAndGet();
+//            System.out.println(iteration + " / " + testSet.size());
+//            classifyArticle(article, metrics);
+//        });
 
         QualityMeasures qualityMeasures = new QualityMeasures();
         accuracy = qualityMeasures.calculateAccuracy(testSet);
