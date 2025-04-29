@@ -12,11 +12,12 @@ import continousSignal
 import discretSignal
 import ioModule
 import signalOperation as so
+from functionType import function_type
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
 from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
-from similarityMeasure import mse, snr, psnr, max_diff
+from similarityMeasure import mse, snr, psnr, max_diff, enob
 
 signal_1 = None
 time_1 = None
@@ -30,6 +31,12 @@ singal_samp_2 = None
 time_samp_2 = None
 T_1 = None
 T_2 = None
+kw_1 = None
+kw_2 = None
+p_1 = None
+p_2 = None
+ts_1 = None
+ts_2 = None
 signal_ko_1 = None
 signal_ko_2 = None
 signal_kz_1 = None
@@ -40,40 +47,12 @@ signal_rp_1 = None
 signal_rp_2 = None
 signal_rs_1 = None
 signal_rs_2 = None
+signal_type_1 = None
+signal_type_2 = None
 
-
-def function_type(A, T, t1, d, kw, ts, p, signal):
-    sample_rate = float(sample_rate_entry.get())
-    time = np.arange(t1, t1 + d, 1 / sample_rate)
-
-    if signal_type.get() == "Sygnał sinusoidalny":
-        signal = continousSignal.sinusoidal(A, T, time)
-        #signal = continousSignal.testFunction(time)
-    elif signal_type.get() == "Sygnał prostokątny symetryczny":
-        signal = continousSignal.squareSymetric(A, T, t1, kw, time)
-    elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany jednopołówkowo':
-        signal = continousSignal.halfWaveSinusoidal(A, T, time)
-    elif signal_type.get() == 'Sygnał sinusoidalny wyprostowany dwupołówkowo ':
-        signal = continousSignal.halfSinusoidal(A, T, time)
-    elif signal_type.get() == 'Sygnał prostokątny':
-        signal = continousSignal.square(A, T, t1, kw, time)
-    elif signal_type.get() == 'Sygnał trójkątny':
-        signal = continousSignal.triangle(A, T, t1, kw, time)
-    elif signal_type.get() == 'Skok jednostkowy':
-        signal = continousSignal.ones(A, ts, time)
-    elif signal_type.get() == 'Szum o rozkładzie jednostajnym':
-        signal = continousSignal.random_uniform_signal(A, time)
-    elif signal_type.get() == 'Szum gaussowski':
-        signal = continousSignal.gaussian_noise(A, time)
-    elif signal_type.get() == 'Impuls jednostkowy':
-        time, signal = discretSignal.delta_diraca(A, t1, ts, d, sample_rate)
-    elif signal_type.get() == 'Szum impulsowy':
-        time, signal = discretSignal.impuls_noise(A, t1, d, sample_rate, p)
-
-    return time, signal
 
 def generate_signal():
-    global signal_1, time_1, signal_2, time_2, T_1, T_2
+    global signal_1, time_1, signal_2, time_2, T_1, T_2, signal_type_1, signal_type_2, kw_1, kw_2, p_1, p_2, ts_1, ts_2
 
     A = float(amplitude_entry.get())
     if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"]:
@@ -86,42 +65,72 @@ def generate_signal():
         T = 0
     t1 = float(start_time_entry.get())
     d = float(duration_entry.get())
-    kw = float(duty_cycle_entry.get()) if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"] else None
-    ts = float(duty_cycle_entry_ts.get()) if signal_type.get() in ["Skok jednostkowy", "Impuls jednostkowy"] else None
-    p = float(duty_cycle_entry_p.get()) if signal_type.get() == "Szum impulsowy" else None
 
+    if signal_type.get() in ["Sygnał prostokątny symetryczny", "Sygnał prostokątny", "Sygnał trójkątny"]:
+        kw = float(duty_cycle_entry.get())
+        if signal_notebook.index(signal_notebook.select()) == 1:
+            kw_2 = kw
+        elif signal_notebook.index(signal_notebook.select()) == 0:
+            kw_1 = kw
+    else:
+        kw = None
+
+    if signal_type.get() in ["Skok jednostkowy", "Impuls jednostkowy"]:
+        ts = float(duty_cycle_entry_ts.get())
+        if signal_notebook.index(signal_notebook.select()) == 1:
+            ts_2 = ts
+        elif signal_notebook.index(signal_notebook.select()) == 0:
+            ts_1 = ts
+    else:
+        ts = None
+
+    if signal_type.get() == "Szum impulsowy":
+        p = float(duty_cycle_entry_p.get())
+        if signal_notebook.index(signal_notebook.select()) == 1:
+            p_2 = p
+        elif signal_notebook.index(signal_notebook.select()) == 0:
+            p_1 = p
+    else:
+        p = None
+
+    sample_rate = float(sample_rate_entry.get())
+    time = np.arange(t1, t1 + d, 1 / sample_rate)
 
     if signal_notebook.index(signal_notebook.select()) == 1:
-        time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2)
+        time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2, signal_type.get(), time, sample_rate_entry.get())
         plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2, signal_type.get())
         plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
+        signal_type_2 = signal_type.get()
 
     else:
-        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time, sample_rate_entry.get())
         plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
         create_parameters_tab(param_frame_1, signal_1, time_1, signal_type.get())
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
+        signal_type_1 = signal_type.get()
+
 
 
     if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
         full_periods = int(d // T)
         d = full_periods * T
-        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1)
+        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time, sample_rate_entry.get())
 
 def samplingFun(sample_rate):
-    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2
+    global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, p_2, ts_2, kw_2, p_1, ts_1, kw_1
 
     if signal_notebook.index(signal_notebook.select()) == 1:
-        signal_samp_2, time_samp_2 = sampling(signal_2, time_2, int(sample_rate), T_2)
+        signal_samp_2, time_samp_2 = sampling(signal_2, time_2, int(sample_rate), T_2, signal_type_2, p_2, ts_2, kw_2)
         plot_signal_samp(time_samp_2, signal_samp_2, plot_frame_samp_2)
         plot_histogram(histogram_frame_samp_2, signal_samp_2, int(bins_var.get()))
         create_parameters_tab(param_frame_samp_2, signal_samp_2, time_1, "Szum impulsowy")
     else:
-        signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1)
+        signal_samp_1, time_samp_1 = sampling(signal_1, time_1, int(sample_rate), T_1, signal_type_1, p_1, ts_1, kw_1)
         plot_signal_samp(time_samp_1, signal_samp_1, plot_frame_samp_1)
         plot_histogram(histogram_frame_samp_1, signal_samp_1, int(bins_var.get()))
         create_parameters_tab(param_frame_samp_1, signal_samp_1, time_1, "Szum impulsowy")
+        
 
 def quantizationFun(num_levels):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
@@ -180,7 +189,7 @@ def reconstructionFun(param):
         create_parameters_tab(param_frame_1_rec_3, signal_rs_1, time_1, "Szum impulsowy")
 
 def similarityCheck():
-    temp, temp2, temp3, temp4 = similaryCheckFun()
+    temp, temp2, temp3, temp4, temp5 = similaryCheckFun()
 
     ttk.Label(tab_similarity, text=f"MSE: {temp:.3f}").grid(row=3, column=0, padx=10, pady=10)
 
@@ -189,6 +198,8 @@ def similarityCheck():
     ttk.Label(tab_similarity, text=f"PSNR: {temp3:.3f}").grid(row=5, column=0, padx=10, pady=10)
 
     ttk.Label(tab_similarity, text=f"MD: {temp4:.3f}").grid(row=6, column=0, padx=10, pady=10)
+
+    ttk.Label(tab_similarity, text=f"ENOB: {temp5:.3f}").grid(row=7, column=0, padx=10, pady=10)
 
 def similaryCheckFun():
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_rp_1, signal_rp_2, signal_rs_1, signal_rs_2,signal_rz_2,signal_rz_2,  signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
@@ -258,8 +269,9 @@ def similaryCheckFun():
     temp2 = snr(orginal, reconstructed)
     temp3 = psnr(orginal, reconstructed)
     temp4 = max_diff(orginal, reconstructed)
+    temp5 = enob(orginal, reconstructed)
 
-    return temp, temp2, temp3, temp4
+    return temp, temp2, temp3, temp4, temp5
 
 def histogram_managment():
     if signal_notebook.index(signal_notebook.select()) == 0:
