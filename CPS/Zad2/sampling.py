@@ -11,10 +11,11 @@ def sampling(signal, time, sample_rate, T, signal_type, p, ts, kw):
     print('Sampling')
     print(T)
     print(d)
-    print(time)
+    #print(time)
+    #time_samp = np.arange(t1, t1 + d, 1 / sample_rate)
     time_samp = np.arange(t1, t1 + d, 1 / sample_rate)
+    last_value = t1 + d
+    time_samp = np.append(time_samp, last_value)
     time_temp, signal_samp = function_type(A, T, t1, d, kw, ts, p, signal, signal_type, time_samp, sample_rate)
     #signal_samp = continousSignal.sinusoidal(A, T, time_samp)
-    print(len(signal_samp))
-    print(len(time_samp))
     return signal_samp, time_samp

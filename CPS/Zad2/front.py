@@ -98,6 +98,13 @@ def generate_signal():
 
     if signal_notebook.index(signal_notebook.select()) == 1:
         time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2, signal_type.get(), time, sample_rate_entry.get())
+        if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski",
+                                     "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
+            full_periods = int(d // T)
+            d = full_periods * T
+            time_2, signal_2 = function_type(A, T, t1, d, kw, ts, p, signal_2, signal_type.get(), time,
+                                             sample_rate_entry.get())
+
         plot_signal(time_2, signal_2, signal_type.get(), plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2, signal_type.get())
         plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
@@ -105,6 +112,13 @@ def generate_signal():
 
     else:
         time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time, sample_rate_entry.get())
+        if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski",
+                                     "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
+            full_periods = int(d // T)
+            d = full_periods * T
+            time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time,
+                                             sample_rate_entry.get())
+
         plot_signal(time_1, signal_1, signal_type.get(), plot_frame_1, histogram_frame_1)
         create_parameters_tab(param_frame_1, signal_1, time_1, signal_type.get())
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
@@ -112,10 +126,10 @@ def generate_signal():
 
 
 
-    if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
-        full_periods = int(d // T)
-        d = full_periods * T
-        time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time, sample_rate_entry.get())
+    # if signal_type.get() not in ["Skok jednostkowy", "Szum o rozkładzie jednostajnym", "Szum gaussowski", "Impuls jednostkowy", "Szum impulsowy"] and d % T != 0:
+    #     full_periods = int(d // T)
+    #     d = full_periods * T
+    #     time_1, signal_1 = function_type(A, T, t1, d, kw, ts, p, signal_1, signal_type.get(), time, sample_rate_entry.get())
 
 def samplingFun(sample_rate):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, T_1, T_2, p_2, ts_2, kw_2, p_1, ts_1, kw_1
