@@ -151,8 +151,8 @@ def quantizationFun(num_levels):
     if signal_notebook.index(signal_notebook.select()) == 1:
         signal_ko_2 = clippQuant(singal_samp_2, int(num_levels))
         signal_kz_2 = roundQuant(singal_samp_2, int(num_levels))
-        plot_signal_quant(time_samp_2, signal_ko_2, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2)
-        plot_signal_quant(time_samp_2, signal_kz_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_signal_quant(time_samp_2, signal_ko_2, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
+        plot_signal_quant(time_samp_2, signal_kz_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         plot_histogram(histogram_frame_2_quand_1, signal_ko_2, int(bins_var.get()))
         create_parameters_tab(param_frame_2_quand_1, signal_ko_2, time_1, "Szum impulsowy")
         plot_histogram(histogram_frame_2_quand_2, signal_kz_2, int(bins_var.get()))
@@ -160,8 +160,8 @@ def quantizationFun(num_levels):
     else:
         signal_ko_1 = clippQuant(signal_samp_1, int(num_levels))
         signal_kz_1 = roundQuant(signal_samp_1, int(num_levels))
-        plot_signal_quant(time_samp_1, signal_ko_1, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1)
-        plot_signal_quant(time_samp_1, signal_kz_1, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(time_samp_1, signal_ko_1, "test", quad1_frame_1, histogram_frame_3, time_1, signal_1, signal_samp_1, time_samp_1)
+        plot_signal_quant(time_samp_1, signal_kz_1, "test", quad2_frame_1, histogram_frame_3, time_1, signal_1, signal_samp_1, time_samp_1)
         plot_histogram(histogram_frame_1_quand_1, signal_ko_1, int(bins_var.get()))
         create_parameters_tab(param_frame_1_quand_1, signal_ko_1, time_1, "Szum impulsowy")
         plot_histogram(histogram_frame_1_quand_2, signal_kz_1, int(bins_var.get()))
@@ -173,13 +173,13 @@ def reconstructionFun(param):
 
     if signal_notebook.index(signal_notebook.select()) == 1:
         time_temp, signal_rz_2 = zeroOrderHold(signal_samp_2, time_samp_2, time_2)
-        plot_signal_quant(time_temp, signal_rz_2, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_signal_quant(time_temp, signal_rz_2, "test", rec1_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         time_temp, signal_rp_2 = firstOrderHold(signal_samp_2, time_samp_2 )
-        plot_signal_quant(time_temp, signal_rp_2, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2)
+        plot_signal_quant(time_temp, signal_rp_2, "test", rec2_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         len = np.round(abs(time_samp_2[-1] - time_samp_2[0]))*1000
         t = np.linspace(time_samp_2[0], time_samp_2[-1], int(len))
         signal_rs_2 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
-        plot_signal_quant(t, signal_rs_2, "test", rec3_frame_2, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(t, signal_rs_2, "test", rec3_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         plot_histogram(histogram_frame_2_rec_1, signal_rz_2, int(bins_var.get()))
         create_parameters_tab(param_frame_2_rec_1, signal_rz_2, time_1, "Szum impulsowy")
         plot_histogram(histogram_frame_2_rec_2, signal_rp_2, int(bins_var.get()))
@@ -188,13 +188,13 @@ def reconstructionFun(param):
         create_parameters_tab(param_frame_2_rec_3, signal_rs_2, time_1, "Szum impulsowy")
     else:
         time_temp, signal_rz_1 = zeroOrderHold(signal_samp_1, time_samp_1, time_1)
-        plot_signal_quant(time_temp, signal_rz_1, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(time_temp, signal_rz_1, "test", rec1_frame_1, histogram_frame_3, time_1, signal_1, signal_samp_1, time_samp_1)
         time_temp_1, signal_rp_1 = firstOrderHold(signal_samp_1, time_samp_1 )
-        plot_signal_quant(time_temp_1, signal_rp_1, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(time_temp_1, signal_rp_1, "test", rec2_frame_1, histogram_frame_3, time_1, signal_1, signal_samp_1, time_samp_1)
         len = np.round(abs(time_samp_1[-1] - time_samp_1[0]))*1000
         t = np.linspace(time_samp_1[0], time_samp_1[-1], int(len))
         signal_rs_1 = np.array([valueFunc(ti, signal_samp_1, time_samp_1, int(param)) for ti in t])
-        plot_signal_quant(t, signal_rs_1, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1)
+        plot_signal_quant(t, signal_rs_1, "test", rec3_frame_1, histogram_frame_3, time_1, signal_1, signal_samp_1, time_samp_1)
         plot_histogram(histogram_frame_1_rec_1, signal_rz_1, int(bins_var.get()))
         create_parameters_tab(param_frame_1_rec_1, signal_rz_1, time_1, "Szum impulsowy")
         plot_histogram(histogram_frame_1_rec_2, signal_rp_1, int(bins_var.get()))

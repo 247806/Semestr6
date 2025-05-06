@@ -25,7 +25,7 @@ def plot_signal(time, signal, signal_types, plot, histogram):
     canvas.draw()
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
 
-def plot_signal_quant(time, signal, signal_types, plot, histogram, time_all, signal_all):
+def plot_signal_quant(time, signal, signal_types, plot, histogram, time_all, signal_all, signal_samp, time_samp):
     plt.style.use('classic')
     for widget in plot.winfo_children():
         widget.destroy()
@@ -46,6 +46,7 @@ def plot_signal_quant(time, signal, signal_types, plot, histogram, time_all, sig
             # ax.step(time[i:i + 2], signal[i:i + 2], where=where, color='b')
         plt.step(time, signal, where='post')
         ax.plot(time_all, signal_all)
+        ax.scatter(time_samp, signal_samp, color='red')
     else:
         ax.plot(time, signal)
     ax.set_title("Wykres sygnału")
