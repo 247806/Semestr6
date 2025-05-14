@@ -14,6 +14,7 @@ import ioModule
 import signalOperation as so
 from convolve import convolve, convolve_time_axis
 from correlation import cross_convolution, cross_correlation_direct
+from filters import low_pass_filter, band_pass_filter, high_pass_filter
 from functionType import function_type
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
@@ -635,6 +636,16 @@ def select_signals_for_operation(operation):
     popup.grab_set()
     root.wait_window(popup)
 
+def filter():
+    signal = high_pass_filter()
+    sample_rate = 100
+    M = 15
+    print("filtr")
+    print(signal)
+    time_conv = np.arange(0, (1 / sample_rate) * M, 1 / sample_rate)
+    print(time_conv)
+    plot_signal(time_conv, signal, "Szum impulsowy", plot_frame_3, histogram_frame_3)
+
 root = ThemedTk()
 #root = tk.Tk()
 # Uzyskanie katalogu, w którym znajduje się skrypt
@@ -745,6 +756,7 @@ ttk.Button(tab_operations, text="Podziel", command=lambda: select_signals_for_op
 ttk.Button(tab_operations, text="Korelacja bezpośrednia", command=lambda: select_signals_for_operation("direct")).grid(row=3, column=0, padx=100, pady=5)
 ttk.Button(tab_operations, text="Korelacja splot", command=lambda: select_signals_for_operation("splot")).grid(row=3, column=1, padx=10, pady=5)
 ttk.Button(tab_operations, text="Splot", command=lambda: select_signals_for_operation("convolve")).grid(row=4, column=0, padx=100, pady=5)
+ttk.Button(tab_operations, text="filtr", command=lambda: filter()).grid(row=4, column=1, padx=100, pady=5)
 
 # --- ZAPIS I ODCZYT ---
 ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
