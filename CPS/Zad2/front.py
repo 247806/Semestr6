@@ -636,15 +636,42 @@ def select_signals_for_operation(operation):
     popup.grab_set()
     root.wait_window(popup)
 
-def filter():
-    signal = high_pass_filter()
-    sample_rate = 100
-    M = 15
-    print("filtr")
-    print(signal)
+def generate_filters():
+    global signal_1, time_1, signal_2, time_2, T_1, T_2, signal_type_1, signal_type_2, kw_1, kw_2, p_1, p_2, ts_1, ts_2
+
+    sample_rate = float(sample_entry.get())
+    M = int(filter_entry.get())
+    K = sample_rate / int(cut_entry.get())
     time_conv = np.arange(0, (1 / sample_rate) * M, 1 / sample_rate)
-    print(time_conv)
-    plot_signal(time_conv, signal, "Szum impulsowy", plot_frame_3, histogram_frame_3)
+
+    if signal_notebook.index(signal_notebook.select()) == 1:
+
+        if fillters_dropdown == "Filtr dolnoprzepustowy":
+            signal_2 = low_pass_filter(M, K)
+        elif fillters_dropdown == "Filtr pasmowy":
+            signal_2 = band_pass_filter(M, K)
+        else:
+            signal_2 = high_pass_filter(M, K)
+
+        plot_signal(time_conv, signal_2, "Skok jednostkowy", plot_frame_2, histogram_frame_2)
+        #create_parameters_tab(param_frame_2, signal_2, time_2, signal_type.get())
+        #plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
+
+    else:
+
+        if fillters_dropdown.get() == "Filtr dolnoprzepustowy":
+            signal_1 = low_pass_filter(M, K)
+            print("dolny")
+        elif fillters_dropdown.get() == "Filtr pasmowy":
+            signal_1 = band_pass_filter(M, K)
+            print("pasmowy")
+        else:
+            signal_1 = high_pass_filter(M, K)
+            print("górny")
+
+        plot_signal(time_conv, signal_1, "Impuls jednostkowy", plot_frame_1, histogram_frame_1)
+        #create_parameters_tab(param_frame_1, signal_1, time_1, signal_type.get())
+        #plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
 
 root = ThemedTk()
 #root = tk.Tk()
@@ -671,6 +698,7 @@ main_notebook.grid(row=0, column=0, padx=10, pady=10)
 # --- ZAKŁADKI ---
 tab_generate = ttk.Frame(main_notebook)
 tab_operations = ttk.Frame(main_notebook)
+tab_filter = ttk.Frame(main_notebook)
 tab_save = ttk.Frame(main_notebook)
 tab_sampAndQuant = ttk.Frame(main_notebook)
 tab_reconstruction = ttk.Frame(main_notebook)
@@ -678,6 +706,7 @@ tab_similarity = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
 main_notebook.add(tab_operations, text="Operacje matematyczne")
+main_notebook.add(tab_filter, text="Filtry")
 main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
 main_notebook.add(tab_reconstruction, text="Rekonstrukcja")
@@ -747,6 +776,39 @@ increase_button.pack(side=tk.LEFT)
 ttk.Button(tab_generate, text="Generuj sygnał", command=lambda: generate_signal()).grid(row=8, column=0, padx=5, pady=5)
 ttk.Button(tab_generate, text="Generuj histogram", command=lambda: histogram_managment()).grid(row=8, column=1, padx=5, pady=5)
 
+# --- Filtry ---
+ttk.Label(tab_filter, text="Typ filtra:").grid(row=0, column=0, padx=5, pady=5)
+fillters_type = tk.StringVar(value="Filtr dolnoprzepustowy")
+fillters_dropdown = ttk.Combobox(tab_filter, textvariable=fillters_type,
+                               values=["Filtr dolnoprzepustowy", "Filtr górnoprzepustowy", "Filtr pasmowy"],
+                               state="readonly", width=50)
+fillters_dropdown.grid(row=0, column=1, padx=5, pady=5)
+fillters_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Label(tab_filter, text="Częstotliwość próbkowania:").grid(row=1, column=0, padx=5, pady=5)
+sample_var = tk.StringVar(value="16")
+sample_entry = ttk.Entry(tab_filter, textvariable=sample_var)
+sample_entry.grid(row=1, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Rząd filtra:").grid(row=2, column=0, padx=5, pady=5)
+filter_var = tk.StringVar(value="15")
+filter_entry = ttk.Entry(tab_filter, textvariable=filter_var)
+filter_entry.grid(row=2, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Częstotliwość odcięcia:").grid(row=3, column=0, padx=5, pady=5)
+cut_var = tk.StringVar(value="4")
+cut_entry = ttk.Entry(tab_filter, textvariable=cut_var)
+cut_entry.grid(row=3, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Typ okna:").grid(row=4, column=0, padx=5, pady=5)
+window_type = tk.StringVar(value="Okno prostokątne")
+window_dropdown = ttk.Combobox(tab_filter, textvariable=window_type,
+                               values=["Okno prostokątne", "Okno Hamminga", "Okno Hanninga", "Okno Blackmana"],
+                               state="readonly", width=50)
+window_dropdown.grid(row=4, column=1, padx=5, pady=5)
+window_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Button(tab_filter, text="Generuj filtr", command=lambda: generate_filters()).grid(row=5, column=0, padx=5, pady=5)
 
 # --- OPERACJE ---
 ttk.Button(tab_operations, text="Dodaj", command=lambda: select_signals_for_operation("add")).grid(row=1, column=0, padx=100, pady=50)

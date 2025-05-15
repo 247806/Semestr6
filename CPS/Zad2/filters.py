@@ -12,7 +12,7 @@ def hann_window(n, M):
 def black_window(n, M):
     return 0.42 - 0.5 * np.cos(2.0 * np.pi * n / M) + 0.08 * np.cos(4.0 * np.pi * n / M);
 
-def low_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def low_pass_filter(M, K, window_func=rectangular_window):
     c = (M - 1) // 2
     h = np.zeros(M)
 
@@ -25,7 +25,7 @@ def low_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
 
     return h
 
-def band_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def band_pass_filter(M, K, window_func=rectangular_window):
     h_lp = low_pass_filter(M, K, window_func)
     h_bp = np.zeros(M)
 
@@ -34,7 +34,7 @@ def band_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
 
     return h_bp
 
-def high_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def high_pass_filter(M, K, window_func=rectangular_window):
     h_lp = low_pass_filter(M, K, window_func)
     h_hp = np.zeros(M)
 
