@@ -119,10 +119,14 @@ def count_distance(param_tab, plot_1, plot_2, plot_3, quant_entry, step_entry, r
 
     # Opcjonalnie ustawienie wartości domyślnej (pierwszy element)
     combo.current(0)
+    combo.bind("<<ComboboxSelected>>", lambda e:select_data(param_tab, dist, distance, combo))
 
+
+
+def select_data(param_tab, dist, distance, combo):
     ttk.Label(param_tab, text=f"Obliczony dystans: {dist}").grid(row=10, column=0, padx=5, pady=5)
-    ttk.Label(param_tab, text=f"Rzeczywisty dystans: {distance[combo.current()]}").grid(row=11, column=0, padx=5, pady=5)
-
+    ttk.Label(param_tab, text=f"Rzeczywisty dystans: {distance[combo.current()]}").grid(row=11, column=0, padx=5,
+                                                                                        pady=5)
 
 def open_new_window(root):
     new_window = tk.Toplevel(root)
