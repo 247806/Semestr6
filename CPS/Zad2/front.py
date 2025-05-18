@@ -14,10 +14,12 @@ import ioModule
 import signalOperation as so
 from convolve import convolve, convolve_time_axis
 from correlation import cross_convolution, cross_correlation_direct
-from filters import low_pass_filter, band_pass_filter, high_pass_filter
+from filters import low_pass_filter, band_pass_filter, high_pass_filter, rectangular_window, black_window, hann_window, \
+    hamming_window
 from functionType import function_type
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
+from radar import open_new_window
 from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
 from similarityMeasure import mse, snr, psnr, max_diff, enob
@@ -476,6 +478,9 @@ def decrease_bins():
 
 def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel):
     global signal_3, time_3, time_samp_1, time_samp_2
+    print("Operation: ", operation)
+    print(signal_1_sel)
+    print(signal_2_sel)
     if operation not in ["convolve", "splot", "direct"]:
         sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
         sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
@@ -498,6 +503,8 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
 
     if operation not in ["convolve", "splot", "direct"]:
         create_parameters_tab(param_frame_3, signal_3, time_3, signal_type.get())
+    else:
+        create_parameters_tab(param_frame_3, signal_3, time_3, "Impuls jednostkowy")
 
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
@@ -626,7 +633,6 @@ def select_signals_for_operation(operation):
         print(f"Wybrano {selected_signal_1} i {selected_signal_2} do operacji.")
         popup.destroy()
         operate_signals_sel(operation, selected_signal_1, selected_time_1, selected_signal_2, selected_time_2)
-        #operate_signals_sel(operation, signal_samp_1, selected_time_1, signal_samp_2, selected_time_2)
 
 
     confirm_button = ttk.Button(popup, text="Potwierdź", command=lambda: confirm_selection(operation))
@@ -644,38 +650,45 @@ def generate_filters():
     K = sample_rate / int(cut_entry.get())
     time_conv = np.arange(0, (1 / sample_rate) * M, 1 / sample_rate)
 
+    if window_dropdown.get() == "Okno prostokątne":
+        window = rectangular_window
+    elif window_dropdown.get() == "Okno Hamminga":
+        window = hamming_window
+    elif window_dropdown.get() == "Okno Hanninga":
+        window = hann_window
+    else:
+        window = black_window
+
     if signal_notebook.index(signal_notebook.select()) == 1:
 
         if fillters_dropdown == "Filtr dolnoprzepustowy":
-            signal_2 = low_pass_filter(M, K)
+            signal_2 = low_pass_filter(M, K, window)
         elif fillters_dropdown == "Filtr pasmowy":
-            signal_2 = band_pass_filter(M, K)
+            signal_2 = band_pass_filter(M, K, window)
         else:
-            signal_2 = high_pass_filter(M, K)
+            signal_2 = high_pass_filter(M, K, window)
 
         plot_signal(time_conv, signal_2, "Skok jednostkowy", plot_frame_2, histogram_frame_2)
-        #create_parameters_tab(param_frame_2, signal_2, time_2, signal_type.get())
-        #plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
+        create_parameters_tab(param_frame_2, signal_2, time_2, "Impuls jednostkowy")
+        plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
 
     else:
 
         if fillters_dropdown.get() == "Filtr dolnoprzepustowy":
-            signal_1 = low_pass_filter(M, K)
+            signal_1 = low_pass_filter(M, K, window)
             print("dolny")
         elif fillters_dropdown.get() == "Filtr pasmowy":
-            signal_1 = band_pass_filter(M, K)
+            signal_1 = band_pass_filter(M, K, window)
             print("pasmowy")
         else:
-            signal_1 = high_pass_filter(M, K)
+            signal_1 = high_pass_filter(M, K, window)
             print("górny")
 
         plot_signal(time_conv, signal_1, "Impuls jednostkowy", plot_frame_1, histogram_frame_1)
-        #create_parameters_tab(param_frame_1, signal_1, time_1, signal_type.get())
-        #plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
+        create_parameters_tab(param_frame_1, signal_1, time_1, "Impuls jednostkowy")
+        plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
 
 root = ThemedTk()
-#root = tk.Tk()
-# Uzyskanie katalogu, w którym znajduje się skrypt
 base_dir = os.path.dirname(__file__)
 
 # Utworzenie ścieżki względnej do pliku .tcl
@@ -689,7 +702,6 @@ print(root.get_themes())
 root.title("Generator sygnałów")
 root.geometry("1510x600")
 root.resizable(False, False)
-
 
 # --- GŁÓWNY NOTEBOOK ---
 main_notebook = ttk.Notebook(root)
@@ -705,7 +717,7 @@ tab_reconstruction = ttk.Frame(main_notebook)
 tab_similarity = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
-main_notebook.add(tab_operations, text="Operacje matematyczne")
+main_notebook.add(tab_operations, text="Operacje")
 main_notebook.add(tab_filter, text="Filtry")
 main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
@@ -818,7 +830,7 @@ ttk.Button(tab_operations, text="Podziel", command=lambda: select_signals_for_op
 ttk.Button(tab_operations, text="Korelacja bezpośrednia", command=lambda: select_signals_for_operation("direct")).grid(row=3, column=0, padx=100, pady=5)
 ttk.Button(tab_operations, text="Korelacja splot", command=lambda: select_signals_for_operation("splot")).grid(row=3, column=1, padx=10, pady=5)
 ttk.Button(tab_operations, text="Splot", command=lambda: select_signals_for_operation("convolve")).grid(row=4, column=0, padx=100, pady=5)
-ttk.Button(tab_operations, text="filtr", command=lambda: filter()).grid(row=4, column=1, padx=100, pady=5)
+ttk.Button(tab_operations, text="Pomiar odległości", command=lambda: open_new_window(root)).grid(row=4, column=1, padx=100, pady=5)
 
 # --- ZAPIS I ODCZYT ---
 ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
