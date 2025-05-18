@@ -5,6 +5,7 @@ from docx_file import create_docx, prepare_data
 from pdf_file import create_pdf
 import json
 import os
+from docx2pdf import convert
 
 TABLES = []
 SETTINGS_FILE = "settings.json"
@@ -42,7 +43,7 @@ def update_column_sizes():
         updated_widths.append(float(value))
     return updated_widths
 
-def convert():
+def convert_excel():
     headers, data = read_excel(entry_file_path.get(), start_row)
     title = entry_title.get()
     add_page = page.get()
@@ -52,7 +53,8 @@ def convert():
     column_widths = update_column_sizes()
     save_settings()
     create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align)
-    create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
+    convert(f"{direction}/{title}.docx")
+    # create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
 def read_excel(file_path, header=0):
     df = pd.read_excel(file_path, engine="openpyxl", header=header)
@@ -76,7 +78,7 @@ def prepare_col_sizes(data):
                 sizes[i].append(0)
             sizes[i][j] = len(str(data[j][i])) * 0.381
 
-    max_col_size = 8.26
+    max_col_size = 12.00
     min_col_size = 1.5
 
     column_widths = []
@@ -107,7 +109,7 @@ def load_column_sizes(start_row):
         column_widths = prepare_col_sizes([headers] + data)
         FIRST_COLUMNS_WIDTHS = column_widths
         data1, data2, data3 = prepare_data(headers, data, column_widths)
-        create_table_preview(root, data1, data2, data3)
+        create_table_preview(column_tables_frame, data1, data2, data3)
 
         btn_convert.config(state="normal")
         btn_refresh.config(state="normal")
@@ -184,7 +186,7 @@ def refresh_table():
         table.destroy()
 
     TABLES.clear()
-    create_table_preview(root, data1, data2, data3)
+    create_table_preview(column_tables_frame, data1, data2, data3)
     save_settings()
 
 def save_settings():
@@ -262,7 +264,20 @@ alignment_menu.grid(row=3, column=2, sticky="w")
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()
 
-btn_convert = tk.Button(frame, text="Konwertuj", command=convert, state="disabled")
+scroll_canvas = tk.Canvas(root)
+scroll_canvas.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+
+scrollbar = ttk.Scrollbar(root, orient="vertical", command=scroll_canvas.yview)
+scrollbar.pack(side="right", fill="y")
+
+scroll_canvas.configure(yscrollcommand=scrollbar.set)
+scroll_canvas.bind('<Configure>', lambda e: scroll_canvas.configure(scrollregion=scroll_canvas.bbox("all")))
+
+column_tables_frame = tk.Frame(scroll_canvas)
+scroll_canvas.create_window((0, 0), window=column_tables_frame, anchor="n")
+
+
+btn_convert = tk.Button(frame, text="Konwertuj", command=convert_excel, state="disabled")
 btn_convert.grid(row=5, column=0, pady=10)
 btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table, state="disabled")
 btn_refresh.grid(row=5, column=1, padx=10, pady=10)
