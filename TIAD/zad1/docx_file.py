@@ -4,6 +4,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
+
 def prepare_data(headers, data, widths):
     page_width_cm = 16.51
     current_width = 0
@@ -29,17 +30,22 @@ def prepare_data(headers, data, widths):
 
     return data1, data2, data3
 
-def create_docx(headers, data, output_file, add_page, column_widths, align, heading, create_table):
+def create_docx(headers, data, output_file, add_page, column_widths, align, heading,table):
     doc = Document()
     doc.add_heading(heading, level=1)
 
-    headers, data, widths = prepare_data(headers, data, column_widths)
+    headers_line, data_line, widths = prepare_data(headers, data, column_widths)
 
-    if create_table:
+    if table:
         for i in range(len(headers)):
-            create_table(doc, headers[i], data[i], widths[i], align)
+            create_table(doc, headers_line[i], data_line[i], widths[i], align)
     else:
-        for i in range(len(headers)-1):
+        for i in range(1, len(headers)):
+            print(f"Numer {i}")
+            print("Nagłówek")
+            print(headers[i])
+            print("Dane")
+            print(data[i])
             create_paragraphs(doc, headers[i], data[i], align)
 
     if add_page:
@@ -102,10 +108,10 @@ def create_paragraphs(doc, headers, data, align):
     print(headers)
     print(data)
     # Zakładamy, że pierwsza kolumna to 'Lp.' (czyli numer wiersza)
-    for col_idx in range(1, len(headers)):
+    for col_idx in range(len(data)):
         title = headers[col_idx]
         paragraph_lines = [
-            f"{data[row_idx][0]}: {data[row_idx][col_idx]}"
+            f"{col_idx}: {data[row_idx][col_idx]}"
             for row_idx in range(len(data))
         ]
         paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)

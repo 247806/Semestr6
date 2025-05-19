@@ -55,7 +55,7 @@ def convert_excel():
     column_widths = update_column_sizes()
     save_settings()
     create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align, heading, create_table)
-    convert(f"{direction}/{title}.docx")
+    # convert(f"{direction}/{title}.docx")
     # create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
 def read_excel(file_path, header=0):
