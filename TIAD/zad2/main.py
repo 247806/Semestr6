@@ -3,7 +3,8 @@ import speech_recognition as sr
 import tkinter as tk
 from tkinter import scrolledtext, messagebox
 import threading
-
+from langdetect import detect
+from deep_translator import GoogleTranslator
 
 class RecipeSearcher:
     def __init__(self, db_config):
@@ -69,6 +70,10 @@ class RecipeApp:
             'host': 'localhost'
         })
 
+        self.original_ingredients = []  # Lista składników w oryginalnym języku
+        self.translated_ingredients = []  # Lista przetłumaczonych składników
+        self.selected_language = 'auto'
+
         self.create_ui()
 
     def create_ui(self):
@@ -97,6 +102,28 @@ class RecipeApp:
         )
         self.status_label.pack(side=tk.LEFT, padx=20)
 
+        # Wybór języka
+        self.lang_selection_label = tk.Label(
+            record_frame, text="Język rozpoznawania:",
+            font=("Arial", 10), fg="#666"
+        )
+        self.lang_selection_label.pack(side=tk.LEFT, padx=10)
+
+        self.lang_selection = tk.StringVar(value='auto')
+        self.lang_menu = tk.OptionMenu(
+            record_frame,
+            self.lang_selection,
+            'auto', 'pl', 'en', 'de', 'es', 'fr', 'it', 'ru',
+            command=self.language_changed
+        )
+        self.lang_menu.pack(side=tk.LEFT)
+
+        self.lang_label = tk.Label(
+            record_frame, text="Wykryty język: brak",
+            font=("Arial", 10), fg="#666"
+        )
+        self.lang_label.pack(side=tk.RIGHT)
+
         # Składniki
         tk.Label(main_frame, text="Wykryte składniki:",
                  font=("Arial", 12)).pack(anchor=tk.W)
@@ -105,7 +132,18 @@ class RecipeApp:
             main_frame, width=80, height=4,
             font=("Arial", 10), wrap=tk.WORD
         )
-        self.ingredients_text.pack(fill=tk.X, pady=(0, 20))
+        self.ingredients_text.pack(fill=tk.X, pady=(0, 5))
+
+        # Przycisk do wyświetlenia tłumaczenia
+        self.translate_button = tk.Button(
+            main_frame,
+            text="⚙ Wyświetl tłumaczenie składników",
+            command=self.toggle_translation_view,
+            font=("Arial", 10),
+            bg="#f0f0f0",
+            fg="black"
+        )
+        self.translate_button.pack(anchor=tk.E, pady=5)
 
         # Wyniki wyszukiwania
         tk.Label(main_frame, text="Pasujące przepisy:",
@@ -121,9 +159,29 @@ class RecipeApp:
         tk.Label(self.root, text="© 2025 Wyszukiwarka Przepisów",
                  fg="#999", font=("Arial", 8)).pack(side=tk.BOTTOM, pady=10)
 
+    def language_changed(self, lang):
+        """Zmieniono język rozpoznawania mowy"""
+        self.selected_language = lang
+        print(f"Wybrano język: {self.selected_language}")
+
+    def toggle_translation_view(self):
+        """
+        Przełącza widok składników pomiędzy oryginalnymi a przetłumaczonymi i wyświetla je na liście składników
+        """
+        if self.translate_button.config('text')[-1] == "⚙ Wyświetl tłumaczenie składników":
+            # Pokazanie przetłumaczonych składników
+            self.ingredients_text.delete(1.0, tk.END)
+            self.ingredients_text.insert(tk.END, ", ".join(self.translated_ingredients))
+            self.translate_button.config(text="🔄 Wyświetl składniki oryginalne")
+        else:
+            # Pokazanie oryginalnych składników
+            self.ingredients_text.delete(1.0, tk.END)
+            self.ingredients_text.insert(tk.END, ", ".join(self.original_ingredients))
+            self.translate_button.config(text="⚙ Wyświetl tłumaczenie składników")
+
     def start_recording(self):
         """Rozpoczyna proces nagrywania w osobnym wątku"""
-        self.record_button.config(text="Nagrywanie", state=tk.DISABLED, font=("Arial", 12),
+        self.record_button.config(text="Nagrywanie", state="disabled", font=("Arial", 12),
                                   bg="#f7162d", fg="white")
         self.status_label.config(text="Status: Nagrywanie... mów teraz")
         threading.Thread(target=self.record_and_process).start()
@@ -138,14 +196,32 @@ class RecipeApp:
                 audio = recognizer.listen(source, timeout=5)
 
             self.status_label.config(text="Status: Przetwarzanie mowy...")
-            text = recognizer.recognize_google(audio, language="pl-PL")
+            if self.selected_language == 'auto':
+                text = recognizer.recognize_google(audio)
+                detected_lang = detect(text)  # Automatyczne wykrycie języka
+            else:
+                text = recognizer.recognize_google(audio, language=self.selected_language)
+                detected_lang = self.selected_language
 
-            # Przetwarzanie tekstu na składniki
-            ingredients = list(set(word.lower() for word in text.split() if len(word) > 2))
-            self.show_ingredients(ingredients)
-            print(ingredients)
-            # Wyszukiwanie przepisów
-            self.search_and_display_recipes(ingredients)
+            self.lang_label.config(text=f"Wykryty język: {detected_lang.upper()}")
+            print(f"Wykryto język: {detected_lang}")
+
+            # Przetwarzanie tekstu na listę składników
+            self.original_ingredients = list(set(word.lower() for word in text.split() if len(word) > 2))
+            self.translated_ingredients = self.original_ingredients.copy()
+
+            # Tłumaczenie składników, jeśli język jest inny niż polski
+            if detected_lang != 'pl' and detected_lang != 'auto':
+                for i in range(len(self.original_ingredients)):
+                    self.translated_ingredients[i] = GoogleTranslator(source=detected_lang, target='pl').translate(
+                        self.original_ingredients[i])
+
+            # Wyświetlenie składników (domyślnie oryginalnych)
+            self.ingredients_text.delete(1.0, tk.END)
+            self.ingredients_text.insert(tk.END, ", ".join(self.original_ingredients))
+
+            # Wyszukiwanie przepisów na podstawie przetłumaczonych składników
+            self.search_and_display_recipes(self.translated_ingredients)
 
         except sr.UnknownValueError:
             messagebox.showwarning("Błąd", "Nie rozpoznano mowy. Spróbuj ponownie.")
@@ -154,8 +230,8 @@ class RecipeApp:
         except Exception as e:
             messagebox.showerror("Błąd", f"Niespodziewany błąd: {str(e)}")
         finally:
-            self.record_button.config(text="🎤 Nagraj składniki", command=self.start_recording, font=("Arial", 12),
-                  bg="#4CAF50", fg="white")
+            self.record_button.config(text="🎤 Nagraj składniki", state="normal", command=self.start_recording, font=("Arial", 12),
+                                      bg="#4CAF50", fg="white")
             self.status_label.config(text="Status: Gotowy do nagrywania")
 
     def show_ingredients(self, ingredients):
