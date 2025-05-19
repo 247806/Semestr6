@@ -12,9 +12,14 @@ import continousSignal
 import discretSignal
 import ioModule
 import signalOperation as so
+from convolve import convolve, convolve_time_axis
+from correlation import cross_convolution, cross_correlation_direct
+from filters import low_pass_filter, band_pass_filter, high_pass_filter, rectangular_window, black_window, hann_window, \
+    hamming_window
 from functionType import function_type
 from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
 from quantization import clippQuant, roundQuant
+from radar import open_new_window
 from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
 from similarityMeasure import mse, snr, psnr, max_diff, enob
@@ -27,7 +32,7 @@ signal_3 = None
 time_3 = None
 signal_samp_1 = None
 time_samp_1 = None
-singal_samp_2 = None
+signal_samp_2 = None
 time_samp_2 = None
 T_1 = None
 T_2 = None
@@ -149,8 +154,8 @@ def samplingFun(sample_rate):
 def quantizationFun(num_levels):
     global singal_1, time_1, signal_2, time_2, signal_3, time_3, signal_samp_1, time_samp_1, signal_samp_2, time_samp_2, signal_ko_1, signal_ko_2, signal_kz_1, signal_kz_2
     if signal_notebook.index(signal_notebook.select()) == 1:
-        signal_ko_2 = clippQuant(singal_samp_2, int(num_levels))
-        signal_kz_2 = roundQuant(singal_samp_2, int(num_levels))
+        signal_ko_2 = clippQuant(signal_samp_2, int(num_levels))
+        signal_kz_2 = roundQuant(signal_samp_2, int(num_levels))
         plot_signal_quant(time_samp_2, signal_ko_2, "test", quad1_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         plot_signal_quant(time_samp_2, signal_kz_2, "test", quad2_frame_2, histogram_frame_3, time_2, signal_2, signal_samp_2, time_samp_2)
         plot_histogram(histogram_frame_2_quand_1, signal_ko_2, int(bins_var.get()))
@@ -472,18 +477,38 @@ def decrease_bins():
     bins_var.set(max(bins_var.get() - 1, 5))
 
 def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel):
-    global signal_3, time_3
+    global signal_3, time_3, time_samp_1, time_samp_2
+    print("Operation: ", operation)
+    print(signal_1_sel)
+    print(signal_2_sel)
+    print("Time 1: ", time_1_sel)
+    print("Time 2: ", time_2_sel)
+    if operation not in ["convolve", "splot", "direct"]:
+        sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
+        sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
 
-    sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
-    sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
+        if sampling_rate_1 != sampling_rate_2:
+            print("Różne próbkowanie")
+        else:
+            signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
+    elif operation == "convolve":
+        signal_3 = convolve(signal_1_sel, signal_2_sel)
+        time_3 = convolve_time_axis(time_1_sel, time_2_sel)
+    elif operation == "direct":
+        signal_3 = cross_correlation_direct(signal_1_sel, signal_2_sel)
+        time_3 = convolve_time_axis(time_1_sel, time_2_sel)
+    elif operation == "splot":
+        signal_3 = cross_convolution(signal_1_sel, signal_2_sel)
+        time_3 = convolve_time_axis(time_1_sel, time_2_sel)
+    print("Signal 3: ", signal_3)
+    print("Time 3: ", time_3)
+    plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
+    plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
 
-    if sampling_rate_1 != sampling_rate_2:
-        print("Różne próbkowanie")
-    else:
-        signal_3, time_3 = so.operate_signals(operation, signal_1_sel, time_1_sel, signal_2_sel, time_2_sel)
-        plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
-        plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
+    if operation not in ["convolve", "splot", "direct"]:
         create_parameters_tab(param_frame_3, signal_3, time_3, signal_type.get())
+    else:
+        create_parameters_tab(param_frame_3, signal_3, time_3, "Impuls jednostkowy")
 
 def operate_signals(operation):
     global signal_1, time_1, signal_2, time_2, signal_3, time_3
@@ -565,7 +590,7 @@ def display_data_in_popup(time_data, signal_data, start_time, sampling_rate, num
     text_box.config(state=tk.DISABLED)
 
 def select_signals_for_operation(operation):
-    global signal_1, time_1, signal_2, time_2
+    global signal_1, time_1, signal_2, time_2, signal_samp_2, signal_samp_1, time_samp_1, time_samp_2
 
     popup = tk.Toplevel(root)
     popup.title("Wybór sygnałów do operacji")
@@ -573,7 +598,7 @@ def select_signals_for_operation(operation):
 
     ttk.Label(popup, text="Wybierz sygnały do operacji:").pack(pady=10)
 
-    signal_options = ["Sygnał 1", "Sygnał 2"]
+    signal_options = ["Sygnał 1", "Sygnał 1 Próbkowanie", "Sygnał 2", "Sygnał 2 Próbkowanie"]
     signal_1_var = tk.StringVar(value=signal_options[0])
     signal_2_var = tk.StringVar(value=signal_options[1])
 
@@ -586,16 +611,59 @@ def select_signals_for_operation(operation):
     signal_2_dropdown.pack()
 
     def confirm_selection(operation):
-        if signal_1_var.get() == "Sygnał 1" and signal_2_var.get() == "Sygnał 2":
+        if signal_1_var.get() == "Sygnał 1":
             selected_signal_1 = signal_1
             selected_time_1 = time_1
-            selected_signal_2 = signal_2
-            selected_time_2 = time_2
-        elif signal_1_var.get() == "Sygnał 2" and signal_2_var.get() == "Sygnał 1":
+        elif signal_1_var.get() == "Sygnał 1 Próbkowanie":
+            selected_signal_1 = signal_samp_1
+            selected_time_1 = time_samp_1
+        elif signal_1_var.get() == "Sygnał 2":
             selected_signal_1 = signal_2
             selected_time_1 = time_2
+        elif signal_1_var.get() == "Sygnał 2 Próbkowanie":
+            selected_signal_1 = signal_samp_2
+            selected_time_1 = time_samp_2
+        else:
+            selected_signal_1 = signal_3
+            selected_time_1 = time_3
+
+        if signal_2_var.get() == "Sygnał 1":
             selected_signal_2 = signal_1
             selected_time_2 = time_1
+        elif signal_2_var.get() == "Sygnał 1 Próbkowanie":
+            selected_signal_2 = signal_samp_1
+            selected_time_2 = time_samp_1
+        elif signal_2_var.get() == "Sygnał 2":
+            selected_signal_2 = signal_2
+            selected_time_2 = time_2
+        elif signal_2_var.get() == "Sygnał 2 Próbkowanie":
+            selected_signal_2 = signal_samp_2
+            selected_time_2 = time_samp_2
+        else:
+            selected_signal_2 = signal_3
+            selected_time_2 = time_3
+        # if signal_1_var.get() == "Sygnał 1" and signal_2_var.get() == "Sygnał 2":
+        #     if operation in ["convolve", "splot", "direct"]:
+        #         selected_signal_1 = signal_samp_1
+        #         selected_time_1 = time_samp_1
+        #         selected_signal_2 = signal_samp_2
+        #         selected_time_2 = time_samp_2
+        #     else:
+        #         selected_signal_1 = signal_1
+        #         selected_time_1 = time_1
+        #         selected_signal_2 = signal_2
+        #         selected_time_2 = time_2
+        # elif signal_1_var.get() == "Sygnał 2" and signal_2_var.get() == "Sygnał 1":
+        #     if operation in ["convolve", "splot", "direct"]:
+        #         selected_signal_1 = signal_samp_2
+        #         selected_time_1 = time_samp_2
+        #         selected_signal_2 = signal_samp_1
+        #         selected_time_2 = time_samp_1
+        #     else:
+        #         selected_signal_1 = signal_2
+        #         selected_time_1 = time_2
+        #         selected_signal_2 = signal_1
+        #         selected_time_2 = time_1
 
         print(f"Wybrano {selected_signal_1} i {selected_signal_2} do operacji.")
         popup.destroy()
@@ -609,9 +677,55 @@ def select_signals_for_operation(operation):
     popup.grab_set()
     root.wait_window(popup)
 
+def generate_filters():
+    global signal_1, time_1, signal_2, time_2, T_1, T_2, signal_type_1, signal_type_2, kw_1, kw_2, p_1, p_2, ts_1, ts_2
+
+    sample_rate = float(sample_entry.get())
+    M = int(filter_entry.get())
+    K = sample_rate / int(cut_entry.get())
+    time_conv = np.arange(0, (1 / sample_rate) * M, 1 / sample_rate)
+
+    if window_dropdown.get() == "Okno prostokątne":
+        window = rectangular_window
+    elif window_dropdown.get() == "Okno Hamminga":
+        window = hamming_window
+    elif window_dropdown.get() == "Okno Hanninga":
+        window = hann_window
+    else:
+        window = black_window
+
+    if signal_notebook.index(signal_notebook.select()) == 1:
+
+        if fillters_dropdown == "Filtr dolnoprzepustowy":
+            signal_2 = low_pass_filter(M, K, window)
+        elif fillters_dropdown == "Filtr pasmowy":
+            signal_2 = band_pass_filter(M, K, window)
+        else:
+            signal_2 = high_pass_filter(M, K, window)
+
+        plot_signal(time_conv, signal_2, "Skok jednostkowy", plot_frame_2, histogram_frame_2)
+        create_parameters_tab(param_frame_2, signal_2, time_2, "Impuls jednostkowy")
+        plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
+        time_2 = time_conv
+
+    else:
+
+        if fillters_dropdown.get() == "Filtr dolnoprzepustowy":
+            signal_1 = low_pass_filter(M, K, window)
+            print("dolny")
+        elif fillters_dropdown.get() == "Filtr pasmowy":
+            signal_1 = band_pass_filter(M, K, window)
+            print("pasmowy")
+        else:
+            signal_1 = high_pass_filter(M, K, window)
+            print("górny")
+
+        plot_signal(time_conv, signal_1, "Impuls jednostkowy", plot_frame_1, histogram_frame_1)
+        create_parameters_tab(param_frame_1, signal_1, time_1, "Impuls jednostkowy")
+        plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
+        time_1 = time_conv
+
 root = ThemedTk()
-#root = tk.Tk()
-# Uzyskanie katalogu, w którym znajduje się skrypt
 base_dir = os.path.dirname(__file__)
 
 # Utworzenie ścieżki względnej do pliku .tcl
@@ -626,7 +740,6 @@ root.title("Generator sygnałów")
 root.geometry("1510x600")
 root.resizable(False, False)
 
-
 # --- GŁÓWNY NOTEBOOK ---
 main_notebook = ttk.Notebook(root)
 main_notebook.grid(row=0, column=0, padx=10, pady=10)
@@ -634,13 +747,15 @@ main_notebook.grid(row=0, column=0, padx=10, pady=10)
 # --- ZAKŁADKI ---
 tab_generate = ttk.Frame(main_notebook)
 tab_operations = ttk.Frame(main_notebook)
+tab_filter = ttk.Frame(main_notebook)
 tab_save = ttk.Frame(main_notebook)
 tab_sampAndQuant = ttk.Frame(main_notebook)
 tab_reconstruction = ttk.Frame(main_notebook)
 tab_similarity = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
-main_notebook.add(tab_operations, text="Operacje matematyczne")
+main_notebook.add(tab_operations, text="Operacje")
+main_notebook.add(tab_filter, text="Filtry")
 main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
 main_notebook.add(tab_reconstruction, text="Rekonstrukcja")
@@ -710,12 +825,49 @@ increase_button.pack(side=tk.LEFT)
 ttk.Button(tab_generate, text="Generuj sygnał", command=lambda: generate_signal()).grid(row=8, column=0, padx=5, pady=5)
 ttk.Button(tab_generate, text="Generuj histogram", command=lambda: histogram_managment()).grid(row=8, column=1, padx=5, pady=5)
 
+# --- Filtry ---
+ttk.Label(tab_filter, text="Typ filtra:").grid(row=0, column=0, padx=5, pady=5)
+fillters_type = tk.StringVar(value="Filtr dolnoprzepustowy")
+fillters_dropdown = ttk.Combobox(tab_filter, textvariable=fillters_type,
+                               values=["Filtr dolnoprzepustowy", "Filtr górnoprzepustowy", "Filtr pasmowy"],
+                               state="readonly", width=50)
+fillters_dropdown.grid(row=0, column=1, padx=5, pady=5)
+fillters_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Label(tab_filter, text="Częstotliwość próbkowania:").grid(row=1, column=0, padx=5, pady=5)
+sample_var = tk.StringVar(value="16")
+sample_entry = ttk.Entry(tab_filter, textvariable=sample_var)
+sample_entry.grid(row=1, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Rząd filtra:").grid(row=2, column=0, padx=5, pady=5)
+filter_var = tk.StringVar(value="15")
+filter_entry = ttk.Entry(tab_filter, textvariable=filter_var)
+filter_entry.grid(row=2, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Częstotliwość odcięcia:").grid(row=3, column=0, padx=5, pady=5)
+cut_var = tk.StringVar(value="4")
+cut_entry = ttk.Entry(tab_filter, textvariable=cut_var)
+cut_entry.grid(row=3, column=1, padx=5, pady=5)
+
+ttk.Label(tab_filter, text="Typ okna:").grid(row=4, column=0, padx=5, pady=5)
+window_type = tk.StringVar(value="Okno prostokątne")
+window_dropdown = ttk.Combobox(tab_filter, textvariable=window_type,
+                               values=["Okno prostokątne", "Okno Hamminga", "Okno Hanninga", "Okno Blackmana"],
+                               state="readonly", width=50)
+window_dropdown.grid(row=4, column=1, padx=5, pady=5)
+window_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Button(tab_filter, text="Generuj filtr", command=lambda: generate_filters()).grid(row=5, column=0, padx=5, pady=5)
 
 # --- OPERACJE ---
 ttk.Button(tab_operations, text="Dodaj", command=lambda: select_signals_for_operation("add")).grid(row=1, column=0, padx=100, pady=50)
 ttk.Button(tab_operations, text="Odejmij", command=lambda: select_signals_for_operation("subtract")).grid(row=1, column=1, padx=10, pady=5)
 ttk.Button(tab_operations, text="Pomnóż", command=lambda: select_signals_for_operation("multiply")).grid(row=2, column=0, padx=100, pady=5)
 ttk.Button(tab_operations, text="Podziel", command=lambda: select_signals_for_operation("divide")).grid(row=2, column=1, padx=10, pady=5)
+ttk.Button(tab_operations, text="Korelacja bezpośrednia", command=lambda: select_signals_for_operation("direct")).grid(row=3, column=0, padx=100, pady=5)
+ttk.Button(tab_operations, text="Korelacja splot", command=lambda: select_signals_for_operation("splot")).grid(row=3, column=1, padx=10, pady=5)
+ttk.Button(tab_operations, text="Splot", command=lambda: select_signals_for_operation("convolve")).grid(row=4, column=0, padx=100, pady=5)
+ttk.Button(tab_operations, text="Pomiar odległości", command=lambda: open_new_window(root)).grid(row=4, column=1, padx=100, pady=5)
 
 # --- ZAPIS I ODCZYT ---
 ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
