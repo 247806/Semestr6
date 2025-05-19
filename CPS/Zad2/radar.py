@@ -4,6 +4,7 @@ from tkinter import ttk
 import numpy as np
 
 from continousSignal import sinusoidal
+from correlation import cross_correlation_direct
 from myPlots import plot_counting
 
 # --- Parametry symulacji ---
@@ -13,6 +14,8 @@ time_step = None            # czas między krokami symulacji (s)
 num_steps = None            # liczba kroków (sondań)
 sampling_rate = None       # Hz, do dyskretyzacji sygnału
 signal_duration = None      # długość sygnału w sekundach
+report_time = None
+bufor_size = None
 
 def calculate_distance(probe_signal, feedback_signal):
     # Korelacja dyskretna (pełna korelacja)
@@ -35,7 +38,7 @@ def calculate_distance(probe_signal, feedback_signal):
     # Obliczamy odległość
     distance = (delay_seconds * signal_velocity) / 2.0
 
-    return distance
+    return distance, correlation
 
 
 def generate_probe_signal(t, probe_signal_term):
@@ -58,15 +61,15 @@ def generate_feedback_signal(t, feedback_signal_term):
     item_distance = 0.0
     distnace = []
     time = []
-
+    print(report_time)
     probe_signals = []
     feedback_signals = []
 
     # --- Główna pętla ---
     for step in range(num_steps):
         # 1. Aktualizacja czasu i pozycji
-        timestamp += time_step
-        item_distance += item_velocity * time_step
+        timestamp += report_time
+        item_distance += item_velocity * report_time
 
         # 2. Obliczenie opóźnienia sygnału
         delay = (item_distance / signal_velocity) * 2.0
@@ -86,7 +89,7 @@ def generate_feedback_signal(t, feedback_signal_term):
     return feedback_signals, distnace, time
 
 def count_distance(param_tab, plot_1, plot_2, plot_3, quant_entry, step_entry, raport_entry, bufor_entry, sample_rate_entry, duty_cycle_entry_t, signal_velocity_entry, item_velocity_entry):
-    global item_velocity, signal_velocity, time_step, num_steps, sampling_rate, signal_duration
+    global item_velocity, signal_velocity, time_step, num_steps, sampling_rate, signal_duration, report_time, bufor_size
 
     item_velocity = float(item_velocity_entry.get())
     signal_velocity = float(signal_velocity_entry.get())
@@ -94,49 +97,52 @@ def count_distance(param_tab, plot_1, plot_2, plot_3, quant_entry, step_entry, r
     num_steps = int(quant_entry.get())
     sampling_rate = float(sample_rate_entry.get())
     signal_duration = float(bufor_entry.get()) / sampling_rate
+    bufor_size = int(bufor_entry.get())
     probe_signal_term = float(duty_cycle_entry_t.get())
+    report_time = float(raport_entry.get())
 
-    i = 249
     t = np.arange(0, signal_duration, 1 / sampling_rate)
     d_true = generate_probe_signal(t, probe_signal_term)
     d_reported, distance, time = generate_feedback_signal(t, probe_signal_term)
-    print("tablica")
-    print(d_reported[i])
-    dist = calculate_distance(d_true, d_reported[i])
-    print(time[i])
-    print(dist)
-    print(distance[i])
-    plot_counting(t, d_true, plot_1)
-    plot_counting(t, d_reported[i], plot_2)
+    dist = []
+    core = []
+    for d in d_reported:
+        dis, cor = calculate_distance(d_true, d)
+        dist.append(dis)
+        core.append(cor)
 
     # StringVar do powiązania z comboboxem
     selected_time = tk.StringVar()
 
     # Utworzenie comboboxa z listą wartości z time
     combo = ttk.Combobox(param_tab, textvariable=selected_time)
-    combo['values'] = time  # przypisanie elementów tablicy
+    combo['values'] = [f"{t:.2f}" for t in time]  # przypisanie elementów tablicy
     combo.grid(row=9, column=0, padx=10, pady=10)
 
     # Opcjonalnie ustawienie wartości domyślnej (pierwszy element)
     combo.current(0)
-    combo.bind("<<ComboboxSelected>>", lambda e:select_data(param_tab, dist, distance, combo))
+    combo.bind("<<ComboboxSelected>>", lambda e:select_data(param_tab, dist, distance, combo, t, d_true, d_reported, plot_1, plot_2, core, plot_3))
 
 
 
-def select_data(param_tab, dist, distance, combo):
-    ttk.Label(param_tab, text=f"Obliczony dystans: {dist}").grid(row=10, column=0, padx=5, pady=5)
-    ttk.Label(param_tab, text=f"Rzeczywisty dystans: {distance[combo.current()]}").grid(row=11, column=0, padx=5,
+def select_data(param_tab, dist, distance, combo, t, d_true, d_reported, plot_1, plot_2, core, plot_3):
+    ttk.Label(param_tab, text=f"Obliczony dystans: {dist[combo.current()]:.3f}").grid(row=10, column=0, padx=5, pady=5)
+    ttk.Label(param_tab, text=f"Rzeczywisty dystans: {distance[combo.current()]:.3f}").grid(row=11, column=0, padx=5,
                                                                                         pady=5)
+    plot_counting(t, d_true, plot_1, "Sygnał oryginalny")
+    plot_counting(t, d_reported[combo.current()], plot_2, "Sygnał odbity")
+    t_core = np.linspace(0, signal_duration, bufor_size * 2 - 1)
+    plot_counting(t_core, core[combo.current()], plot_3, "Korelacja")
 
 def open_new_window(root):
     new_window = tk.Toplevel(root)
     new_window.title("Nowe Okno")
-    new_window.geometry("1200x500")
+    new_window.geometry("1200x800")
     # label = ttk.Label(new_window, text="To jest nowe okno")
     # label.pack(pady=20)
     # --- GŁÓWNY NOTEBOOK ---
     main_notebook = ttk.Notebook(new_window)
-    main_notebook.grid(row=0, column=0, padx=10, pady=10)
+    main_notebook.grid(row=0, column=0, rowspan=3, padx=10, pady=10)
 
     param_tab = ttk.Frame(main_notebook)
     main_notebook.add(param_tab, text="Parametry")

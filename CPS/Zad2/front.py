@@ -481,6 +481,8 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
     print("Operation: ", operation)
     print(signal_1_sel)
     print(signal_2_sel)
+    print("Time 1: ", time_1_sel)
+    print("Time 2: ", time_2_sel)
     if operation not in ["convolve", "splot", "direct"]:
         sampling_rate_1 = round(1 / (time_1[1] - time_1[0]), 2) if len(time_1) > 1 else 1.0
         sampling_rate_2 = round(1 / (time_2[1] - time_2[0]), 2) if len(time_2) > 1 else 1.0
@@ -498,6 +500,8 @@ def operate_signals_sel(operation, signal_1_sel, time_1_sel, signal_2_sel, time_
     elif operation == "splot":
         signal_3 = cross_convolution(signal_1_sel, signal_2_sel)
         time_3 = convolve_time_axis(time_1_sel, time_2_sel)
+    print("Signal 3: ", signal_3)
+    print("Time 3: ", time_3)
     plot_signal(time_3, signal_3, "Wynik", plot_frame_3, histogram_frame_3)
     plot_histogram(histogram_frame_3, signal_3, int(bins_var.get()))
 
@@ -594,7 +598,7 @@ def select_signals_for_operation(operation):
 
     ttk.Label(popup, text="Wybierz sygnały do operacji:").pack(pady=10)
 
-    signal_options = ["Sygnał 1", "Sygnał 2"]
+    signal_options = ["Sygnał 1", "Sygnał 1 Próbkowanie", "Sygnał 2", "Sygnał 2 Próbkowanie"]
     signal_1_var = tk.StringVar(value=signal_options[0])
     signal_2_var = tk.StringVar(value=signal_options[1])
 
@@ -607,28 +611,59 @@ def select_signals_for_operation(operation):
     signal_2_dropdown.pack()
 
     def confirm_selection(operation):
-        if signal_1_var.get() == "Sygnał 1" and signal_2_var.get() == "Sygnał 2":
-            if operation in ["convolve", "splot", "direct"]:
-                selected_signal_1 = signal_samp_1
-                selected_time_1 = time_samp_1
-                selected_signal_2 = signal_samp_2
-                selected_time_2 = time_samp_2
-            else:
-                selected_signal_1 = signal_1
-                selected_time_1 = time_1
-                selected_signal_2 = signal_2
-                selected_time_2 = time_2
-        elif signal_1_var.get() == "Sygnał 2" and signal_2_var.get() == "Sygnał 1":
-            if operation in ["convolve", "splot", "direct"]:
-                selected_signal_1 = signal_samp_2
-                selected_time_1 = time_samp_2
-                selected_signal_2 = signal_samp_1
-                selected_time_2 = time_samp_1
-            else:
-                selected_signal_1 = signal_2
-                selected_time_1 = time_2
-                selected_signal_2 = signal_1
-                selected_time_2 = time_1
+        if signal_1_var.get() == "Sygnał 1":
+            selected_signal_1 = signal_1
+            selected_time_1 = time_1
+        elif signal_1_var.get() == "Sygnał 1 Próbkowanie":
+            selected_signal_1 = signal_samp_1
+            selected_time_1 = time_samp_1
+        elif signal_1_var.get() == "Sygnał 2":
+            selected_signal_1 = signal_2
+            selected_time_1 = time_2
+        elif signal_1_var.get() == "Sygnał 2 Próbkowanie":
+            selected_signal_1 = signal_samp_2
+            selected_time_1 = time_samp_2
+        else:
+            selected_signal_1 = signal_3
+            selected_time_1 = time_3
+
+        if signal_2_var.get() == "Sygnał 1":
+            selected_signal_2 = signal_1
+            selected_time_2 = time_1
+        elif signal_2_var.get() == "Sygnał 1 Próbkowanie":
+            selected_signal_2 = signal_samp_1
+            selected_time_2 = time_samp_1
+        elif signal_2_var.get() == "Sygnał 2":
+            selected_signal_2 = signal_2
+            selected_time_2 = time_2
+        elif signal_2_var.get() == "Sygnał 2 Próbkowanie":
+            selected_signal_2 = signal_samp_2
+            selected_time_2 = time_samp_2
+        else:
+            selected_signal_2 = signal_3
+            selected_time_2 = time_3
+        # if signal_1_var.get() == "Sygnał 1" and signal_2_var.get() == "Sygnał 2":
+        #     if operation in ["convolve", "splot", "direct"]:
+        #         selected_signal_1 = signal_samp_1
+        #         selected_time_1 = time_samp_1
+        #         selected_signal_2 = signal_samp_2
+        #         selected_time_2 = time_samp_2
+        #     else:
+        #         selected_signal_1 = signal_1
+        #         selected_time_1 = time_1
+        #         selected_signal_2 = signal_2
+        #         selected_time_2 = time_2
+        # elif signal_1_var.get() == "Sygnał 2" and signal_2_var.get() == "Sygnał 1":
+        #     if operation in ["convolve", "splot", "direct"]:
+        #         selected_signal_1 = signal_samp_2
+        #         selected_time_1 = time_samp_2
+        #         selected_signal_2 = signal_samp_1
+        #         selected_time_2 = time_samp_1
+        #     else:
+        #         selected_signal_1 = signal_2
+        #         selected_time_1 = time_2
+        #         selected_signal_2 = signal_1
+        #         selected_time_2 = time_1
 
         print(f"Wybrano {selected_signal_1} i {selected_signal_2} do operacji.")
         popup.destroy()
@@ -671,6 +706,7 @@ def generate_filters():
         plot_signal(time_conv, signal_2, "Skok jednostkowy", plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2, "Impuls jednostkowy")
         plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
+        time_2 = time_conv
 
     else:
 
@@ -687,6 +723,7 @@ def generate_filters():
         plot_signal(time_conv, signal_1, "Impuls jednostkowy", plot_frame_1, histogram_frame_1)
         create_parameters_tab(param_frame_1, signal_1, time_1, "Impuls jednostkowy")
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
+        time_1 = time_conv
 
 root = ThemedTk()
 base_dir = os.path.dirname(__file__)
