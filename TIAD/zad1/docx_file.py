@@ -34,21 +34,18 @@ def create_docx(headers, data, output_file, add_page, column_widths, align, head
     doc = Document()
     doc.add_heading(heading, level=1)
 
-    for i in range(len(col_delete)):
+    for i in range(len(col_delete) - 1, -1, -1):
         if not col_delete[i].get():
             del headers[i]
             for row in data:
                 del row[i]
             del column_widths[i]
 
-    print(headers)
-    print(data)
-
     headers_line, data_line, widths = prepare_data(headers, data, column_widths)
     print(headers)
     print(data)
     if table:
-        for i in range(len(headers)):
+        for i in range(len(headers_line)):
             create_table(doc, headers_line[i], data_line[i], widths[i], align)
     else:
         for i in range(len(headers)):
@@ -122,7 +119,7 @@ def create_paragraphs(doc, headers, data, align, col_number):
     # title = headers
     doc.add_heading(f"{headers}:", level=2)
     paragraph_lines = [
-        f"{row_idx + 1}: {data[row_idx][col_number]}\n"
+        f"{row_idx + 1}: {data[row_idx][col_number]}"
         for row_idx in range(len(data))
     ]
     # paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
