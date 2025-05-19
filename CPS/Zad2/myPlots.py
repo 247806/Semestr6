@@ -1,6 +1,20 @@
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+def plot_counting(time, signal, plot):
+    plt.style.use('classic')
+    for widget in plot.winfo_children():
+        widget.destroy()
+
+    fig, ax = plt.subplots(figsize=(6, 2), dpi=100)
+    ax.plot(time, signal,  'o-')
+    ax.set_title("Wykres sygnału")
+    ax.set_xlabel("Czas [s]")
+    ax.set_ylabel("Amplituda")
+    ax.grid()
+    canvas = FigureCanvasTkAgg(fig, master=plot)
+    canvas.draw()
+    canvas.get_tk_widget().pack(expand=False, fill='both', padx=5, pady=5)
 
 def plot_signal(time, signal, signal_types, plot, histogram):
     plt.style.use('classic')

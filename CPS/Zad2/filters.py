@@ -1,18 +1,22 @@
 import numpy as np
 
 def hamming_window(n, M):
+    print("hamming")
     return 0.53836 - 0.46164 * np.cos(2 * np.pi * n / M)
 
 def rectangular_window(n, M):
+    print("prostokat")
     return 1.0
 
 def hann_window(n, M):
+    print("hann")
     return 0.5 - 0.5 * np.cos(2 * np.pi * n / M)
 
 def black_window(n, M):
+    print("black")
     return 0.42 - 0.5 * np.cos(2.0 * np.pi * n / M) + 0.08 * np.cos(4.0 * np.pi * n / M);
 
-def low_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def low_pass_filter(M, K, window_func=rectangular_window):
     c = (M - 1) // 2
     h = np.zeros(M)
 
@@ -25,7 +29,7 @@ def low_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
 
     return h
 
-def band_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def band_pass_filter(M, K, window_func=rectangular_window):
     h_lp = low_pass_filter(M, K, window_func)
     h_bp = np.zeros(M)
 
@@ -34,7 +38,7 @@ def band_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
 
     return h_bp
 
-def high_pass_filter(M = 15, K = 100/4, window_func=rectangular_window):
+def high_pass_filter(M, K, window_func=rectangular_window):
     h_lp = low_pass_filter(M, K, window_func)
     h_hp = np.zeros(M)
 

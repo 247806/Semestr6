@@ -1,6 +1,6 @@
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, LongTable, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Paragraph, Spacer
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
@@ -64,7 +64,7 @@ def create_table_pdf(headers, data, column_widths, align):
         wrapped_row = [Paragraph(str(cell), custom_style) for cell in row]
         table_data.append(wrapped_row)
 
-    table = Table(table_data, colWidths=column_widths)
+    table = LongTable(table_data, colWidths=column_widths)
 
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
