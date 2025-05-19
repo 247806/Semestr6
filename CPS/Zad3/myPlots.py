@@ -30,7 +30,7 @@ def plot_signal(time, signal, signal_types, plot, histogram):
     elif signal_types == "test":
         ax.step(time, signal, where='post')
     else:
-        ax.plot(time, signal)
+        ax.plot(time, signal,  'o-')
     ax.set_title("Wykres sygnału")
     ax.set_xlabel("Czas [s]")
     ax.set_ylabel("Amplituda")

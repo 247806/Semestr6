@@ -600,7 +600,7 @@ def select_signals_for_operation(operation):
 
     signal_options = ["Sygnał 1", "Sygnał 1 Próbkowanie", "Sygnał 2", "Sygnał 2 Próbkowanie"]
     signal_1_var = tk.StringVar(value=signal_options[0])
-    signal_2_var = tk.StringVar(value=signal_options[1])
+    signal_2_var = tk.StringVar(value=signal_options[2])
 
     ttk.Label(popup, text="Sygnał 1:").pack()
     signal_1_dropdown = ttk.Combobox(popup, textvariable=signal_1_var, values=signal_options, state="readonly")
@@ -696,14 +696,15 @@ def generate_filters():
 
     if signal_notebook.index(signal_notebook.select()) == 1:
 
-        if fillters_dropdown == "Filtr dolnoprzepustowy":
+        if fillters_dropdown.get() == "Filtr dolnoprzepustowy":
             signal_2 = low_pass_filter(M, K, window)
-        elif fillters_dropdown == "Filtr pasmowy":
+            print("dolny")
+        elif fillters_dropdown.get() == "Filtr pasmowy":
             signal_2 = band_pass_filter(M, K, window)
         else:
             signal_2 = high_pass_filter(M, K, window)
 
-        plot_signal(time_conv, signal_2, "Skok jednostkowy", plot_frame_2, histogram_frame_2)
+        plot_signal(time_conv, signal_2, "Impuls jednostkowy", plot_frame_2, histogram_frame_2)
         create_parameters_tab(param_frame_2, signal_2, time_2, "Impuls jednostkowy")
         plot_histogram(histogram_frame_2, signal_2, int(bins_var.get()))
         time_2 = time_conv
