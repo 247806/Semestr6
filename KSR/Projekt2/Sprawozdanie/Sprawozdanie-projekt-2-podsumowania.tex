@@ -17,49 +17,21 @@
 
 \title{Komputerowe systemy rozpoznawania 2024/2025\\Projekt 2. Podsumowania lingwistyczne relacyjnych baz danych}
 \begin{document}
-\maketitle
-
-Opis projektu ma formę artykułu naukowego lub raportu z zadania
-badawczego (doświadczalnego/obliczeniowego (wg indywidualnych potrzeb związanych np. z
-pracą inżynierską/naukową/zawodową). Wzory są numerowane, tablice są numerowane i podpisane nad
-tablicą, rysunki są numerowane i podpisane pod rysunkiem. Podpis rysunku i
-tabeli musi być wyczerpujący (nie ogólnikowy), aby czytelnik nie musiał sięgać do tekstu, aby go zrozumieć.\\
-\indent {\bf Limit stron sprawozdania: 20. Nie zmieniać parametrów tekstu
-(czcionki, marginesów, interlinii, itp.). Istotne dla sprawozdania rysunki,
-tabele, informacje, kody itp. można umieścić w załącznikach, które nie wliczają
-się do limitu stron.}\\
-\indent {\bf Kolejne sekcje sprawozdania są uzupełniane wg wymagań w
-opisie Projektu 2. i Harmonogramie Zajęć na WIKAMP KSR jako efekty zadań w~poszczególnych tygodniach}. 
+\maketitle 
 
 \section{Cel}
 Celem projektu jest stworzenie aplikacji, której główną funkcjonalnością
-jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zadanie generowanie podsumowań lingwistycznych dla wybranych przez użytkownika kwantyfikatorów, sumaryzatorów i kwalifikatorów dla różnych atrybutów. Analiza otrzymanych wyników polega na określeniu, znaczenia wybranych kwantyfikatorów, sumaryzatorów, kwalifikatorów oraz miar ich jakości dla wiarygodności i jakości otrzymanych podsumowań lingwistycznych. Przykładowe podsumowanie to, np. większkość pomiarów ma wysoką wilgotność.
-
-Zwięzły (2-3 zdania) opis
-problemu, uwzględniający część eksperymentalną i
-implementacyjną.  Opis (własny, nie skopiowany) zawiera przypisy do literatury (bibliografii) zamieszczonej na końcu sprawozdania
-zgodnie z~Polską Normą (zob. materiały BG PŁ pt. ,,Bibliografia
-załącznikowa'').\\ 
-\indent Opis zawiera minimum teorii ściśle odniesionej do tego konkretnego zadania (zbiór
-danych, liczba zmiennych i rekordów, jakie podsumowania chcesz generować i po
-co, PRZYKŁADY, itp.), tak by inżynier innej specjalności zrozumiał dalszy
-opis tego konkretnego eksperymentu. {\bf Nie przepisuj literatury -- pokaż na
-przykładach jak
-jej elementy wyglądają zastosowane konkretnie do Twojego zadania}. 
-Nie przepisuj literatury ani teorii 
-napisz krótko jak rozumiesz to co masz wykona¢: jakie działania, na
-jakim zbiorze danych (link lub przypis), jaki jest spodziewany efekt.\\
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 09 wg Harmonogramu Zajęć na WIKAMP KSR.}
+jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zadanie generowanie podsumowań lingwistycznych dla wybranych przez użytkownika kwantyfikatorów, sumaryzatorów i kwalifikatorów dla różnych atrybutów. Analiza otrzymanych wyników polega na określeniu, znaczenia wybranych kwantyfikatorów, sumaryzatorów, kwalifikatorów oraz miar ich jakości dla wiarygodności i jakości otrzymanych podsumowań lingwistycznych. Przykładowe podsumowanie to, np. większkość pomiarów ma wysokie ciśnienie.
 
 
 \section{Baza danych, zmienne lingwistyczne, kwantyfikatory lingwistyczne}
 \noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 09 wg Harmonogramu Zajęć na WIKAMP KSR.}
 
 \subsection{Charakterystyka podsumowywanej bazy danych}
-W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 71331 rekordów. 
+W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 71331 rekordów. 
 
-Zmiennym lingwistycznym przypisuje się znaczenie ze względu na potrzebę lepszej interpretowalności danych przez użytkowników. Ludzie rzadko reagują na dokładne wartości (np. 1033.8 mb ciśnienia), natomiast określenie „wysokie ciśnienie” pozwala im intuicyjnie rozumieć sytuację pogodową. Stąd istnieje zapotrzebowanie na „przekładanie” danych formalnych na język naturalny. 
-Podmiotem podsumowań jest pomiar, z bazy World Weather Repository wybrano 10 atrybutów, które zostaną rozmyte, są to następujące kolumny:
+Zmiennym lingwistycznym przypisuje się znaczenie ze względu na potrzebę lepszej interpretowalności danych przez użytkowników. Ludzie rzadko reagują na dokładne wartości (np. 1033.8 mb ciśnienia), natomiast określenie „wysokie ciśnienie” pozwala im intuicyjnie rozumieć sytuację pogodową. Stąd istnieje zapotrzebowanie na „przekładanie” danych formalnych na język naturalny. \\
+Podmiotem podsumowań jest pomiar atmosferyczny, z bazy World Weather Repository wybrano 10 atrybutów, które zostaną rozmyte, są to następujące kolumny:
 \begin{enumerate}
     \item last\_updated - data przeprowadzenia pomiarów, z tego atrybutu zostanie wykorzystana godzina w celu określenia pory dnia, zakres [0 - 24]. 
     \item temperature\_celsius - temperatura wyrażona w stopniach Celsjusza w zakresie [-25, 50].
@@ -72,7 +44,7 @@ Podmiotem podsumowań jest pomiar, z bazy World Weather Repository wybrano 10 at
     \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu w zakresie [0 - 428].
     \item air\_quality\_gb-defra-index - skala określająca poziomy zanieczyszczenia w powietrzu w zakresie [1 - 10].
 
-    \begin{figure}[h!]
+    \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/table.png}
     \caption{Fragment widoku tabeli z bazy danych.}
@@ -89,7 +61,7 @@ naturalny (a nie formalny) \cite{niewiadomski19, niewiadomski08}.\\
 Realizacja bazy w wybranym DBMS. Rysunek lub tabela (fragment).
 
 \subsection{Zmienne lingwistyczne (atrybuty/własności obiektów)}
-Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1, ich wzory analityczne oraz wykresy funkcji przynależności wraz z dopasowanymi do nich etykietami. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, ..., \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej ligwistycznej. 
+Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1, ich wzory analityczne oraz wykresy funkcji przynależności wraz z dopasowanymi do nich etykietami. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, \mathcal{L}\_1 - nazwa zmiennej lingwistycznej , \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej ligwistycznej. 
 \begin{enumerate}
     \item last\_updated
         \begin{equation}
@@ -536,9 +508,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         
     \item Indeks jakości powietrza
                 \begin{equation}
-            L_10 = \langle \mathcal{L}_10, H_10, \mathcal{X}_10 \rangle
+            L_10 = \langle \mathcal{L}_{10}, H_{10}, \mathcal{X}_{10} \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_10$ – jakość powietrza, $H_10$ – \{bardzo dobra, dobra, umiarkowana, zła, bardzo zła\}, $\mathcal{X}_10 = [1, 10]$. \\
+        gdzie: $\mathcal{L}_{10}$ – jakość powietrza, $H_{10}$ – \{bardzo dobra, dobra, umiarkowana, zła, bardzo zła\}, $\mathcal{X}_{10} = [1, 10]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
 \begin{equation}
