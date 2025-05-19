@@ -10,6 +10,7 @@ from docx2pdf import convert
 TABLES = []
 SETTINGS_FILE = "settings.json"
 column_entries = []
+column_checkboxes = []
 
 def select_file():
     file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
@@ -54,7 +55,8 @@ def convert_excel():
         title = "file"
     column_widths = update_column_sizes()
     save_settings()
-    create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align, heading, create_table)
+    create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align, heading,
+                create_table, column_checkboxes)
     # convert(f"{direction}/{title}.docx")
     # create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
@@ -103,7 +105,16 @@ def validate_column_input(P):
 #Odczytuje dane po wczytaniu pliku przez użytkownika i wyświetla wielkości kolumn do edycji
 def load_column_sizes(start_row):
     global FIRST_COLUMNS_WIDTHS
+    global column_checkboxes
+
     try:
+        for table in TABLES:
+            table.destroy()
+        TABLES.clear()
+
+        if len(column_checkboxes) != 0:
+            column_checkboxes.clear()
+
         headers, data = read_excel(entry_file_path.get(), start_row)
         if not headers or not data:
             raise ValueError("Plik nie zawiera danych")
@@ -140,13 +151,19 @@ def load_column_sizes(start_row):
         row, col = divmod(i, 4)
 
         label = tk.Label(column_frame, text=f"Kolumna {i + 1} (cm):")
-        label.grid(row=row + 1, column=col * 2, padx=5, pady=2)
+        label.grid(row=row + 1, column=col * 3, padx=5, pady=2)
 
         entry = tk.Entry(column_frame, width=5, validate="key", validatecommand=(validate_command, "%P"))
         entry.insert(0, f"{width:.2f}")
-        entry.grid(row=row + 1, column=col * 2 + 1, padx=5, pady=2)
+        entry.grid(row=row + 1, column=col * 3 + 1, padx=5, pady=2)
 
         column_entries.append(entry)
+
+        var = tk.BooleanVar(value=True)  # Domyślnie kolumna ma być włączona
+        checkbox = tk.Checkbutton(column_frame, variable=var)
+        checkbox.grid(row=row + 1, column=col * 3 + 2, padx=5, pady=2)
+        column_checkboxes.append(var)
+
 
 #Wyświetla podgląd tabeli
 def load_table_data(parent, headers, data, widths):
@@ -182,6 +199,11 @@ def create_table_preview(root, headers_list, data_list, widths_list):
 def refresh_table():
     column_widths = update_column_sizes()
     headers, data = read_excel(entry_file_path.get(), start_row)
+    for i in range(len(column_checkboxes)):
+        if not column_checkboxes[i].get():
+            del headers[i]
+            for row in data:
+                del row[i]
     data1, data2, data3 = prepare_data(headers, data, column_widths)
 
     for table in TABLES:
