@@ -46,13 +46,15 @@ def update_column_sizes():
 def convert_excel():
     headers, data = read_excel(entry_file_path.get(), start_row)
     title = entry_title.get()
+    heading = entry_heading.get()
+    create_table = table.get()
     add_page = page.get()
     align = align_var.get()
     if title == "":
         title = "file"
     column_widths = update_column_sizes()
     save_settings()
-    create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align)
+    create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align, heading, create_table)
     convert(f"{direction}/{title}.docx")
     # create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
@@ -247,19 +249,27 @@ entry_path = tk.Entry(frame, textvariable=path_var, width=50)
 entry_path.grid(row=1, column=1)
 tk.Button(frame, text="Wybierz", command=choose_dir).grid(row=1, column=2, padx=10)
 
-tk.Label(frame, text="Tytuł dokumentu:").grid(row=2, column=0, sticky="w", pady=10)
+tk.Label(frame, text="Tytuł pliku:").grid(row=2, column=0, sticky="w", pady=10)
 entry_title = tk.Entry(frame, width=50)
 entry_title.grid(row=2, column=1, columnspan=2, sticky="w")
 
+tk.Label(frame, text="Tytuł dokumentu:").grid(row=3, column=0, sticky="w", pady=10)
+entry_heading = tk.Entry(frame, width=50)
+entry_heading.grid(row=3, column=1, columnspan=2, sticky="w")
+
 page = tk.BooleanVar()
 check_page = tk.Checkbutton(frame, text="Numeruj strony", variable=page)
-check_page.grid(row=3, column=0, pady=5)
+check_page.grid(row=4, column=0, pady=5)
 
-tk.Label(frame, text="Wyrównanie tekstu:").grid(row=3, column=1, sticky="e", pady=5)
+table = tk.BooleanVar()
+check_table = tk.Checkbutton(frame, text="Tabela", variable=table)
+check_table.grid(row=4, column=1, pady=5)
+
+tk.Label(frame, text="Wyrównanie tekstu:").grid(row=4, column=1, sticky="e", pady=5)
 align_var = tk.StringVar(value="Do lewej")
 alignment_options = ["Do lewej", "Do środka", "Do prawej"]
 alignment_menu = ttk.Combobox(frame, textvariable=align_var, values=alignment_options, state="readonly")
-alignment_menu.grid(row=3, column=2, sticky="w")
+alignment_menu.grid(row=4, column=2, sticky="w")
 
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()

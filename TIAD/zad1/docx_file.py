@@ -29,13 +29,18 @@ def prepare_data(headers, data, widths):
 
     return data1, data2, data3
 
-def create_docx(headers, data, output_file, add_page, column_widths, align):
+def create_docx(headers, data, output_file, add_page, column_widths, align, heading, create_table):
     doc = Document()
-    doc.add_heading('Tabela danych', level=1)
+    doc.add_heading(heading, level=1)
 
     headers, data, widths = prepare_data(headers, data, column_widths)
-    for i in range(len(headers)):
-        create_table(doc, headers[i], data[i], widths[i], align)
+
+    if create_table:
+        for i in range(len(headers)):
+            create_table(doc, headers[i], data[i], widths[i], align)
+    else:
+        for i in range(len(headers)-1):
+            create_paragraphs(doc, headers[i], data[i], align)
 
     if add_page:
         for i, section in enumerate(doc.sections):
@@ -85,3 +90,27 @@ def create_table(doc, headers, data, column_widths, align):
         for i, cell in enumerate(row):
             row_cells[i].text = str(cell) if cell else ""
             row_cells[i].paragraphs[0].alignment = align_map[align]
+
+def create_paragraphs(doc, headers, data, align):
+    align_map = {
+        "Do lewej": WD_ALIGN_PARAGRAPH.LEFT,
+        "Do środka": WD_ALIGN_PARAGRAPH.CENTER,
+        "Do prawej": WD_ALIGN_PARAGRAPH.RIGHT,
+    }
+
+    doc.add_paragraph()  # odstęp
+    print(headers)
+    print(data)
+    # Zakładamy, że pierwsza kolumna to 'Lp.' (czyli numer wiersza)
+    for col_idx in range(1, len(headers)):
+        title = headers[col_idx]
+        paragraph_lines = [
+            f"{data[row_idx][0]}: {data[row_idx][col_idx]}"
+            for row_idx in range(len(data))
+        ]
+        paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
+
+        paragraph = doc.add_paragraph(paragraph_text)
+        paragraph.alignment = align_map[align]
+        doc.add_paragraph()  # odstęp między kolumnami
+
