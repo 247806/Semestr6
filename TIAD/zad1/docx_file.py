@@ -4,6 +4,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
+
 def prepare_data(headers, data, widths):
     page_width_cm = 16.51
     current_width = 0
@@ -29,18 +30,31 @@ def prepare_data(headers, data, widths):
 
     return data1, data2, data3
 
-def create_docx(headers, data, output_file, add_page, column_widths, align, heading, create_table):
+def create_docx(headers, data, output_file, add_page, column_widths, align, heading, table, col_delete):
     doc = Document()
     doc.add_heading(heading, level=1)
 
-    headers, data, widths = prepare_data(headers, data, column_widths)
+    for i in range(len(col_delete) - 1, -1, -1):
+        if not col_delete[i].get():
+            del headers[i]
+            for row in data:
+                del row[i]
+            del column_widths[i]
 
-    if create_table:
-        for i in range(len(headers)):
-            create_table(doc, headers[i], data[i], widths[i], align)
+    headers_line, data_line, widths = prepare_data(headers, data, column_widths)
+    print(headers)
+    print(data)
+    if table:
+        for i in range(len(headers_line)):
+            create_table(doc, headers_line[i], data_line[i], widths[i], align)
     else:
-        for i in range(len(headers)-1):
-            create_paragraphs(doc, headers[i], data[i], align)
+        for i in range(len(headers)):
+            print(f"Numer {i}")
+            # print("Nagłówek")
+            # print(headers[i])
+            # print("Dane")
+            # print(data[i])
+            create_paragraphs(doc, headers[i], data, align, i)
 
     if add_page:
         for i, section in enumerate(doc.sections):
@@ -91,7 +105,7 @@ def create_table(doc, headers, data, column_widths, align):
             row_cells[i].text = str(cell) if cell else ""
             row_cells[i].paragraphs[0].alignment = align_map[align]
 
-def create_paragraphs(doc, headers, data, align):
+def create_paragraphs(doc, headers, data, align, col_number):
     align_map = {
         "Do lewej": WD_ALIGN_PARAGRAPH.LEFT,
         "Do środka": WD_ALIGN_PARAGRAPH.CENTER,
@@ -101,16 +115,29 @@ def create_paragraphs(doc, headers, data, align):
     doc.add_paragraph()  # odstęp
     print(headers)
     print(data)
-    # Zakładamy, że pierwsza kolumna to 'Lp.' (czyli numer wiersza)
-    for col_idx in range(1, len(headers)):
-        title = headers[col_idx]
-        paragraph_lines = [
-            f"{data[row_idx][0]}: {data[row_idx][col_idx]}"
-            for row_idx in range(len(data))
-        ]
-        paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
 
-        paragraph = doc.add_paragraph(paragraph_text)
-        paragraph.alignment = align_map[align]
-        doc.add_paragraph()  # odstęp między kolumnami
+    # title = headers
+    doc.add_heading(f"{headers}:", level=2)
+    paragraph_lines = [
+        f"{row_idx + 1}: {data[row_idx][col_number]}"
+        for row_idx in range(len(data))
+    ]
+    # paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
+    paragraph_text = '\n'.join(paragraph_lines)
+
+    paragraph = doc.add_paragraph(paragraph_text)
+    # paragraph.alignment = align_map[align]
+    doc.add_paragraph()  # odstęp między kolumnami
+    # Zakładamy, że pierwsza kolumna to 'Lp.' (czyli numer wiersza)
+    # for col_idx in range(len(data)):
+    #     title = headers
+    #     paragraph_lines = [
+    #         f"{col_idx}: {data[row_idx][col_number]}"
+    #         for row_idx in range(len(data))
+    #     ]
+    #     paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
+    #
+    #     paragraph = doc.add_paragraph(paragraph_text)
+    #     paragraph.alignment = align_map[align]
+    #     doc.add_paragraph()  # odstęp między kolumnami
 
