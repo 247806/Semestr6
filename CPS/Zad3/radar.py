@@ -19,8 +19,8 @@ bufor_size = None
 
 def calculate_distance(probe_signal, feedback_signal):
     # Korelacja dyskretna (pełna korelacja)
-    correlation = np.correlate(feedback_signal, probe_signal, mode='full')
-    #correlation = cross_correlation_direct(probe_signal, feedback_signal)
+    #correlation = np.correlate(feedback_signal, probe_signal, mode='full')
+    correlation = cross_correlation_direct(probe_signal, feedback_signal)
 
     # Punkt środkowy korelacji (przy zerowym opóźnieniu)
     center_index = len(correlation) // 2
