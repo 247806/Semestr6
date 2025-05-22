@@ -1,9 +1,6 @@
 package ksr.zad2;
 
-import ksr.zad2.fuzzy.lingustic.LinguisticVariable;
-import ksr.zad2.fuzzy.lingustic.Quantifier;
-import ksr.zad2.fuzzy.lingustic.Summarizer;
-import ksr.zad2.fuzzy.lingustic.Summary;
+import ksr.zad2.fuzzy.lingustic.*;
 import ksr.zad2.fuzzy.set.GaussianFunction;
 import ksr.zad2.fuzzy.set.TrapezoidalFunction;
 import ksr.zad2.fuzzy.set.TriangularFunction;
@@ -49,6 +46,15 @@ public class KsrApplication implements CommandLineRunner {
 			humidities.add((double) measurement.getHumidity());
 		}
 
+		List<LocalDateTime> dates = new ArrayList<>();
+		for (Measurements measurement : allMeasurements) {
+			dates.add(measurement.getLast_updated());
+		}
+
+		List<Double> hours = new ArrayList<>();
+		for (LocalDateTime date : dates) {
+			hours.add((double) date.getHour() + date.getMinute() / 60.0);
+		}
 
 		List<String> terminy1 = Arrays.asList(
 				"bardzo zimno", "zimno", "umiarkowanie", "ciepło", "gorąco"
@@ -62,19 +68,27 @@ public class KsrApplication implements CommandLineRunner {
 				"suchą", "umiarkowaną", "wilgotną"
 		);
 
+		List<String> terminy3 = Arrays.asList(
+				"nocna", "poranna", "południowa", "popołudniowa", "wieczorna"
+		);
+
 		LinguisticVariable linguisticVariable = new LinguisticVariable("Temperatura", terminy1, -30.0, 50.0);
 		LinguisticVariable linguisticVariable2 = new LinguisticVariable("Wilgotność", terminy2, 0.0, 100.0);
 		LinguisticVariable linguisticVariable3 = new LinguisticVariable("Przynależność", quantifiers, 0.0, 1.0);
+		LinguisticVariable linguisticVariable4 = new LinguisticVariable("Pora dnia", terminy3, 0.0, 24.0);
 
-		Quantifier quantifier = new Quantifier(quantifiers.get(2), new GaussianFunction(0.5, 0.2), "RELATIVE", linguisticVariable3);
-		Summarizer summarizer1 = new Summarizer(terminy1.get(3), new TrapezoidalFunction(15, 20, 25, 30), temperatures, linguisticVariable);
+		Quantifier quantifier = new Quantifier(quantifiers.get(4), new GaussianFunction(1.0, 0.2), "RELATIVE", linguisticVariable3);
+		Summarizer summarizer1 = new Summarizer(terminy1.get(4), new TrapezoidalFunction(25, 35, 50, 51), temperatures, linguisticVariable);
 		Summarizer summarizer2 = new Summarizer(terminy2.get(2), new TriangularFunction(60, 100, 101), humidities, linguisticVariable2);
+		Qualifier qualifier = new Qualifier(terminy3.get(4), new TrapezoidalFunction(19, 20, 22, 24), hours, linguisticVariable4);
 
 		Summary summary = new Summary(quantifier, List.of(summarizer1));
 		System.out.println(summary.singleSummarization());
-//		System.out.println(quantifier.getFuzzySet().contains(0.2));
-//		System.out.println(summarizer2.getFuzzySet().contains(90.0));
+
 		Summary summary2 = new Summary(quantifier, List.of(summarizer1, summarizer2));
 		System.out.println(summary2.doubleSummarization());
+
+		Summary summary3 = new Summary(quantifier, List.of(summarizer1), qualifier);
+		System.out.println(summary3.qualifiedSummarization());
 	}
 }
