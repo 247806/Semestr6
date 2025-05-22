@@ -9,4 +9,6 @@ import lombok.Data;
 public class Quantifier {
     private String name;
     private FuzzySet fuzzySet;
+    private String type;
+    private LinguisticVariable variable;
 }

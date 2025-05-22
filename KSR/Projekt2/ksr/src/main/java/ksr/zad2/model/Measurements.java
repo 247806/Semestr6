@@ -1,9 +1,6 @@
 package ksr.zad2.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,17 +9,17 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "weather_data_10_atrributes")
+@Table(name = "measurements")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Measurement {
+public class Measurements {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private LocalDateTime last_updated;
-    private float temperature;
+    private float temperature_celsius;
     private float wind_kph;
     private float pressure_mb;
     private int humidity;

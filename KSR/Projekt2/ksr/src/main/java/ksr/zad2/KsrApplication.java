@@ -6,23 +6,51 @@ import ksr.zad2.fuzzy.lingustic.Summarizer;
 import ksr.zad2.fuzzy.lingustic.Summary;
 import ksr.zad2.fuzzy.set.GaussianFunction;
 import ksr.zad2.fuzzy.set.TrapezoidalFunction;
+import ksr.zad2.fuzzy.set.TriangularFunction;
+import ksr.zad2.model.Measurements;
+import ksr.zad2.repository.MeasurementsRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
-public class KsrApplication {
+public class KsrApplication implements CommandLineRunner {
+
+	private final MeasurementsRepository measurementsRepository;
+
+	public KsrApplication(MeasurementsRepository measurementsRepository) {
+		this.measurementsRepository = measurementsRepository;
+	}
 
 	public static void main(String[] args) {
-//		SpringApplication.run(KsrApplication.class, args);
-		// Przykładowe dane temperatury
-		List<Double> daneTemperatury = Arrays.asList(
-				-20.0, -5.0, 0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0,
-				-10.0, 2.0, 8.0, 12.0, 18.0, 22.0, 28.0, 32.0, 40.0, 45.0
-		);
+		SpringApplication.run(KsrApplication.class, args);
+	}
 
-		List<String> terminy = Arrays.asList(
+	@Override
+	public void run(String... args) {
+		System.out.println("Hello World!");
+
+		// Wywołanie metody repozytorium
+		List<Measurements> allMeasurements = measurementsRepository.findAll();
+
+		List<Double> temperatures = new ArrayList<>();
+		for (Measurements measurement : allMeasurements) {
+			temperatures.add((double) measurement.getTemperature_celsius());
+		}
+
+		List<Double> humidities = new ArrayList<>();
+		for (Measurements measurement : allMeasurements) {
+			humidities.add((double) measurement.getHumidity());
+		}
+
+
+		List<String> terminy1 = Arrays.asList(
 				"bardzo zimno", "zimno", "umiarkowanie", "ciepło", "gorąco"
 		);
 
@@ -30,13 +58,23 @@ public class KsrApplication {
 				"prawie żaden", "trochę", "około połowy", "wiele", "prawie wszystkie"
 		);
 
-		Quantifier quantifier = new Quantifier(quantifiers.get(1), new GaussianFunction(0.3, 0.15));
-		Summarizer summarizer = new Summarizer(terminy.get(4), new TrapezoidalFunction(25, 35, 50, 51));
-		LinguisticVariable linguisticVariable = new LinguisticVariable("Temperatura", terminy, -30.0, 50.0);
-		Summary summary = new Summary(daneTemperatury, linguisticVariable, quantifier, summarizer);
-		System.out.println(summary.makeSummarization());
-		System.out.println(quantifier.getFuzzySet().contains(0.2));
-		System.out.println(summarizer.getFuzzySet().contains(-10.0));
-	}
+		List<String> terminy2 = Arrays.asList(
+				"suchą", "umiarkowaną", "wilgotną"
+		);
 
+		LinguisticVariable linguisticVariable = new LinguisticVariable("Temperatura", terminy1, -30.0, 50.0);
+		LinguisticVariable linguisticVariable2 = new LinguisticVariable("Wilgotność", terminy2, 0.0, 100.0);
+		LinguisticVariable linguisticVariable3 = new LinguisticVariable("Przynależność", quantifiers, 0.0, 1.0);
+
+		Quantifier quantifier = new Quantifier(quantifiers.get(2), new GaussianFunction(0.5, 0.2), "RELATIVE", linguisticVariable3);
+		Summarizer summarizer1 = new Summarizer(terminy1.get(3), new TrapezoidalFunction(15, 20, 25, 30), temperatures, linguisticVariable);
+		Summarizer summarizer2 = new Summarizer(terminy2.get(2), new TriangularFunction(60, 100, 101), humidities, linguisticVariable2);
+
+		Summary summary = new Summary(quantifier, List.of(summarizer1));
+		System.out.println(summary.singleSummarization());
+//		System.out.println(quantifier.getFuzzySet().contains(0.2));
+//		System.out.println(summarizer2.getFuzzySet().contains(90.0));
+		Summary summary2 = new Summary(quantifier, List.of(summarizer1, summarizer2));
+		System.out.println(summary2.doubleSummarization());
+	}
 }
