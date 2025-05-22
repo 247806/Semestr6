@@ -3,15 +3,14 @@ package ksr.zad2.fuzzy.set;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TrapezoidalFunction implements FuzzySet {
+public class TrapezoidalFunction extends FuzzySet {
     private final double a;
     private final double b;
     private final double c;
     private final double d;
 
-
     @Override
-    public double contains(double x) {
+    public double membership(double x) {
         if (x < a || x > d) {
             return 0;
         } else if (x >= a && x <= b) {
