@@ -24,28 +24,22 @@ public class Summary {
 
     public String singleSummarization() {
         double truth = degreeOfTruth();
-        StringBuilder sb = new StringBuilder();
-        sb.append(quantifier.getName()).append(" measurements ma ").append(summarizer.getFirst().getName()).append(" temperaturę ").append(" [")
-                .append(truth).append("] ");
-        return sb.toString();
+        return quantifier.getName() + " measurements ma " + summarizer.getFirst().getName() + " temperaturę " + " [" +
+                truth + "] ";
     }
 
     public String doubleSummarization() {
         double truth = degreeOfTruth();
-        StringBuilder sb = new StringBuilder();
-        sb.append(quantifier.getName()).append(" measurements ma ").append(summarizer.getFirst().getName()).append(" temperaturę ")
-                .append("oraz ").append(summarizer.get(1).getName()).append(" wilgotność ").append(" [")
-                .append(truth).append("] ");
-        return sb.toString();
+        return quantifier.getName() + " measurements ma " + summarizer.getFirst().getName() + " temperaturę " +
+                "oraz " + summarizer.get(1).getName() + " wilgotność " + " [" +
+                truth + "] ";
     }
 
     public String qualifiedSummarization() {
         double truth = degreeOfTruthWithQualifier();
-        StringBuilder sb = new StringBuilder();
-        sb.append(quantifier.getName()).append(" measurements które są ").append(qualifier.getName()).append(" ma ")
-                .append(summarizer.getFirst().getName()).append(" temperaturę ").append(" [")
-                .append(truth).append("] ");
-        return sb.toString();
+        return quantifier.getName() + " measurements które są " + qualifier.getName() + " ma " +
+                summarizer.getFirst().getName() + " temperaturę " + " [" +
+                truth + "] ";
     }
 
     public double degreeOfTruth() {
@@ -95,4 +89,28 @@ public class Summary {
 
         return quantifier.getFuzzySet().membership(sum / qualifier.getFuzzySet().cardinality(dataS));
     }
+
+    public double degreeOfImprecision() {
+        double sum = 0.0;
+        for (Summarizer value : summarizer) {
+            sum *= value.getFuzzySet().degreeOfFuzziness(value.getData());
+        }
+        return 1 - (Math.pow(sum, 1.0 / summarizer.size()));
+    }
+
+    public double degreeOfCovering() {
+        double t = 0.0;
+        double h = 0.0;
+        for (int i = 0; i < summarizer.getFirst().getData().size(); i++) {
+            if (summarizer.getFirst().getFuzzySet().contains(summarizer.getFirst().getData().get(i)) > 0.0 &&
+                    qualifier.getFuzzySet().contains(qualifier.getData().get(i)) > 0) {
+                t += 1;
+            }
+            if (qualifier.getFuzzySet().contains(qualifier.getData().get(i)) > 0.0) {
+                h += 1;
+            }
+        }
+        return t / h;
+    }
+
 }
