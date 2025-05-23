@@ -53,19 +53,18 @@ public class Summary {
                         .fuzzyCardinality(summarizer.getFirst().getData()) / summarizer.getFirst().getData().size());
             }
         } else {
-            List<Double> data1 = summarizer.get(0).getData();
-            List<Double> data2 = summarizer.get(1).getData();
-
             double sum = 0.0;
-            for (int i = 0; i < data1.size(); i++) {
-                double mu1 = summarizer.get(0).getFuzzySet().membership(data1.get(i));
-                double mu2 = summarizer.get(1).getFuzzySet().membership(data2.get(i));
-                sum += Math.min(mu1, mu2);
+            for (int i = 0; i < summarizer.getFirst().getData().size(); i++) {
+                double minValue = Double.MAX_VALUE;
+                for (Summarizer summarizer : summarizer) {
+                    minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
+                }
+                sum += minValue;
             }
-
-            double average = sum / data1.size();
+            double average = sum / summarizer.getFirst().getData().size();
 
             if (!quantifier.isRelative()) {
+                //TODO SPRAWDZIĆ CZY TO DOBRZE
                 return quantifier.getFuzzySet().membership(sum);
             } else {
                 return quantifier.getFuzzySet().membership(average);
@@ -73,6 +72,8 @@ public class Summary {
         }
     }
 
+
+    //ZROBIC Z WIELOMA SUMARYZATORAMI JESZCZE
     public double degreeOfTruthWithQualifier() {
         List<Double> dataQ = qualifier.getData();
         List<Double> dataS = summarizer.getFirst().getData();
