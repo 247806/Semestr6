@@ -44,7 +44,7 @@ public class Summary {
 
     public double degreeOfTruth() {
         if (summarizer.size() == 1) {
-            if (quantifier.getType().equals("ABSOLUTE")) {
+            if (!quantifier.isRelative()) {
                 //TODO SPRAWDZIĆ CZY TO DOBRZE
                 return quantifier.getFuzzySet().membership(summarizer.getFirst().getFuzzySet()
                         .cardinality(summarizer.getFirst().getData()));
@@ -65,7 +65,7 @@ public class Summary {
 
             double average = sum / data1.size();
 
-            if (quantifier.getType().equals("ABSOLUTE")) {
+            if (!quantifier.isRelative()) {
                 return quantifier.getFuzzySet().membership(sum);
             } else {
                 return quantifier.getFuzzySet().membership(average);

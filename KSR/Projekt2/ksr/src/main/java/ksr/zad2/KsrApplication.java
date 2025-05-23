@@ -72,15 +72,39 @@ public class KsrApplication implements CommandLineRunner {
 				"nocna", "poranna", "południowa", "popołudniowa", "wieczorna"
 		);
 
-		LinguisticVariable linguisticVariable = new LinguisticVariable("Temperatura", terminy1, -30.0, 50.0);
-		LinguisticVariable linguisticVariable2 = new LinguisticVariable("Wilgotność", terminy2, 0.0, 100.0);
-		LinguisticVariable linguisticVariable3 = new LinguisticVariable("Przynależność", quantifiers, 0.0, 1.0);
-		LinguisticVariable linguisticVariable4 = new LinguisticVariable("Pora dnia", terminy3, 0.0, 24.0);
+		LinguisticVariable linguisticVariable = new LinguisticVariable("Temperatura",-25.0, 50.0);
 
-		Quantifier quantifier = new Quantifier(quantifiers.get(4), new GaussianFunction(1.0, 0.2), "RELATIVE", linguisticVariable3);
-		Summarizer summarizer1 = new Summarizer(terminy1.get(4), new TrapezoidalFunction(25, 35, 50, 51), temperatures, linguisticVariable);
-		Summarizer summarizer2 = new Summarizer(terminy2.get(2), new TriangularFunction(60, 100, 101), humidities, linguisticVariable2);
-		Qualifier qualifier = new Qualifier(terminy3.get(4), new TrapezoidalFunction(19, 20, 22, 24), hours, linguisticVariable4);
+		linguisticVariable.addTerm(terminy1.getFirst(), new TrapezoidalFunction(-26, -25, -15, -5));
+		linguisticVariable.addTerm(terminy1.get(1), new TrapezoidalFunction(-10, 0, 5, 10));
+		linguisticVariable.addTerm(terminy1.get(2), new TrapezoidalFunction(5, 10, 15, 20));
+		linguisticVariable.addTerm(terminy1.get(3), new TrapezoidalFunction(15, 20, 25, 30));
+		linguisticVariable.addTerm(terminy1.get(4), new TrapezoidalFunction(25, 35, 50, 51));
+
+		LinguisticVariable linguisticVariable3 = new LinguisticVariable("Przynależność",0.0, 1.0);
+
+		linguisticVariable3.addTerm(quantifiers.getFirst(), new GaussianFunction(0.0, 0.2));
+		linguisticVariable3.addTerm(quantifiers.get(1), new GaussianFunction(0.3, 0.15));
+		linguisticVariable3.addTerm(quantifiers.get(2), new GaussianFunction(0.5, 0.15));
+		linguisticVariable3.addTerm(quantifiers.get(3), new GaussianFunction(0.7, 0.15));
+		linguisticVariable3.addTerm(quantifiers.get(4), new GaussianFunction(1.0, 0.2));
+
+		LinguisticVariable linguisticVariable2 = new LinguisticVariable("Wilgotność", 0.0, 100.0);
+		linguisticVariable2.addTerm(terminy2.getFirst(), new TriangularFunction(0.0,  0.0, 0.5));
+		linguisticVariable2.addTerm(terminy2.get(1), new TriangularFunction(0.30,  0.6, 0.8));
+		linguisticVariable2.addTerm(terminy2.get(2), new TriangularFunction(0.6,  1.0, 1.01));
+
+		LinguisticVariable linguisticVariable4 = new LinguisticVariable("Pora dnia", 0.0, 24.0);
+		linguisticVariable4.addTerm(terminy3.getFirst(), new TrapezoidalFunction(0,  5, 8, 21));
+		linguisticVariable4.addTerm(terminy3.get(1), new TrapezoidalFunction(5,  7, 10, 12));
+		linguisticVariable4.addTerm(terminy3.get(2), new TrapezoidalFunction(10, 11, 13, 15));
+		linguisticVariable4.addTerm(terminy3.get(3), new TrapezoidalFunction(15, 16, 18, 20));
+		linguisticVariable4.addTerm(terminy3.get(4), new TrapezoidalFunction(19, 20, 22, 24));
+
+		Quantifier quantifier = new Quantifier("prawie wszystkie", linguisticVariable3.getTerms().get("prawie wszystkie"), true);
+		Summarizer summarizer1 = new Summarizer("gorąco", linguisticVariable.getTerms().get("gorąco"), temperatures);
+
+		Summarizer summarizer2 = new Summarizer(terminy2.get(2), linguisticVariable2.getTerms().get(terminy2.get(2)), humidities);
+		Qualifier qualifier = new Qualifier(terminy3.get(4), linguisticVariable4.getTerms().get(terminy3.get(4)), hours);
 
 		Summary summary = new Summary(quantifier, List.of(summarizer1));
 		System.out.println(summary.singleSummarization());
