@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class Qualifier extends LinguisticTerm {
-    public Qualifier(String name, FuzzySet fuzzySet, List<Double> data) {
-        super(name, fuzzySet, data);
+    public Qualifier(String name, LinguisticVariable variable, List<Double> data) {
+        super(name, variable, data);
     }
 
 }

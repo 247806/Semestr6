@@ -22,18 +22,21 @@ public class Summary {
         this.qualifier = qualifier;
     }
 
-    public String singleSummarization() {
+    public String summarization() {
         double truth = degreeOfTruth();
-        return quantifier.getName() + " measurements ma " + summarizer.getFirst().getName() + " temperaturę " + " [" +
-                truth + "] ";
+        StringBuilder summaryText = new StringBuilder(quantifier.getName() + " measurements ma ");
+
+        for (int i = 0; i < summarizer.size(); i++) {
+            if (i > 0) {
+                summaryText.append(" oraz ");
+            }
+            summaryText.append(summarizer.get(i).getName());
+        }
+
+        summaryText.append(" [" + truth + "] ");
+        return summaryText.toString();
     }
 
-    public String doubleSummarization() {
-        double truth = degreeOfTruth();
-        return quantifier.getName() + " measurements ma " + summarizer.getFirst().getName() + " temperaturę " +
-                "oraz " + summarizer.get(1).getName() + " wilgotność " + " [" +
-                truth + "] ";
-    }
 
     public String qualifiedSummarization() {
         double truth = degreeOfTruthWithQualifier();
@@ -45,7 +48,6 @@ public class Summary {
     public double degreeOfTruth() {
         if (summarizer.size() == 1) {
             if (!quantifier.isRelative()) {
-                //TODO SPRAWDZIĆ CZY TO DOBRZE
                 return quantifier.getFuzzySet().membership(summarizer.getFirst().getFuzzySet()
                         .cardinality(summarizer.getFirst().getData()));
             } else {
@@ -53,27 +55,36 @@ public class Summary {
                         .fuzzyCardinality(summarizer.getFirst().getData()) / summarizer.getFirst().getData().size());
             }
         } else {
-            double sum = 0.0;
-            for (int i = 0; i < summarizer.getFirst().getData().size(); i++) {
-                double minValue = Double.MAX_VALUE;
-                for (Summarizer summarizer : summarizer) {
-                    minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
+            if (quantifier.isRelative()) {
+                double sum = 0.0;
+                for (int i = 0; i < summarizer.getFirst().getData().size(); i++) {
+                    double minValue = Double.MAX_VALUE;
+                    for (Summarizer summarizer : summarizer) {
+                        minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
+                    }
+                    sum += minValue;
                 }
-                sum += minValue;
-            }
-            double average = sum / summarizer.getFirst().getData().size();
-
-            if (!quantifier.isRelative()) {
-                //TODO SPRAWDZIĆ CZY TO DOBRZE
-                return quantifier.getFuzzySet().membership(sum);
-            } else {
+                double average = sum / summarizer.getFirst().getData().size();
                 return quantifier.getFuzzySet().membership(average);
+            } else {
+                double sum = 0.0;
+                double size = summarizer.size();
+                for (int i = 0; i < summarizer.getFirst().getData().size(); i++) {
+                    double temp = 0.0;
+                    for (Summarizer summarizer : summarizer) {
+                        temp += summarizer.getFuzzySet().membership(summarizer.getData().get(i));
+                    }
+                    if (temp == size) {
+                        sum += 1.0;
+                    }
+                }
+                return sum;
             }
         }
     }
 
 
-    //ZROBIC Z WIELOMA SUMARYZATORAMI JESZCZE
+    //TODO ZROBIC Z WIELOMA SUMARYZATORAMI JESZCZE
     public double degreeOfTruthWithQualifier() {
         List<Double> dataQ = qualifier.getData();
         List<Double> dataS = summarizer.getFirst().getData();

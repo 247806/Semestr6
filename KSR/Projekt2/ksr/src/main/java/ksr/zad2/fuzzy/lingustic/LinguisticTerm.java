@@ -14,6 +14,15 @@ import java.util.List;
 public abstract class LinguisticTerm {
     private String name;
     private FuzzySet fuzzySet;
+    private LinguisticVariable linguisticVariable;
     private List<Double> data;
+
+    public LinguisticTerm(String name, LinguisticVariable linguisticVariable, List<Double> data) {
+        this.name = name;
+        this.data = data;
+        this.linguisticVariable = linguisticVariable;
+        this.fuzzySet = linguisticVariable.getTerms().get(name);
+    }
+
 }
 

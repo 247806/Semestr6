@@ -100,17 +100,17 @@ public class KsrApplication implements CommandLineRunner {
 		linguisticVariable4.addTerm(terminy3.get(3), new TrapezoidalFunction(15, 16, 18, 20));
 		linguisticVariable4.addTerm(terminy3.get(4), new TrapezoidalFunction(19, 20, 22, 24));
 
-		Quantifier quantifier = new Quantifier("prawie wszystkie", linguisticVariable3.getTerms().get("prawie wszystkie"), true);
-		Summarizer summarizer1 = new Summarizer("gorąco", linguisticVariable.getTerms().get("gorąco"), temperatures);
+		Quantifier quantifier = new Quantifier("prawie wszystkie", linguisticVariable3, true);
+		Summarizer summarizer1 = new Summarizer("gorąco", linguisticVariable, temperatures);
 
-		Summarizer summarizer2 = new Summarizer(terminy2.get(2), linguisticVariable2.getTerms().get(terminy2.get(2)), humidities);
-		Qualifier qualifier = new Qualifier(terminy3.get(4), linguisticVariable4.getTerms().get(terminy3.get(4)), hours);
+		Summarizer summarizer2 = new Summarizer(terminy2.get(2), linguisticVariable2, humidities);
+		Qualifier qualifier = new Qualifier(terminy3.get(4), linguisticVariable4, hours);
 
 		Summary summary = new Summary(quantifier, List.of(summarizer1));
-		System.out.println(summary.singleSummarization());
+		System.out.println(summary.summarization());
 
 		Summary summary2 = new Summary(quantifier, List.of(summarizer1, summarizer2));
-		System.out.println(summary2.doubleSummarization());
+		System.out.println(summary2.summarization());
 
 		Summary summary3 = new Summary(quantifier, List.of(summarizer1), qualifier);
 		System.out.println(summary3.qualifiedSummarization());
