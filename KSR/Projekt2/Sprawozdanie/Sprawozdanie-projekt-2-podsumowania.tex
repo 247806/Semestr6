@@ -6,6 +6,8 @@
 \usepackage{url}
 \usepackage{graphicx}
  \usepackage{float}
+ \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 %{Informatyka stosowana 2022, I st., semestr VI}
 
 
@@ -21,11 +23,10 @@
 
 \section{Cel}
 Celem projektu jest stworzenie aplikacji, której główną funkcjonalnością
-jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zadanie generowanie podsumowań lingwistycznych dla wybranych przez użytkownika kwantyfikatorów, sumaryzatorów i kwalifikatorów dla różnych atrybutów. Analiza otrzymanych wyników polega na określeniu, znaczenia wybranych kwantyfikatorów, sumaryzatorów, kwalifikatorów oraz miar ich jakości dla wiarygodności i jakości otrzymanych podsumowań lingwistycznych. Przykładowe podsumowanie to, np. większkość pomiarów ma wysokie ciśnienie.
+jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zadanie generowanie podsumowań lingwistycznych dla wybranych przez użytkownika kwantyfikatorów, sumaryzatorów i kwalifikatorów dla różnych atrybutów. Analiza otrzymanych wyników polega na określeniu, znaczenia wybranych kwantyfikatorów, sumaryzatorów, kwalifikatorów oraz miar ich jakości dla wiarygodności i jakości otrzymanych podsumowań lingwistycznych. Przykładowe podsumowanie to, np. większość pomiarów ma wysokie ciśnienie.
 
 
 \section{Baza danych, zmienne lingwistyczne, kwantyfikatory lingwistyczne}
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 09 wg Harmonogramu Zajęć na WIKAMP KSR.}
 
 \subsection{Charakterystyka podsumowywanej bazy danych}
 W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 71331 rekordów. 
@@ -39,30 +40,25 @@ Podmiotem podsumowań jest pomiar atmosferyczny, z bazy World Weather Repository
     \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [947 - 1050]. 
     \item humidity - wilgotność w zakresie [2 - 100\%].
     \item visibility\_km - widoczność wyrażona w kilometrach w zakresie [0, 32].
-    \item uv\_index - wartość promieniowania słonecznego w zakresie [0, 16].
-    \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla w zakresie [0 - 2220].
-    \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu w zakresie [0 - 428].
+    \item uv\_index - wartość promieniowania słonecznego UVI w zakresie [0, 16].
+    \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla, wyrażony w ppm(liczba cząstek CO2 w milionie cząstek powietrza), w zakresie [0 - 2220].
+    \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu, wyrażony w ppm(liczba cząstek NO2 w milionie cząstek powietrza) w zakresie [0 - 428].
     \item air\_quality\_gb-defra-index - skala określająca poziomy zanieczyszczenia w powietrzu w zakresie [1 - 10].
 
-    \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{img/table.png}
-    \caption{Fragment widoku tabeli z bazy danych.}
-    \end{figure}
     
 \end{enumerate}
 
 \subsection{Zmienne lingwistyczne (atrybuty/własności obiektów)}
-Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1, ich wzory analityczne oraz wykresy funkcji przynależności wraz z dopasowanymi do nich etykietami. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, \(\mathcal{L}\_1\) - nazwa zmiennej lingwistycznej , \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej ligwistycznej. 
+Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1, ich wzory analityczne oraz wykresy funkcji przynależności wraz z dopasowanymi do nich etykietami. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, $\mathcal{L}_x$ - nazwa zmiennej lingwistycznej , \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej ligwistycznej. 
 \begin{enumerate}
     \item last\_updated
         \begin{equation}
             L_1 = \langle \mathcal{L}_1, H_1, \mathcal{X}_1 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_1$ – pora dnia, $H_1$ – \{noc, poranek, południe, popołudnie, wieczór\}, $\mathcal{X}_1 = [0, 24]$. \\
+        gdzie: $\mathcal{L}_1$ – pora dnia, $H_1$ – \{nocna, poranna, południowa, popołudniowa, wieczorna\}, $\mathcal{X}_1 = [0, 24]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
         \begin{equation}
-            \mu_{\text{noc}}(x) =
+            \mu_{\text{nocna}}(x) =
             \begin{cases}
             \frac{8 - x}{3}, & x \in (5, 8] \\
             1, & x \in [0, 5] \\
@@ -72,7 +68,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \end{equation}
 
         \begin{equation}
-            \mu_{\text{rano}}(x) =
+            \mu_{\text{poranna}}(x) =
             \begin{cases}
             \frac{x - 5}{2}, & x \in (5, 7] \\
             1, & x \in [7, 10] \\
@@ -82,7 +78,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \end{equation}
 
         \begin{equation}
-            \mu_{\text{południe}}(x) =
+            \mu_{\text{południowa}}(x) =
             \begin{cases}
             \frac{x - 10}{1}, & x \in (10, 11] \\
             1, & x \in [11, 13] \\
@@ -92,7 +88,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \end{equation}
 
         \begin{equation}
-            \mu_{\text{popołudnie}}(x) =
+            \mu_{\text{popołudniowa}}(x) =
             \begin{cases}
             \frac{x - 15}{1}, & x \in (15, 16] \\
             1, & x \in [16, 18] \\
@@ -102,7 +98,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \end{equation}
 
         \begin{equation}
-            \mu_{\text{wieczór}}(x) =
+            \mu_{\text{wieczorna}}(x) =
             \begin{cases}
             \frac{x - 19}{1}, & x \in (19, 20] \\
             1, & x \in [20, 22] \\
@@ -121,10 +117,10 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             L_2 = \langle \mathcal{L}_2, H_2, \mathcal{X}_2 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_2$ – temperatura, $H_2$ – \{bardzo zimno, zimno, umiarkowanie, ciepło, gorąco\}, $\mathcal{X}_2 = [-25, 50]$. \\
+        gdzie: $\mathcal{L}_2$ – temperatura, $H_2$ – \{bardzo zimna, zimna, umiarkowana, ciepła, gorąca\}, $\mathcal{X}_2 = [-25, 50]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
                 \begin{equation}
-                   \mu_{\text{bardzo\_zimno}}(x) =
+                   \mu_{\text{bardzo\_zimna}}(x) =
                     \begin{cases}
                     1, & x \in [-25, -15] \\
                     \frac{-5 - x}{10}, & x \in (-15, -5] \\
@@ -133,7 +129,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \end{equation}
                 
                 \begin{equation}
-                   \mu_{\text{zimno}}(x) =
+                   \mu_{\text{zimna}}(x) =
                     \begin{cases}
                     \frac{x + 10}{10}, & x \in (-10, 0] \\
                     1, & x \in (0, 5] \\
@@ -143,7 +139,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \end{equation}
 
                 \begin{equation}
-                    \mu_{\text{umiarkowanie}}(x) =
+                    \mu_{\text{umiarkowana}}(x) =
                     \begin{cases}
                     \frac{x - 5}{5}, & x \in (5, 10] \\
                     1, & x \in (10, 15] \\
@@ -153,7 +149,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \end{equation}
 
                 \begin{equation}
-                    \mu_{\text{ciepło}}(x) =
+                    \mu_{\text{ciepła}}(x) =
                     \begin{cases}
                     \frac{x - 15}{5}, & x \in (15, 20] \\
                     1, & x \in (20, 25] \\
@@ -163,7 +159,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \end{equation}
 
                 \begin{equation}
-                    \mu_{\text{gorąco}}(x) =
+                    \mu_{\text{gorąca}}(x) =
                     \begin{cases}
                     \frac{x - 25}{10}, & x \in (25, 35] \\
                     1, & x \in (35, 50] \\
@@ -179,7 +175,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
 
     \item wind\_kph
         \begin{equation}
-            L_2 = \langle \mathcal{L}_2, H_2, \mathcal{X}_2 \rangle
+            L_3 = \langle \mathcal{L}_3, H_3, \mathcal{X}_3 \rangle
         \end{equation}
         gdzie: $\mathcal{L}_3$ – siła wiatru, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny\}, $\mathcal{X}_3 = [3, 151]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
@@ -267,43 +263,42 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
     \begin{equation}
             L_5 = \langle \mathcal{L}_5, H_5, \mathcal{X}_5 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_5$ – stopień wilgotności, $H_5$ – \{sucho, umiarkowanie, wilgotno\}, $\mathcal{X}_1 = [2, 100]$. \\
+        gdzie: $\mathcal{L}_5$ – wilgotność powietrza, $H_5$ – \{suche, umiarkowane, wilgotne\}, $\mathcal{X}_1 = [2, 100]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
-\begin{equation}
-\mu_{\text{sucho}}(x) =
-\begin{cases}
-1, & x \in [2, 30] \\
-\frac{50 - x}{20}, & x \in (30, 50] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+        \begin{equation}
+        \mu_{\text{sucho}}(x) =
+        \begin{cases}
+        1, & x = 0 \\
+        \frac{50 - x}{50}, & x \in (0, 50) \\
+        0, & \text{w przeciwnym razie}
+        \end{cases}
+        \end{equation}
 
+        \begin{equation}
+        \mu_{\text{umiarkowane}}(x) =
+        \begin{cases}
+        \frac{x - 30}{30}, & x \in (30, 60) \\
+        1, & x = 60 \\
+        \frac{80 - x}{20}, & x \in (60, 80) \\
+        0, & \text{w przeciwnym razie}
+        \end{cases}
+        \end{equation}
 
-\begin{equation}
-\mu_{\text{umiarkowanie}}(x) =
-\begin{cases}
-\frac{x - 30}{20}, & x \in (30, 50] \\
-1, & x \in (50, 70] \\
-\frac{90 - x}{20}, & x \in (70, 90] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+        \begin{equation}
+        \mu_{\text{wilgotne}}(x) =
+        \begin{cases}
+        \frac{x - 60}{40}, & x \in (60, 100) \\
+        1, & x = 100 \\
+        0, & \text{w przeciwnym razie}
+        \end{cases}
+        \end{equation}
 
-\begin{equation}
-\mu_{\text{wilgotno}}(x) =
-\begin{cases}
-\frac{x - 70}{20}, & x \in (70, 90] \\
-1, & x \in (90, 100] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-    \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{img/humidity.png}
-    \caption{Wykres funkcji przynależności dla stopnia wilgotności.}
-    \end{figure}
+        \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{img/humidity.png}
+        \caption{Wykres funkcji przynależności dla stopnia wilgotności.}
+        \end{figure}
 
     \item visibility\_km
     \begin{equation}
@@ -311,43 +306,44 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \end{equation}
         gdzie: $\mathcal{L}_6$ – stopień widoczności, $H_6$ – \{słaba, umiarkowana, dobra, bardzo dobra\}, $\mathcal{X}_6 = [0, 32]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
-\begin{equation}
-\mu_{\text{słaba}}(x) =
-\begin{cases}
-1, & x \in [0, 4] \\
-\frac{8 - x}{4}, & x \in (4, 8] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+        
+    \begin{equation}
+    \mu_{\text{słaba}}(x) =
+    \begin{cases}
+    1, & x \in [0, 4] \\
+    \frac{8 - x}{4}, & x \in (4, 8] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{umiarkowana}}(x) =
+    \begin{cases}
+    \frac{x - 4}{4}, & x \in (4, 8] \\
+    1, & x \in (8, 12] \\
+    \frac{16 - x}{4}, & x \in (12, 16] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{dobra}}(x) =
+    \begin{cases}
+    \frac{x - 12}{4}, & x \in (12, 16] \\
+    1, & x \in (16, 24] \\
+    \frac{28 - x}{4}, & x \in (24, 28] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
-\begin{equation}
-\mu_{\text{umiarkowana}}(x) =
-\begin{cases}
-\frac{x - 4}{4}, & x \in (4, 8] \\
-1, & x \in (8, 12] \\
-\frac{16 - x}{4}, & x \in (12, 16] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{dobra}}(x) =
-\begin{cases}
-\frac{x - 12}{4}, & x \in (12, 16] \\
-1, & x \in (16, 24] \\
-\frac{28 - x}{4}, & x \in (24, 28] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{bardzo\_dobra}}(x) =
-\begin{cases}
-\frac{x - 24}{4}, & x \in (24, 28] \\
-1, & x \in (28, 32] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+    \begin{equation}
+    \mu_{\text{bardzo\_dobra}}(x) =
+    \begin{cases}
+    \frac{x - 24}{4}, & x \in (24, 28] \\
+    1, & x \in (28, 32] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
     \begin{figure}[H]
     \centering
@@ -362,53 +358,53 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         gdzie: $\mathcal{L}_7$ – promieniowanie UV, $H_1$ – \{niskie, umiarkowane, wysokie, bardzo wysokie, ekstremalne\}, $\mathcal{X}_7 = [0, 16]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
-\begin{equation}
-\mu_{\text{niskie}}(x) =
-\begin{cases}
-1, & x \in [0, 2] \\
-\frac{3 - x}{1}, & x \in (2, 3] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+    \begin{equation}
+    \mu_{\text{niskie}}(x) =
+    \begin{cases}
+    1, & x \in [0, 2] \\
+    \frac{3 - x}{1}, & x \in (2, 3] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{umiarkowane}}(x) =
+    \begin{cases}
+    \frac{x - 2}{1}, & x \in (2, 3] \\
+    1, & x \in (3, 5] \\
+    \frac{6 - x}{1}, & x \in (5, 6) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{wysokie}}(x) =
+    \begin{cases}
+    \frac{x - 5}{1}, & x \in (5, 6] \\
+    1, & x \in (6, 7] \\
+    \frac{8 - x}{1}, & x \in (7, 8) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{bardzo\_wysokie}}(x) =
+    \begin{cases}
+    \frac{x - 7}{1}, & x \in (7, 8] \\
+    1, & x \in (8, 10] \\
+    \frac{11 - x}{1}, & x \in (10, 11) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
-\begin{equation}
-\mu_{\text{umiarkowane}}(x) =
-\begin{cases}
-\frac{x - 2}{1}, & x \in (2, 3] \\
-1, & x \in (3, 5] \\
-\frac{6 - x}{1}, & x \in (5, 6) \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{wysokie}}(x) =
-\begin{cases}
-\frac{x - 5}{1}, & x \in (5, 6] \\
-1, & x \in (6, 7] \\
-\frac{8 - x}{1}, & x \in (7, 8) \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{bardzo\_wysokie}}(x) =
-\begin{cases}
-\frac{x - 7}{1}, & x \in (7, 8] \\
-1, & x \in (8, 10] \\
-\frac{11 - x}{1}, & x \in (10, 11) \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{ekstremalne}}(x) =
-\begin{cases}
-\frac{x - 10}{1}, & x \in (10, 11] \\
-1, & x \in (11, 16] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+    \begin{equation}
+    \mu_{\text{ekstremalne}}(x) =
+    \begin{cases}
+    \frac{x - 10}{1}, & x \in (10, 11] \\
+    1, & x \in (11, 16] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
     \begin{figure}[H]
     \centering
@@ -423,33 +419,33 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         gdzie: $\mathcal{L}_8$ – zanieczyszczenie CO2, $H_8$ – \{normalne, niezdrowe, niebezpieczne\}, $\mathcal{X}_8 = [0, 2220]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
-\begin{equation}
-\mu_{\text{normalne}}(x) =
-\begin{cases}
-1, & x \in [0, 200] \\
-\frac{400 - x}{200}, & x \in (200, 400] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{niezdrowe}}(x) =
-\begin{cases}
-\frac{x - 200}{200}, & x \in (200, 400] \\
-1, & x \in (400, 800] \\
-\frac{1000 - x}{200}, & x \in (800, 1000) \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{niebezpieczne}}(x) =
-\begin{cases}
-\frac{x - 800}{200}, & x \in (800, 1000] \\
-1, & x > \ in (1000, 2220] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+    \begin{equation}
+    \mu_{\text{normalne}}(x) =
+    \begin{cases}
+    1, & x \in [0, 200] \\
+    \frac{400 - x}{200}, & x \in (200, 400] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{niezdrowe}}(x) =
+    \begin{cases}
+    \frac{x - 200}{200}, & x \in (200, 400] \\
+    1, & x \in (400, 800] \\
+    \frac{1000 - x}{200}, & x \in (800, 1000) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{niebezpieczne}}(x) =
+    \begin{cases}
+    \frac{x - 800}{200}, & x \in (800, 1000] \\
+    1, & x > \ in (1000, 2220] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
     \begin{figure}[H]
     \centering
@@ -464,33 +460,33 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         gdzie: $\mathcal{L}_9$ – zanieczyszczenie NO2, $H_9$ – \{normalne, niezdrowe, niebezpieczne\}, $\mathcal{X}_9 = [0, 428]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
-\begin{equation}
-\mu_{\text{normalne}}(x) =
-\begin{cases}
-1, & x \in [0, 50] \\
-\frac{100 - x}{50}, & x \in (50, 100] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{niezdrowe}}(x) =
-\begin{cases}
-\frac{x - 100}{50}, & x \in (100, 150] \\
-1, & x \in (150, 200] \\
-\frac{250 - x}{50}, & x \in (200, 250) \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
-
-\begin{equation}
-\mu_{\text{niebezpieczne}}(x) =
-\begin{cases}
-\frac{x - 200}{50}, & x \in (200, 250] \\
-1, & x \in (250, 428] \\
-0, & \text{w przeciwnym razie}
-\end{cases}
-\end{equation}
+    \begin{equation}
+    \mu_{\text{normalne}}(x) =
+    \begin{cases}
+    1, & x \in [0, 50] \\
+    \frac{100 - x}{50}, & x \in (50, 100] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{niezdrowe}}(x) =
+    \begin{cases}
+    \frac{x - 100}{50}, & x \in (100, 150] \\
+    1, & x \in (150, 200] \\
+    \frac{250 - x}{50}, & x \in (200, 250) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+    
+    \begin{equation}
+    \mu_{\text{niebezpieczne}}(x) =
+    \begin{cases}
+    \frac{x - 200}{50}, & x \in (200, 250] \\
+    1, & x \in (250, 428] \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
 
         \begin{figure}[H]
     \centering
@@ -553,69 +549,82 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                     \end{cases}
                 \end{equation}
 
-            \begin{figure}[H]
+    \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/air.png}
     \caption{Wykres funkcji przynależności dla jakości powietrza.}
     \end{figure}
 \end{enumerate}
 
-
 \subsection{Kwantyfikatory lingwistyczne (liczności obiektów)}
 Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami analitycznymi oraz wykresem funkcji przynależności.
 \begin{itemize}
-    \item wcale
+    \item[-] prawie żaden
         \begin{equation}
-            \mu_{\text{wcale}}(x) =
+            \mu_{\text{prawie\_żaden}}(x) =
         \begin{cases}
-        \dfrac{0.2 - x}{0.2 - 0}, & 0 < x < 0.2 \\
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}0}{\frac{0{,}2 - 0{,}0}{3}} \right)^2 \right), & x \in (0, 0.2) \\
         0, & \text{w przeciwnym razie}
         \end{cases}
         \end{equation}
-    \item trochę
+    \item[-] trochę
         \begin{equation}
             \mu_{\text{trochę}}(x) =
-\begin{cases}
-\dfrac{0.3 - x}{0.3 - 0.1}, & 0.15 < x < 0.45 \\
-0, & \text{w przeciwnym razie}
+        \begin{cases}
+       \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}3}{\frac{0{,}3 - 0{,}15}{3}} \right)^2 \right), &  x \in (0.15, 0.45) \\
+        0, & \text{w przeciwnym razie}
 \end{cases}
         \end{equation}
-    \item około połowa
+    \item[-] około połowa
         \begin{equation}
-\mu_{\text{około połowa}}(x) =
-\begin{cases}
-\dfrac{x - 0.3}{0.5 - 0.3}, & 0.35 < x \leq 0.5 \\
-\dfrac{0.7 - x}{0.7 - 0.5}, & 0.5 < x < 0.75 \\
-0, & \text{w przeciwnym razie}
+        \mu_{\text{około połowa}}(x) =
+        \begin{cases}
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}5}{\frac{0{,}5 - 0{,}3}{3}} \right)^2 \right), & x \in (0.35, 0.75) \\
+        0, & \text{w przeciwnym razie}
 \end{cases}
         \end{equation}
-    \item{wiele}
+    \item[-] wiele
         \begin{equation}
             \mu_{\text{wiele}}(x) =
-\begin{cases}
-\dfrac{x - 0.4}{0.6 - 0.4}, & 0.55 < x \leq 0.75 \\
-\dfrac{0.8 - x}{0.8 - 0.6}, & 0.75 < x < 0.9 \\
-0, & \text{w przeciwnym razie}
-\end{cases}
+            \begin{cases}
+            \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}75}{\frac{0{,}75 - 0{,}60}{3}} \right)^2 \right), & x \in (0.60, 0.85) \\
+            0, & \text{w przeciwnym razie}
+            \end{cases}
         \end{equation}
-    \item{prawie wszystkie}
+    \item[-] prawie wszystkie
         \begin{equation}
             \mu_{\text{prawie wszystkie}}(x) =
-\begin{cases}
-\dfrac{x - 0.7}{0.9 - 0.7}, & 0.7 < x \leq 0.9 \\
-\dfrac{1 - x}{1 - 0.9}, & 0.9 < x < 1 \\
-0, & \text{w przeciwnym razie}
-\end{cases}
+            \begin{cases}
+            \exp\left( -\frac{1}{2} \left( \frac{x - 1{,}0}{\frac{1{,}0 - 0{,}8}{3}} \right)^2 \right), &  x \in (0.8, 1.0) \\
+            0, & \text{w przeciwnym razie}
+            \end{cases}
         \end{equation}
 \end{itemize}
 
-        \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{img/a.png}
-    \caption{Funkcja przynależności dla wybranych kwantyfikatorów lingwistycznych.}
-    \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{img/a.png}
+\caption{Funkcja przynależności dla wybranych kwantyfikatorów lingwistycznych.}
+\end{figure}
+
 
 \section{Narzędzia obliczeniowe: wybór/implementacja. Diagram UML klas do obliczeń rozmytych i generowania podsumowań}
+Program został przygotowany w języku Java w wersji JDK 24, dodatkowo do zarządzania relacyjną bazą danych - PostgreSQL został wykorzystany framework Spring Boot. Kod źródłowy pakietu obliczeń rozmytych o nazwie \(ligustic\) został podzielony na dwa dodatkowe pakiety. Pierwszy z nich - \(set\), zawiera podstawowy model reprezentujący zbiory rozmyte. Centralnym elementem tego pakietu jest klasa abstakcyjna FuzzySet, która definiuje fundamentalne operacje na zbiorach rozmytych, są to m.in. funkcje, które zwracają kardynalność lub nośnik zbioru rozmytego. Klasy: GaussianFunction, TrapezoidalFunction oraz TriangularFunction są rozszerzeniami klasy FuzzySet, które implementują przynależność do zbioru rozmytego w zależności od wybranej funkcji (gaussowka, trapezoidalna lub trójkątna). \\
+Pakiet \(lingustic\) składa się z klas, które są odpowiedzialne za tworzenie podsumowań lingwistycznych. Możemy wyodrębnić LingusticVariable, - klasa reprezentująca zmienną lingwistyczną, która charakteryzuje określoną cechę (np. temperatura, wilgotność). Zmienna zawiera nazwę, przestrzeń rozważań oraz zestaw terminów lingwistycznych (np. "bardzo zimno", "ciepło").
+Kwalifikator oraz sumaryzator mają bardzo podobne struktry, różnią się tylko celami użycia, w jaki sposób są wykorzystywane w podsumowaniach lingwistycznych, dlatego została stworzona wspólna klasa LingusticTerm, składająca się z nazwy i zbioru rozmytego, z której dziedziczą klasy Qualifier oraz Summarizer w celu zachowania semantycznego rozróżnienia. Klasa Quantifier opisuje kwantyfikator poprzez nazwę, zbiór rozmyty i czy to jest kwantyfikator absolutny czy względny. Najważniejszą klasą w pakiecie jest Summary, która odpowiada za generowanie podsumowań lingwistycznych w oparciu o dostarczone sumaryzatory, kwalifikator oraz kwantyfikator. \\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{img/lingustic.png}
+\caption{Diagram UML pakietu \(lingustic\).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{img/set.png}
+\caption{Diagram UML pakietu \(set\).}
+\end{figure}
+
 \noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 10 wg Harmonogramu Zajęć na WIKAMP KSR.}
 
 Diagram UML i zwięzły opis pakietu obliczeń rozmytych: źródło pakietu
