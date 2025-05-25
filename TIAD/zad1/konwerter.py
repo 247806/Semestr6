@@ -54,10 +54,10 @@ def convert_excel():
     if title == "":
         title = "file"
     column_widths = update_column_sizes()
-    save_settings()
+    # save_settings()
     create_docx(headers, data, f"{direction}/{title}.docx", add_page, column_widths, align, heading,
                 create_table, column_checkboxes)
-    # convert(f"{direction}/{title}.docx")
+    convert(f"{direction}/{title}.docx")
     # create_pdf(headers, data, f"{direction}/{title}.pdf", add_page, column_widths, align)
 
 def read_excel(file_path, header=0):
@@ -173,7 +173,7 @@ def load_table_data(parent, headers, data, widths):
 
     table_frame = tk.Frame(parent, bd=2, relief="solid", height=100, width=640)
     table_frame.pack_propagate(False)
-    table_frame.pack(padx=10, pady=5, fill="both")
+    table_frame.pack(padx=10, pady=5, fill="x", expand=False)
 
     table = ttk.Treeview(table_frame, columns=headers, show="headings")
     scrollbar_x = ttk.Scrollbar(table_frame, orient="horizontal", command=table.xview)
@@ -221,26 +221,61 @@ def refresh_table():
 
     TABLES.clear()
     create_table_preview(column_tables_frame, data1, data2, data3)
-    save_settings()
+    # save_settings()
 
 def save_settings():
+    file_name = simpledialog.askstring(
+        "Zapisz ustawienia", "Podaj nazwę pliku (bez rozszerzenia):", parent=root
+    )
+    if not file_name:  # Jeśli użytkownik nic nie poda, zakończ funkcję
+        return
+
+    # Dodaj rozszerzenie .json, jeśli nie zostało podane
+    if not file_name.endswith(".json"):
+        file_name += ".json"
+
+    # Określ ścieżkę pliku w folderze programu
+    file_path = os.path.join(os.getcwd(), file_name)
+
+    # Pobierz dane do zapisania
     settings = {
         "title": entry_title.get(),
         "page_numbering": page.get(),
         "alignment": align_var.get(),
-        "column_widths": update_column_sizes()
+        "column_widths": update_column_sizes(),
+        "doc_title": entry_heading.get()
     }
-    with open(SETTINGS_FILE, "w") as f:
-        json.dump(settings, f, indent=4)
+
+    try:
+        # Zapisz dane do pliku JSON
+        with open(file_path, "w") as f:
+            json.dump(settings, f, indent=4)
+        messagebox.showinfo("Sukces", f"Ustawienia zostały zapisane jako {file_name} w katalogu programu.")
+    except Exception as e:
+        # W przypadku błędu wyświetl komunikat
+        messagebox.showerror("Błąd", f"Nie udało się zapisać ustawień: {e}")
+
 
 def load_settings():
-    if os.path.exists(SETTINGS_FILE):
-        with open(SETTINGS_FILE, "r") as f:
+    file_path = filedialog.askopenfilename(
+        title="Wczytaj ustawienia",
+        filetypes=[("JSON files", "*.json")],
+        initialdir=os.getcwd(),
+    )
+    if not file_path:
+        return
+    try:
+        with open(file_path, "r") as f:
             settings = json.load(f)
 
         entry_title.insert(0, settings.get("title", ""))
         page.set(settings.get("page_numbering", False))
         align_var.set(settings.get("alignment", "Do lewej"))
+        entry_heading.insert(0, settings.get("doc_title", ""))
+
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Nie udało się wczytać ustawień: {e}")
+
 
 #Wczytuje szerokości kolumn z pliku
 def load_col_sizes():
@@ -264,7 +299,7 @@ def choose_dir():
 #GUI
 root = tk.Tk()
 root.title("Konwerter XLSX do DOCX/PDF")
-root.after(100, load_settings)
+# root.after(100, load_settings)
 
 path_var = tk.StringVar()
 
@@ -303,6 +338,13 @@ alignment_options = ["Do lewej", "Do środka", "Do prawej"]
 alignment_menu = ttk.Combobox(frame, textvariable=align_var, values=alignment_options, state="readonly")
 alignment_menu.grid(row=4, column=2, sticky="w")
 
+btn_save_settings = tk.Button(frame, text="Zapisz ustawienia...", command=save_settings)
+btn_save_settings.grid(row=5, column=0, pady=10)
+
+btn_load_settings = tk.Button(frame, text="Wczytaj ustawienia...", command=load_settings)
+btn_load_settings.grid(row=5, column=1, pady=10)
+
+
 column_frame = tk.Frame(root, padx=10, pady=10)
 column_frame.pack()
 
@@ -320,14 +362,14 @@ scroll_canvas.create_window((0, 0), window=column_tables_frame, anchor="n")
 
 
 btn_convert = tk.Button(frame, text="Konwertuj", command=convert_excel, state="disabled")
-btn_convert.grid(row=5, column=0, pady=10)
+btn_convert.grid(row=6, column=0, pady=10)
 btn_refresh = tk.Button(frame, text="Aktualizuj podgląd", command=refresh_table, state="disabled")
-btn_refresh.grid(row=5, column=1, padx=10, pady=10)
+btn_refresh.grid(row=6, column=1, padx=10, pady=10)
 btn_load_sizes = tk.Button(frame, text="Wczytaj kolumny", command=load_col_sizes, state="disabled")
-btn_load_sizes.grid(row=5, column=2, padx=10, pady=10)
+btn_load_sizes.grid(row=6, column=2, padx=10, pady=10)
 
-entry_title.bind("<KeyRelease>", lambda e: save_settings())
-alignment_menu.bind("<<ComboboxSelected>>", lambda e: save_settings())
-check_page.config(command=save_settings)
+# entry_title.bind("<KeyRelease>", lambda e: save_settings())
+# alignment_menu.bind("<<ComboboxSelected>>", lambda e: save_settings())
+# check_page.config(command=save_settings)
 
 root.mainloop()

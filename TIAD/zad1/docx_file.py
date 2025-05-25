@@ -42,18 +42,11 @@ def create_docx(headers, data, output_file, add_page, column_widths, align, head
             del column_widths[i]
 
     headers_line, data_line, widths = prepare_data(headers, data, column_widths)
-    print(headers)
-    print(data)
     if table:
         for i in range(len(headers_line)):
             create_table(doc, headers_line[i], data_line[i], widths[i], align)
     else:
         for i in range(len(headers)):
-            print(f"Numer {i}")
-            # print("Nagłówek")
-            # print(headers[i])
-            # print("Dane")
-            # print(data[i])
             create_paragraphs(doc, headers[i], data, align, i)
 
     if add_page:
@@ -71,7 +64,7 @@ def create_docx(headers, data, output_file, add_page, column_widths, align, head
             run._r.append(fldSimple)
 
     doc.save(output_file)
-    print(f"Plik DOCX zapisany: {output_file}")
+    # print(f"Plik DOCX zapisany: {output_file}")
 
 def create_table(doc, headers, data, column_widths, align):
     align_map = {
@@ -108,13 +101,11 @@ def create_table(doc, headers, data, column_widths, align):
 def create_paragraphs(doc, headers, data, align, col_number):
     align_map = {
         "Do lewej": WD_ALIGN_PARAGRAPH.LEFT,
-        "Do środka": WD_ALIGN_PARAGRAPH.CENTER,
+        "Do środka": WD_ALIGN_PARAGRAPH.JUSTIFY,
         "Do prawej": WD_ALIGN_PARAGRAPH.RIGHT,
     }
 
     doc.add_paragraph()  # odstęp
-    print(headers)
-    print(data)
 
     # title = headers
     doc.add_heading(f"{headers}:", level=2)
@@ -125,19 +116,12 @@ def create_paragraphs(doc, headers, data, align, col_number):
     # paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
     paragraph_text = '\n'.join(paragraph_lines)
 
+    # paragraph = doc.add_paragraph(paragraph_text)
     paragraph = doc.add_paragraph(paragraph_text)
+    if align in align_map:
+        paragraph.alignment = align_map[align]
+
     # paragraph.alignment = align_map[align]
     doc.add_paragraph()  # odstęp między kolumnami
-    # Zakładamy, że pierwsza kolumna to 'Lp.' (czyli numer wiersza)
-    # for col_idx in range(len(data)):
-    #     title = headers
-    #     paragraph_lines = [
-    #         f"{col_idx}: {data[row_idx][col_number]}"
-    #         for row_idx in range(len(data))
-    #     ]
-    #     paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
-    #
-    #     paragraph = doc.add_paragraph(paragraph_text)
-    #     paragraph.alignment = align_map[align]
-    #     doc.add_paragraph()  # odstęp między kolumnami
+
 
