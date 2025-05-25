@@ -66,13 +66,18 @@ class RecipeApp:
         self.searcher = RecipeSearcher({
             'dbname': 'recipes',
             'user': 'postgres',
-            'password': '1234',  # Zmień na swoje
+            'password': '1234',
             'host': 'localhost'
         })
 
-        self.original_ingredients = []  # Lista składników w oryginalnym języku
-        self.translated_ingredients = []  # Lista przetłumaczonych składników
+        self.original_ingredients = []
+        self.translated_ingredients = []
+        self.translated_ingredients_text = []
+        self.polish_ingredients = []
         self.selected_language = 'auto'
+        self.translation_language = 'pl'
+        self.detected_lang = 'pl'
+        self.result_translation = 'pl'
 
         self.create_ui()
 
@@ -113,7 +118,7 @@ class RecipeApp:
         self.lang_menu = tk.OptionMenu(
             record_frame,
             self.lang_selection,
-            'auto', 'pl', 'en', 'de', 'es', 'fr', 'it', 'ru',
+            'polski', 'angielski', 'niemiecki', 'hiszpański', 'francuski', 'włoski',
             command=self.language_changed
         )
         self.lang_menu.pack(side=tk.LEFT)
@@ -134,16 +139,30 @@ class RecipeApp:
         )
         self.ingredients_text.pack(fill=tk.X, pady=(0, 5))
 
-        # Przycisk do wyświetlenia tłumaczenia
+        translate_frame = tk.Frame(main_frame)
+        translate_frame.pack(anchor=tk.E, pady=5)
+
+        # Przycisk do wyświetlenia tłumaczenia składników
         self.translate_button = tk.Button(
-            main_frame,
+            translate_frame,
             text="⚙ Wyświetl tłumaczenie składników",
             command=self.toggle_translation_view,
             font=("Arial", 10),
             bg="#f0f0f0",
             fg="black"
         )
-        self.translate_button.pack(anchor=tk.E, pady=5)
+        self.translate_button.pack(side=tk.LEFT, padx=(0, 10))
+
+        # Menu wyboru języka do tłumaczenia
+        self.translation_language = tk.StringVar(value='polski')
+        self.translate_language_menu = tk.OptionMenu(
+            translate_frame,
+            self.translation_language,
+            'polski', 'angielski', 'niemiecki', 'hiszpański', 'francuski', 'włoski',
+            command=self.translate_language
+        )
+        self.translate_language_menu.config(font=("Arial", 10))
+        self.translate_language_menu.pack(side=tk.LEFT)
 
         # Wyniki wyszukiwania
         tk.Label(main_frame, text="Pasujące przepisy:",
@@ -155,24 +174,94 @@ class RecipeApp:
         )
         self.recipes_text.pack(fill=tk.BOTH, expand=True)
 
+        # Kontener na przycisk tłumaczenia i wybór języka – poniżej wyników
+        translate_frame2 = tk.Frame(main_frame)
+        translate_frame2.pack(anchor=tk.E, pady=5)
+
+        # Przycisk do wyświetlenia tłumaczenia składników
+        self.translate_button2 = tk.Button(
+            translate_frame2,
+            text="⚙ Wyświetl tłumaczenie wyników",
+            command=self.search_and_display_recipes,
+            font=("Arial", 10),
+            bg="#f0f0f0",
+            fg="black"
+        )
+        self.translate_button2.pack(side=tk.LEFT, padx=(0, 10))
+
+        # Menu wyboru języka do tłumaczenia wyników
+        self.translation_language2 = tk.StringVar(value='polski')  # Domyślnie język polski
+        self.translate_language_menu2 = tk.OptionMenu(
+            translate_frame2,
+            self.translation_language2,  # Zmienna dla wyboru języka
+            'polski', 'angielski', 'niemiecki', 'hiszpański', 'francuski', 'włoski',
+            command=self.result_language
+        )
+        self.translate_language_menu2.config(font=("Arial", 10))  # Wygląd menu
+        self.translate_language_menu2.pack(side=tk.LEFT)
+
         # Stopka
         tk.Label(self.root, text="© 2025 Wyszukiwarka Przepisów",
                  fg="#999", font=("Arial", 8)).pack(side=tk.BOTTOM, pady=10)
 
     def language_changed(self, lang):
-        """Zmieniono język rozpoznawania mowy"""
-        self.selected_language = lang
+        match lang:
+            case 'auto':
+                 self.selected_language = 'auto'
+            case 'polski':
+                self.selected_language = 'pl'
+            case 'angielski':
+                self.selected_language = 'en'
+            case 'niemiecki':
+                self.selected_language = 'de'
+            case 'hiszpański':
+                self.selected_language = 'es'
+            case 'francuski':
+                self.selected_language = 'fr'
+            case 'włoski':
+                self.selected_language = 'it'
+
         print(f"Wybrano język: {self.selected_language}")
 
+    def result_language(self, lang):
+        match lang:
+            case 'polski':
+                self.result_translation = 'pl'
+            case 'angielski':
+                self.result_translation = 'en'
+            case 'niemiecki':
+                self.result_translation = 'de'
+            case 'hiszpański':
+                self.result_translation = 'es'
+            case 'francuski':
+                self.result_translation = 'fr'
+            case 'włoski':
+                self.result_translation = 'it'
+
+    def translate_language(self, lang):
+        match lang:
+            case 'polski':
+                self.translation_language = 'pl'
+            case 'angielski':
+                self.translation_language = 'en'
+            case 'niemiecki':
+                self.translation_language = 'de'
+            case 'hiszpański':
+                self.translation_language = 'es'
+            case 'francuski':
+                self.translation_language = 'fr'
+            case 'włoski':
+                self.translation_language = 'it'
+
     def toggle_translation_view(self):
-        """
-        Przełącza widok składników pomiędzy oryginalnymi a przetłumaczonymi i wyświetla je na liście składników
-        """
         if self.translate_button.config('text')[-1] == "⚙ Wyświetl tłumaczenie składników":
+            for i in range(len(self.original_ingredients)):
+                self.translated_ingredients[i] = GoogleTranslator(source=self.detected_lang, target=self.translation_language).translate(
+                    self.original_ingredients[i])
             # Pokazanie przetłumaczonych składników
             self.ingredients_text.delete(1.0, tk.END)
             self.ingredients_text.insert(tk.END, ", ".join(self.translated_ingredients))
-            self.translate_button.config(text="🔄 Wyświetl składniki oryginalne")
+            self.translate_button.config(text="⚙ Wyświetl składniki oryginalne")
         else:
             # Pokazanie oryginalnych składników
             self.ingredients_text.delete(1.0, tk.END)
@@ -198,22 +287,24 @@ class RecipeApp:
             self.status_label.config(text="Status: Przetwarzanie mowy...")
             if self.selected_language == 'auto':
                 text = recognizer.recognize_google(audio)
-                detected_lang = detect(text)  # Automatyczne wykrycie języka
+                self.detected_lang = detect(text)
             else:
                 text = recognizer.recognize_google(audio, language=self.selected_language)
-                detected_lang = self.selected_language
+                self.detected_lang = self.selected_language
 
-            self.lang_label.config(text=f"Wykryty język: {detected_lang.upper()}")
-            print(f"Wykryto język: {detected_lang}")
+            self.lang_label.config(text=f"Wykryty język: {self.detected_lang.upper()}")
+            print(f"Wykryto język: {self.detected_lang}")
 
             # Przetwarzanie tekstu na listę składników
             self.original_ingredients = list(set(word.lower() for word in text.split() if len(word) > 2))
             self.translated_ingredients = self.original_ingredients.copy()
+            self.translated_ingredients_text = self.original_ingredients.copy()
+            self.polish_ingredients = self.original_ingredients.copy()
 
             # Tłumaczenie składników, jeśli język jest inny niż polski
-            if detected_lang != 'pl' and detected_lang != 'auto':
+            if self.detected_lang != 'pl' and self.detected_lang != 'auto':
                 for i in range(len(self.original_ingredients)):
-                    self.translated_ingredients[i] = GoogleTranslator(source=detected_lang, target='pl').translate(
+                    self.polish_ingredients[i] = GoogleTranslator(source=self.detected_lang, target='pl').translate(
                         self.original_ingredients[i])
 
             # Wyświetlenie składników (domyślnie oryginalnych)
@@ -221,7 +312,7 @@ class RecipeApp:
             self.ingredients_text.insert(tk.END, ", ".join(self.original_ingredients))
 
             # Wyszukiwanie przepisów na podstawie przetłumaczonych składników
-            self.search_and_display_recipes(self.translated_ingredients)
+            self.search_and_display_recipes()
 
         except sr.UnknownValueError:
             messagebox.showwarning("Błąd", "Nie rozpoznano mowy. Spróbuj ponownie.")
@@ -239,31 +330,50 @@ class RecipeApp:
         self.ingredients_text.delete(1.0, tk.END)
         self.ingredients_text.insert(tk.END, ", ".join(ingredients))
 
-    def search_and_display_recipes(self, ingredients):
+    def search_and_display_recipes(self):
         """Wyszukuje i wyświetla przepisy"""
         self.recipes_text.delete(1.0, tk.END)
         self.status_label.config(text="Status: Wyszukiwanie przepisów...")
 
-        recipes = self.searcher.search_recipes(ingredients)
+        recipes = self.searcher.search_recipes(self.polish_ingredients)
         print(recipes)
         if not recipes:
             self.recipes_text.insert(tk.END, "Nie znaleziono przepisów zawierających wszystkie podane składniki.")
             return
 
+        if self.result_translation != 'pl':
+            self.recipes_text.delete(1.0, tk.END)
+
         for recipe in recipes:
             name = recipe[0]
-            instructions = recipe[1]
+            # instructions = recipe[1]
             all_ingredients = recipe[2]
             matched_count = recipe[3]
 
-            self.recipes_text.insert(tk.END, f"🍲 {name}\n", 'title')
-            self.recipes_text.insert(tk.END, f"✅ Pasujące składniki: {matched_count}/{len(ingredients)}\n")
-            self.recipes_text.insert(tk.END, f"📋 Wszystkie składniki: {all_ingredients}\n")
-            self.recipes_text.insert(tk.END, f"📝 Instrukcje: {instructions}\n\n")
-            self.recipes_text.insert(tk.END, "-" * 80 + "\n\n", 'divider')
+            if self.result_translation == 'pl':
+                self.display_result(name, all_ingredients, matched_count, self.polish_ingredients, "Pasujące składniki", "Wszystkie składniki")
+            else:
+                header1 = GoogleTranslator(source=self.detected_lang, target=self.result_translation).translate("Pasujące składniki")
+                header2 = GoogleTranslator(source=self.detected_lang, target=self.result_translation).translate(
+                    "Wszystkie składniki")
+                translated_name = GoogleTranslator(source=self.detected_lang, target=self.result_translation).translate(name)
+                translated_ingredients = GoogleTranslator(source=self.detected_lang, target=self.result_translation).translate(
+                    all_ingredients)
+                self.display_result(translated_name, translated_ingredients, matched_count, self.polish_ingredients, header1, header2)
 
         self.status_label.config(text=f"Status: Znaleziono {len(recipes)} przepisów")
 
+    def display_result(self, name, all_ingredients, matched_count, ingredients, header1, header2):
+        self.recipes_text.insert(tk.END, f"🍲 {name}\n", 'title')
+        self.recipes_text.insert(
+            tk.END,
+            f"✅ {header1}: {matched_count}/{len(all_ingredients.split(", "))}\n"
+        )
+        self.recipes_text.insert(
+            tk.END,
+            f"📋 {header2}: {all_ingredients}\n"
+        )
+        self.recipes_text.insert(tk.END, "-" * 80 + "\n", 'divider')
 
 if __name__ == "__main__":
     root = tk.Tk()
