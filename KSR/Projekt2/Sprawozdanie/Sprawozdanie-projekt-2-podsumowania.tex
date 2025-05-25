@@ -177,43 +177,51 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             L_3 = \langle \mathcal{L}_3, H_3, \mathcal{X}_3 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_3$ – siła wiatru, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny\}, $\mathcal{X}_3 = [3, 151]$. \\
+        gdzie: $\mathcal{L}_3$ – wiatr, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny, huragan\}, $\mathcal{X}_3 = [3, 151]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
                   \begin{equation}
                     \mu_{\text{słaby}}(x) =
                     \begin{cases}
-                    1, & x \in [3,  10] \\
-                    \frac{20 - x}{10}, & x \in (10, 20] \\
+                    1, & x = 3 \\
+                    \frac{20 - x}{17}, & x \in (3, 20] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                   \end{equation}
                 \begin{equation}
                     \mu_{\text{umiarkowany}}(x) =
                     \begin{cases}
-                    \frac{x - 10}{10}, & x \in (10, 20] \\
-                    1, & x \in (20, 40] \\
-                    \frac{60 - x}{20}, & x \in (40, 60] \\
+                    \frac{x - 10}{15}, & x \in (10, 25) \\
+                    1, & x = 25 \\
+                    \frac{40 - x}{15}, & x \in (25, 40) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                   \end{equation}
                 \begin{equation}
                     \mu_{\text{silny}}(x) =
                     \begin{cases}
-                    \frac{x - 40}{20}, & x \in (40, 60] \\
-                    1, & x \in (60, 90] \\
-                    \frac{110 - x}{20}, & x \in (90, 110] \\
+                    \frac{x - 35}{15}, & x \in (35, 50) \\
+                    1, & x = 50 \\
+                    \frac{70 - x}{20}, & x \in (50, 70) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
                 \begin{equation}
                     \mu_{\text{bardzo\_silny}}(x) =
                     \begin{cases}
-                    \frac{x - 90}{20}, & x \in (90, 110] \\
-                    1, & x \in (110, 152] \\
+                    \frac{x - 60}{20}, & x \in (60, 80) \\
+                    1, & x = 80 \\
+                    \frac{105 - x}{25}, & x \in (80, 105) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
-
+                 \begin{equation}
+                    \mu_{\text{huragan}}(x) =
+                    \begin{cases}
+                    \frac{x - 90}{61}, & x \in (90, 151) \\
+                    1, & x = 151 \\
+                    0, & \text{w przeciwnym razie}
+                    \end{cases}
+              \end{equation}
         \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/wind.png}
@@ -563,7 +571,7 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \begin{equation}
             \mu_{\text{prawie\_żaden}}(x) =
         \begin{cases}
-        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}0}{\frac{0{,}2 - 0{,}0}{3}} \right)^2 \right), & x \in (0, 0.2) \\
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}0}{0,06} \right)^2 \right), & x \in (0, 0.2) \\
         0, & \text{w przeciwnym razie}
         \end{cases}
         \end{equation}
@@ -571,7 +579,7 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \begin{equation}
             \mu_{\text{trochę}}(x) =
         \begin{cases}
-       \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}3}{\frac{0{,}3 - 0{,}15}{3}} \right)^2 \right), &  x \in (0.15, 0.45) \\
+       \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}3}{0,06} \right)^2 \right), &  x \in (0.15, 0.45) \\
         0, & \text{w przeciwnym razie}
 \end{cases}
         \end{equation}
@@ -579,7 +587,7 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \begin{equation}
         \mu_{\text{około połowa}}(x) =
         \begin{cases}
-        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}5}{\frac{0{,}5 - 0{,}3}{3}} \right)^2 \right), & x \in (0.35, 0.75) \\
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}5}{0,06} \right)^2 \right), & x \in (0.35, 0.75) \\
         0, & \text{w przeciwnym razie}
 \end{cases}
         \end{equation}
@@ -587,7 +595,7 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \begin{equation}
             \mu_{\text{wiele}}(x) =
             \begin{cases}
-            \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}75}{\frac{0{,}75 - 0{,}60}{3}} \right)^2 \right), & x \in (0.60, 0.85) \\
+            \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}75}{0,06} \right)^2 \right), & x \in (0.60, 0.85) \\
             0, & \text{w przeciwnym razie}
             \end{cases}
         \end{equation}
@@ -595,7 +603,7 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \begin{equation}
             \mu_{\text{prawie wszystkie}}(x) =
             \begin{cases}
-            \exp\left( -\frac{1}{2} \left( \frac{x - 1{,}0}{\frac{1{,}0 - 0{,}8}{3}} \right)^2 \right), &  x \in (0.8, 1.0) \\
+            \exp\left( -\frac{1}{2} \left( \frac{x - 1{,}0}{0,06} \right)^2 \right), &  x \in (0.8, 1.0) \\
             0, & \text{w przeciwnym razie}
             \end{cases}
         \end{equation}
@@ -609,29 +617,20 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
 
 
 \section{Narzędzia obliczeniowe: wybór/implementacja. Diagram UML klas do obliczeń rozmytych i generowania podsumowań}
-Program został przygotowany w języku Java w wersji JDK 24, dodatkowo do zarządzania relacyjną bazą danych - PostgreSQL został wykorzystany framework Spring Boot. Kod źródłowy pakietu obliczeń rozmytych o nazwie \(ligustic\) został podzielony na dwa dodatkowe pakiety. Pierwszy z nich - \(set\), zawiera podstawowy model reprezentujący zbiory rozmyte. Centralnym elementem tego pakietu jest klasa abstakcyjna FuzzySet, która definiuje fundamentalne operacje na zbiorach rozmytych, są to m.in. funkcje, które zwracają kardynalność lub nośnik zbioru rozmytego. Klasy: GaussianFunction, TrapezoidalFunction oraz TriangularFunction są rozszerzeniami klasy FuzzySet, które implementują przynależność do zbioru rozmytego w zależności od wybranej funkcji (gaussowka, trapezoidalna lub trójkątna). \\
-Pakiet \(lingustic\) składa się z klas, które są odpowiedzialne za tworzenie podsumowań lingwistycznych. Możemy wyodrębnić LingusticVariable, - klasa reprezentująca zmienną lingwistyczną, która charakteryzuje określoną cechę (np. temperatura, wilgotność). Zmienna zawiera nazwę, przestrzeń rozważań oraz zestaw terminów lingwistycznych (np. "bardzo zimno", "ciepło").
-Kwalifikator oraz sumaryzator mają bardzo podobne struktry, różnią się tylko celami użycia, w jaki sposób są wykorzystywane w podsumowaniach lingwistycznych, dlatego została stworzona wspólna klasa LingusticTerm, składająca się z nazwy i zbioru rozmytego, z której dziedziczą klasy Qualifier oraz Summarizer w celu zachowania semantycznego rozróżnienia. Klasa Quantifier opisuje kwantyfikator poprzez nazwę, zbiór rozmyty i czy to jest kwantyfikator absolutny czy względny. Najważniejszą klasą w pakiecie jest Summary, która odpowiada za generowanie podsumowań lingwistycznych w oparciu o dostarczone sumaryzatory, kwalifikator oraz kwantyfikator. \\
+Program został napisany w języku Java w wersji JDK 24. Do obsługi relacyjnej bazy danych PostgreSQL wykorzystano framework Spring Boot, który umożliwia wygodną konfigurację połączenia z bazą danych. Kod źródłowy komponentu odpowiedzialnego za obliczenia rozmyte został umieszczony w pakiecie o nazwie \texttt{fuzzy}. Znajduje sie w nim podstawowy model reprezentujący zbiory rozmyte, którego centralnym elementem jest abstrakcyjna klasa \texttt{FuzzySet}, która definiuje fundamentalne operacje na zbiorach rozmytych. Klasa ta udostępnia metody pozwalające na obliczanie podstawowych właściwości zbioru rozmytego, m.in. takich jak kardynalność oraz nośnik. Na bazie klasy \texttt{FuzzySet} zbudowane zostały trzy klasy reprezentujące konkretne typy funkcji przynależności: \texttt{GaussianFunction}, \texttt{TrapezoidalFunction} oraz \texttt{TriangularFunction}. Każda z tych klas implementuje matematyczną funkcję przynależności o charakterystycznym kształcie: odpowiednio gaussowskim, trapezoidalnym i trójkątnym. Dzięki temu możliwe jest precyzyjne modelowanie różnych pojęć językowych. \\
+Oprócz modelu zbiorów rozmytych, pakiet \texttt{fuzzy} zawiera również klasy odpowiedzialne za tworzenie i przetwarzanie podsumowań lingwistycznych. Klasa \texttt{LinguisticVariable} reprezentuje zmienną lingwistyczną, która zawiera nazwę, przestrzeń rozważań oraz zestaw powiązanych z nią terminów lingwistycznych, np. „bardzo zimno”, „ciepło”, „gorąco”, które są reprezentowane przez odpowiednie zbiory rozmyte.
+W strukturze podsumowań lingwistycznych wyróżniamy także kwalifikatory i sumaryzatory, które mają bardzo podobną strukturę, ponieważ są złożone z nazwy oraz przypisanego im zbioru rozmytego. Ich różnice wynikają jedynie z zastosowania, w jaki sposób są wykorzystywane w podsumowaniach lingwistycznych. W celu zachowania przejrzystości i uniknięcia duplikacji kodu, stworzona została wspólna klasa bazowa \texttt{LinguisticTerm}, z której dziedziczą klasy \texttt{Qualifier} oraz \texttt{Summarizer}. Pozwala to na zachowanie semantycznego rozróżnienia przy jednoczesnym wykorzystaniu wspólnej logiki przetwarzania.
+Klasa \texttt{Quantifier} odpowiada za reprezentację kwantyfikatorów, takich jak „około połowy” czy „prawie żaden”. Kwantyfikator opisany jest za pomocą nazwy, funkcji przynależności oraz typu — może być kwantyfikatorem absolutnym lub względnym.
+Ostatnim elementem pakietu jest klasa \texttt{Summary}. To ona odpowiada za generowanie podsumowań lingwistycznych na podstawie przekazanych obiektów: sumaryzatora, kwalifikatora oraz kwantyfikatora. \\
+Strukturę logiczną opisanych klas oraz zależności między nimi przedstawiono na poniższym diagramie UML.
+
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{img/lingustic.png}
-\caption{Diagram UML pakietu \(lingustic\).}
+\caption{Diagram UML pakietu \texttt{fuzzy}.}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{img/set.png}
-\caption{Diagram UML pakietu \(set\).}
-\end{figure}
-
-\noindent {\bf Sekcja uzupełniona jako efekt zadania Tydzień 10 wg Harmonogramu Zajęć na WIKAMP KSR.}
-
-Diagram UML i zwięzły opis pakietu obliczeń rozmytych: źródło pakietu
-(zewnętrzny/własny/hybrydowy), przypis do literatury/źródeł. Krótka charakterystyka
-najważniejszych klas i podstawowych dla zadania ich metod. \\
-
-Wersja JRE i inne wymogi niezbędne do uruchomienia aplikacji przez użytkownika na własnym komputerze. 
 
 \section{ Jednopodmiotowe podsumowania lingwistyczne. Miary jakości, podsumowanie optymalne}
 Wyniki kolejnych eksperymentów wg punktów 2.-4. opisu projektu 2.  Listy podsumowań
