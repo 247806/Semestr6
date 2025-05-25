@@ -1,8 +1,5 @@
-package ksr.zad2.fuzzy.lingustic;
+package ksr.zad2.fuzzy;
 
-import ksr.zad2.fuzzy.set.FuzzySet;
-import ksr.zad2.fuzzy.set.TriangularFunction;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

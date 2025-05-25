@@ -1,21 +1,24 @@
-package ksr.zad2.fuzzy.set;
+package ksr.zad2.fuzzy;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TriangularFunction extends FuzzySet {
+public class TrapezoidalFunction extends FuzzySet {
     private final double a;
     private final double b;
     private final double c;
+    private final double d;
 
     @Override
     public double membership(double x) {
-        if (x < a || x > c) {
+        if (x < a || x > d) {
             return 0;
         } else if (x >= a && x <= b) {
             return (x - a) / (b - a);
+        } else if (x >= b && x <= c) {
+            return 1;
         } else {
-            return (c - x) / (c - b);
+            return (d - x) / (d - c);
         }
     }
 }

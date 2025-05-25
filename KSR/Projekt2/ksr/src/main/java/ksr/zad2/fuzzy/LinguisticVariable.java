@@ -1,9 +1,7 @@
-package ksr.zad2.fuzzy.lingustic;
+package ksr.zad2.fuzzy;
 
-import ksr.zad2.fuzzy.set.FuzzySet;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

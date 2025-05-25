@@ -1,4 +1,4 @@
-package ksr.zad2.fuzzy.set;
+package ksr.zad2.fuzzy;
 
 import lombok.Data;
 

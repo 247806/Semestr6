@@ -1,16 +1,15 @@
 package ksr.zad2;
 
-import ksr.zad2.fuzzy.lingustic.*;
-import ksr.zad2.fuzzy.set.GaussianFunction;
-import ksr.zad2.fuzzy.set.TrapezoidalFunction;
-import ksr.zad2.fuzzy.set.TriangularFunction;
+import ksr.zad2.fuzzy.*;
+import ksr.zad2.fuzzy.GaussianFunction;
+import ksr.zad2.fuzzy.TrapezoidalFunction;
+import ksr.zad2.fuzzy.TriangularFunction;
 import ksr.zad2.model.Measurements;
 import ksr.zad2.repository.MeasurementsRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +32,7 @@ public class KsrApplication implements CommandLineRunner {
 	public void run(String... args) {
 		System.out.println("Hello World!");
 
-		// Wywołanie metody repozytorium
 		List<Measurements> allMeasurements = measurementsRepository.findAll();
-
 		List<Double> temperatures = new ArrayList<>();
 		for (Measurements measurement : allMeasurements) {
 			temperatures.add((double) measurement.getTemperature_celsius());
@@ -82,11 +79,11 @@ public class KsrApplication implements CommandLineRunner {
 
 		LinguisticVariable linguisticVariable3 = new LinguisticVariable("Przynależność",0.0, 1.0);
 
-		linguisticVariable3.addTerm(quantifiers.getFirst(), new GaussianFunction(0.0, 0.2));
-		linguisticVariable3.addTerm(quantifiers.get(1), new GaussianFunction(0.3, 0.15));
-		linguisticVariable3.addTerm(quantifiers.get(2), new GaussianFunction(0.5, 0.15));
-		linguisticVariable3.addTerm(quantifiers.get(3), new GaussianFunction(0.7, 0.15));
-		linguisticVariable3.addTerm(quantifiers.get(4), new GaussianFunction(1.0, 0.2));
+		linguisticVariable3.addTerm(quantifiers.getFirst(), new GaussianFunction(0.0, 0.06));
+		linguisticVariable3.addTerm(quantifiers.get(1), new GaussianFunction(0.3, 0.06));
+		linguisticVariable3.addTerm(quantifiers.get(2), new GaussianFunction(0.5, 0.06));
+		linguisticVariable3.addTerm(quantifiers.get(3), new GaussianFunction(0.7, 0.06));
+		linguisticVariable3.addTerm(quantifiers.get(4), new GaussianFunction(1.0, 0.06));
 
 		LinguisticVariable linguisticVariable2 = new LinguisticVariable("Wilgotność", 0.0, 100.0);
 		linguisticVariable2.addTerm(terminy2.getFirst(), new TriangularFunction(0.0,  0.0, 0.5));
@@ -100,7 +97,7 @@ public class KsrApplication implements CommandLineRunner {
 		linguisticVariable4.addTerm(terminy3.get(3), new TrapezoidalFunction(15, 16, 18, 20));
 		linguisticVariable4.addTerm(terminy3.get(4), new TrapezoidalFunction(19, 20, 22, 24));
 
-		Quantifier quantifier = new Quantifier("prawie wszystkie", linguisticVariable3, true);
+		Quantifier quantifier = new Quantifier("trochę", linguisticVariable3, true);
 		Summarizer summarizer1 = new Summarizer("gorąco", linguisticVariable, temperatures);
 
 		Summarizer summarizer2 = new Summarizer(terminy2.get(2), linguisticVariable2, humidities);

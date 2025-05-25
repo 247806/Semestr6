@@ -1,6 +1,5 @@
-package ksr.zad2.fuzzy.lingustic;
+package ksr.zad2.fuzzy;
 
-import ksr.zad2.fuzzy.set.FuzzySet;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
