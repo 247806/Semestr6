@@ -46,8 +46,8 @@ def create_docx(headers, data, output_file, add_page, column_widths, align, head
         for i in range(len(headers_line)):
             create_table(doc, headers_line[i], data_line[i], widths[i], align)
     else:
-        for i in range(len(headers)):
-            create_paragraphs(doc, headers[i], data, align, i)
+        create_paragraphs(doc, headers, data, align)
+
 
     if add_page:
         for i, section in enumerate(doc.sections):
@@ -98,30 +98,24 @@ def create_table(doc, headers, data, column_widths, align):
             row_cells[i].text = str(cell) if cell else ""
             row_cells[i].paragraphs[0].alignment = align_map[align]
 
-def create_paragraphs(doc, headers, data, align, col_number):
+def create_paragraphs(doc, headers, data, align):
     align_map = {
         "Do lewej": WD_ALIGN_PARAGRAPH.LEFT,
         "Do środka": WD_ALIGN_PARAGRAPH.JUSTIFY,
         "Do prawej": WD_ALIGN_PARAGRAPH.RIGHT,
     }
 
-    doc.add_paragraph()  # odstęp
+    doc.add_paragraph()
 
-    # title = headers
-    doc.add_heading(f"{headers}:", level=2)
-    paragraph_lines = [
-        f"{row_idx + 1}: {data[row_idx][col_number]}"
-        for row_idx in range(len(data))
-    ]
-    # paragraph_text = f"{title}:\n" + '\n'.join(paragraph_lines)
-    paragraph_text = '\n'.join(paragraph_lines)
+    for row_idx, row in enumerate(data):
+        lines = [f"{headers[col_idx]}: {row[col_idx]}" for col_idx in range(len(headers))]
+        paragraph_text = f"{row_idx + 1}.\n" + '\n'.join(lines)
 
-    # paragraph = doc.add_paragraph(paragraph_text)
-    paragraph = doc.add_paragraph(paragraph_text)
-    if align in align_map:
-        paragraph.alignment = align_map[align]
+        paragraph = doc.add_paragraph(paragraph_text)
+        if align in align_map:
+            paragraph.alignment = align_map[align]
 
-    # paragraph.alignment = align_map[align]
-    doc.add_paragraph()  # odstęp między kolumnami
+        doc.add_paragraph()
+
 
 
