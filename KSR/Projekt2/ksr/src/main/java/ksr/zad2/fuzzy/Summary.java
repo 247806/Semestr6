@@ -8,15 +8,15 @@ import java.util.List;
 @Data
 public class Summary {
     private Quantifier quantifier;
-    private List<Summarizer> summarizers;
-    private Qualifier qualifier;
+    private List<LinguisticTerm> summarizers;
+    private LinguisticTerm qualifier;
 
-    public Summary(Quantifier quantifier, List<Summarizer> summarizers) {
+    public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
         this.quantifier = quantifier;
         this.summarizers = summarizers;
     }
 
-    public Summary(Quantifier quantifier, List<Summarizer> summarizers, Qualifier qualifier) {
+    public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers, LinguisticTerm qualifier) {
         this.quantifier = quantifier;
         this.summarizers = summarizers;
         this.qualifier = qualifier;
@@ -59,7 +59,7 @@ public class Summary {
                 double sum = 0.0;
                 for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
                     double minValue = Double.MAX_VALUE;
-                    for (Summarizer summarizer : summarizers) {
+                    for (LinguisticTerm summarizer : summarizers) {
                         minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
                     }
                     sum += minValue;
@@ -71,7 +71,7 @@ public class Summary {
                 double size = summarizers.size();
                 for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
                     double temp = 0.0;
-                    for (Summarizer summarizer : summarizers) {
+                    for (LinguisticTerm summarizer : summarizers) {
                         temp += summarizer.getFuzzySet().membership(summarizer.getData().get(i));
                     }
                     if (temp == size) {
@@ -104,7 +104,7 @@ public class Summary {
 
     public double degreeOfImprecision() {
         double sum = 1.0;
-        for (Summarizer value : summarizers) {
+        for (LinguisticTerm value : summarizers) {
             sum *= value.getFuzzySet().degreeOfFuzziness(value.getData());
         }
         return 1 - (Math.pow(sum, 1.0 / summarizers.size()));
@@ -134,7 +134,7 @@ public class Summary {
 
     public double degreeOfAppropriateness() {
         double sum = 1.0;
-        for (Summarizer summarizer : summarizers) {
+        for (LinguisticTerm summarizer : summarizers) {
             double g = 0.0;
             for (Double value : summarizer.getData()) {
                 if (summarizer.getFuzzySet().membership(value) > 0.0) {
@@ -171,7 +171,7 @@ public class Summary {
 
     public double degreeOfSummarizerImprecision() {
         double sum = 1.0;
-        for (Summarizer summarizer : summarizers) {
+        for (LinguisticTerm summarizer : summarizers) {
             sum *= (summarizer.getFuzzySet().fuzzyCardinality(summarizer.getData()) / summarizer.getData().size());
         }
         return 1 - (Math.pow(sum, 1.0 / summarizers.size()));
