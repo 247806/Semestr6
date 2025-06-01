@@ -4,7 +4,6 @@ import lombok.Data;
 
 
 import java.util.List;
-import java.util.stream.DoubleStream;
 
 @Data
 public class Summary {
@@ -12,6 +11,8 @@ public class Summary {
     private List<LinguisticTerm> summarizers;
     //TODO A MOZE BYC LISTA KWALIFIKATORÓW?
     private LinguisticTerm qualifier;
+    private double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+    private double optimal;
 
     public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
         this.quantifier = quantifier;
@@ -25,62 +26,86 @@ public class Summary {
     }
 
     public String summarization() {
-        double truth = degreeOfTruth();
-        StringBuilder summaryText = new StringBuilder(quantifier.getName() + " measurements ma ");
-
+        StringBuilder summaryText = new StringBuilder(quantifier.getName() + " pomiarów ");
+        if (qualifier != null) {
+            summaryText.append("będący/mający ").append(qualifier.getName());
+        }
         for (int i = 0; i < summarizers.size(); i++) {
+            summaryText.append(" jest/ma ").append(summarizers.get(i).getName());
             if (i > 0) {
-                summaryText.append(" oraz ");
+                summaryText.append(" i ");
             }
-            summaryText.append(summarizers.get(i).getName());
         }
 
-        summaryText.append(" [" + truth + "] ");
+        this.processQualityMeasurements();
         return summaryText.toString();
     }
 
+    public void processQualityMeasurements() {
+        this.t1 = degreeOfTruth();
+        this.t2 = degreeOfImprecision();
+        this.t3 = degreeOfCovering();
+        this.t4 = degreeOfAppropriateness();
+        this.t5 = lengthOfSummary();
+        this.t6 = degreeOfQuantifierImprecision();
+        this.t7 = degreeOfQuantifierCardinality();
+        this.t8 = degreeOfSummarizerImprecision();
+        this.t9 = degreeOfQualifierImprecision();
+        this.t10 = degreeOfQualifierCardinality();
+        System.out.println(t1);
+        System.out.println(t2);
+        System.out.println(t3);
+        System.out.println(t4);
+        System.out.println(t5);
+        System.out.println(t6);
+        System.out.println(t7);
+        System.out.println(t8);
+        System.out.println(t9);
+        System.out.println(t10);
+        System.out.println(t11);
+        System.out.println(optimalSummary(List.of(0.2, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08),
+                List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
 
-    public String qualifiedSummarization() {
-        double truth = degreeOfTruthWithQualifier();
-        return quantifier.getName() + " measurements które są " + qualifier.getName() + " ma " +
-                summarizers.getFirst().getName() + " temperaturę " + " [" +
-                truth + "] ";
     }
 
     public double degreeOfTruth() {
-        if (summarizers.size() == 1) {
-            if (!quantifier.isRelative()) {
-                return quantifier.getFuzzySet().membership(summarizers.getFirst().getFuzzySet()
-                        .cardinality(summarizers.getFirst().getData()));
-            } else {
-                return quantifier.getFuzzySet().membership(summarizers.getFirst().getFuzzySet()
-                        .fuzzyCardinality(summarizers.getFirst().getData()) / summarizers.getFirst().getData().size());
-            }
+        if (qualifier != null) {
+            return this.degreeOfTruthWithQualifier();
         } else {
-            if (quantifier.isRelative()) {
-                double sum = 0.0;
-                for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
-                    double minValue = Double.MAX_VALUE;
-                    for (LinguisticTerm summarizer : summarizers) {
-                        minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
-                    }
-                    sum += minValue;
+            if (summarizers.size() == 1) {
+                if (!quantifier.isRelative()) {
+                    return quantifier.getFuzzySet().membership(summarizers.getFirst().getFuzzySet()
+                            .cardinality(summarizers.getFirst().getData()));
+                } else {
+                    return quantifier.getFuzzySet().membership(summarizers.getFirst().getFuzzySet()
+                            .fuzzyCardinality(summarizers.getFirst().getData()) / summarizers.getFirst().getData().size());
                 }
-                double average = sum / summarizers.getFirst().getData().size();
-                return quantifier.getFuzzySet().membership(average);
             } else {
-                double sum = 0.0;
-                double size = summarizers.size();
-                for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
-                    double temp = 0.0;
-                    for (LinguisticTerm summarizer : summarizers) {
-                        temp += summarizer.getFuzzySet().membership(summarizer.getData().get(i));
+                if (quantifier.isRelative()) {
+                    double sum = 0.0;
+                    for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
+                        double minValue = Double.MAX_VALUE;
+                        for (LinguisticTerm summarizer : summarizers) {
+                            minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
+                        }
+                        sum += minValue;
                     }
-                    if (temp == size) {
-                        sum += 1.0;
+                    double average = sum / summarizers.getFirst().getData().size();
+                    return quantifier.getFuzzySet().membership(average);
+                } else {
+                    double sum = 0.0;
+                    double size = summarizers.size();
+                    for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
+                        double temp = 0.0;
+                        for (LinguisticTerm summarizer : summarizers) {
+                            temp += summarizer.getFuzzySet().membership(summarizer.getData().get(i));
+                        }
+                        if (temp == size) {
+                            sum += 1.0;
+                        }
                     }
+                    return sum;
                 }
-                return sum;
             }
         }
     }
@@ -92,7 +117,7 @@ public class Summary {
             double sum = 0.0;
 
             for (int i = 0; i < dataQ.size(); i++) {
-                double minValue = qualifier.getFuzzySet().membership(dataQ.get(i));;
+                double minValue = qualifier.getFuzzySet().membership(dataQ.get(i));
                 for (LinguisticTerm summarizer : summarizers) {
                     minValue = Math.min(minValue, summarizer.getFuzzySet().membership(minValue));
                 }
@@ -182,7 +207,7 @@ public class Summary {
 
     //TODO TEGO TO JA NIE JESTEM PEWIEN
     public double degreeOfQuantifierImprecision() {
-        double result = 0.0;
+        double result;
         if (quantifier.isRelative()) {
             result = quantifier.getRightLimit() - quantifier.getLeftLimit();
         } else {
@@ -191,7 +216,6 @@ public class Summary {
 
         return 1.0 - result;
     }
-    //WGL MY MAMY SAME GAUSSOIDY W KWANTYFIKATORACH TO TA MIARA WYZEJ I NIZEJ NIE MAJA SENSU
     //TODO NIE WIEM CZY TEGO NIE TRZEBA LICZYC JAKO POLE POD WYKRESEM
     public double degreeOfQuantifierCardinality() {
         if (quantifier.isRelative()) {
@@ -243,6 +267,15 @@ public class Summary {
             return 0.0;
         }
         return 1.0 - (qualifier.getFuzzySet().fuzzyCardinality(qualifier.getData()) / qualifier.getData().size());
+    }
+
+    public double T11() {
+        if (qualifier != null) {
+            return 2.0 * Math.pow(0.5, 1.0);
+        } else {
+            return 0.0;
+        }
+
     }
 
     public double optimalSummary(List<Double> weights, List<Double> measurements) {

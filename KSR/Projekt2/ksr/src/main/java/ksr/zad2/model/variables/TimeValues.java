@@ -8,7 +8,7 @@ public class TimeValues {
     public static LinguisticVariable timeVariable = new LinguisticVariable("Pora dnia", 0.0, 24.0);
 
     public static LinguisticTerm nocna = new LinguisticTerm(
-            "nocna", new TrapezoidalFunction(-1, 0, 4, 7)
+            "nocna", new TrapezoidalFunction(21, 24, 0, 4, 7)
     );
 
     public static LinguisticTerm poranna = new LinguisticTerm(

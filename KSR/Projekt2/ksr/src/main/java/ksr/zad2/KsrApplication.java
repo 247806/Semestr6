@@ -1,14 +1,8 @@
 package ksr.zad2;
 
 import ksr.zad2.fuzzy.*;
-import ksr.zad2.fuzzy.GaussianFunction;
-import ksr.zad2.fuzzy.TrapezoidalFunction;
-import ksr.zad2.fuzzy.TriangularFunction;
 import ksr.zad2.model.Measurements;
-import ksr.zad2.model.variables.HumidityValues;
-import ksr.zad2.model.variables.QuantifierValues;
-import ksr.zad2.model.variables.TempValues;
-import ksr.zad2.model.variables.TimeValues;
+import ksr.zad2.model.variables.*;
 import ksr.zad2.repository.MeasurementsRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,8 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 public class KsrApplication implements CommandLineRunner {
@@ -65,50 +59,257 @@ public class KsrApplication implements CommandLineRunner {
 			hours.add((double) date.getHour() + date.getMinute() / 60.0);
 		}
 
-		LinguisticVariable linguisticVariable = TempValues.tempVariable;
+		// Temperatura
+		LinguisticVariable tempVariable = TempValues.tempVariable;
+		tempVariable.addTerm(TempValues.bardzoZimna.getName(), TempValues.bardzoZimna.getFuzzySet());
+		tempVariable.addTerm(TempValues.zimna.getName(), TempValues.zimna.getFuzzySet());
+		tempVariable.addTerm(TempValues.umiarkowana.getName(), TempValues.umiarkowana.getFuzzySet());
+		tempVariable.addTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+		tempVariable.addTerm(TempValues.goraca.getName(), TempValues.goraca.getFuzzySet());
+		List<LinguisticTerm> temperaturesTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : tempVariable.getTerms().entrySet()) {
+			// Create LinguisticTerm for each temperature term
+			// Set the data for the temperature term
+			LinguisticTerm temperatureTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			temperatureTerm.setData(temperatures);
+			temperaturesTerms.add(temperatureTerm);
+		}
 
-		linguisticVariable.addTerm(TempValues.bardzoZimna.getName(), TempValues.bardzoZimna.getFuzzySet());
-		linguisticVariable.addTerm(TempValues.zimna.getName(), TempValues.zimna.getFuzzySet());
-		linguisticVariable.addTerm(TempValues.umiarkowana.getName(), TempValues.umiarkowana.getFuzzySet());
-		linguisticVariable.addTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
-		linguisticVariable.addTerm(TempValues.goraca.getName(), TempValues.goraca.getFuzzySet());
 
-		LinguisticVariable linguisticVariable3 = QuantifierValues.linguisticVariableQ;
+		// Kwalifikatory
+		LinguisticVariable quatifiers = QuantifierValues.linguisticVariableQ;
+		quatifiers.addTerm(QuantifierValues.Q1.getName(), QuantifierValues.Q1.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q2.getName(), QuantifierValues.Q2.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q3.getName(), QuantifierValues.Q3.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q4.getName(), QuantifierValues.Q4.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q5.getName(), QuantifierValues.Q5.getFuzzySet());
+		List<Quantifier> quantifierTerms = new ArrayList<>();
+		quantifierTerms.add(QuantifierValues.Q1);
+		quantifierTerms.add(QuantifierValues.Q2);
+		quantifierTerms.add(QuantifierValues.Q3);
+		quantifierTerms.add(QuantifierValues.Q4);
+		quantifierTerms.add(QuantifierValues.Q5);
 
-		linguisticVariable3.addTerm(QuantifierValues.Q1.getName(), QuantifierValues.Q1.getFuzzySet());
-		linguisticVariable3.addTerm(QuantifierValues.Q2.getName(), QuantifierValues.Q2.getFuzzySet());
-		linguisticVariable3.addTerm(QuantifierValues.Q3.getName(), QuantifierValues.Q3.getFuzzySet());
-		linguisticVariable3.addTerm(QuantifierValues.Q4.getName(), QuantifierValues.Q4.getFuzzySet());
-		linguisticVariable3.addTerm(QuantifierValues.Q5.getName(), QuantifierValues.Q5.getFuzzySet());
+		// Wilgotność
+		LinguisticVariable humidity = HumidityValues.humidityVariable;
+		humidity.addTerm(HumidityValues.suche.getName(), HumidityValues.suche.getFuzzySet());
+		humidity.addTerm(HumidityValues.umiarkowane.getName(), HumidityValues.umiarkowane.getFuzzySet());
+		humidity.addTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+		List<LinguisticTerm> humidityTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : humidity.getTerms().entrySet()) {
+			LinguisticTerm humidityTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			humidityTerm.setData(humidities);
+			humidityTerms.add(humidityTerm);
+		}
 
-		LinguisticVariable linguisticVariable2 = HumidityValues.humidityVariable;
-		linguisticVariable2.addTerm(HumidityValues.suche.getName(), HumidityValues.suche.getFuzzySet());
-		linguisticVariable2.addTerm(HumidityValues.umiarkowane.getName(), HumidityValues.umiarkowane.getFuzzySet());
-		linguisticVariable2.addTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+		// Czas
+		LinguisticVariable timeVariable = TimeValues.timeVariable;
+		timeVariable.addTerm(TimeValues.nocna.getName(), TimeValues.nocna.getFuzzySet());
+		timeVariable.addTerm(TimeValues.poranna.getName(), TimeValues.poranna.getFuzzySet());
+		timeVariable.addTerm(TimeValues.poludniowa.getName(), TimeValues.poludniowa.getFuzzySet());
+		timeVariable.addTerm(TimeValues.popoludniowa.getName(), TimeValues.popoludniowa.getFuzzySet());
+		timeVariable.addTerm(TimeValues.wieczorna.getName(), TimeValues.wieczorna.getFuzzySet());
+		List<LinguisticTerm> timeTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : timeVariable.getTerms().entrySet()) {
+			LinguisticTerm timeTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			timeTerm.setData(hours);
+			timeTerms.add(timeTerm);
+		}
 
-		LinguisticVariable linguisticVariable4 = TimeValues.timeVariable;
-		linguisticVariable4.addTerm(TimeValues.nocna.getName(), TimeValues.nocna.getFuzzySet());
-		linguisticVariable4.addTerm(TimeValues.poranna.getName(), TimeValues.poranna.getFuzzySet());
-		linguisticVariable4.addTerm(TimeValues.poludniowa.getName(), TimeValues.poludniowa.getFuzzySet());
-		linguisticVariable4.addTerm(TimeValues.popoludniowa.getName(), TimeValues.popoludniowa.getFuzzySet());
-		linguisticVariable4.addTerm(TimeValues.wieczorna.getName(), TimeValues.wieczorna.getFuzzySet());
 
-		Quantifier quantifier = QuantifierValues.Q2;
-		LinguisticTerm summarizer1 = TempValues.goraca;
-		summarizer1.setData(temperatures);
+		// Wiatr
+		LinguisticVariable windVariable = WindValues.windVariable;
+		windVariable.addTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
+		windVariable.addTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
+		windVariable.addTerm(WindValues.silny.getName(), WindValues.silny.getFuzzySet());
+		windVariable.addTerm(WindValues.bardzoSilny.getName(), WindValues.bardzoSilny.getFuzzySet());
+		windVariable.addTerm(WindValues.gwaltowny.getName(), WindValues.gwaltowny.getFuzzySet());
+		List<LinguisticTerm> windTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : windVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each wind term
+			LinguisticTerm windTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			// Set the data for the wind term
+			windTerm.setData(wind);
+			windTerms.add(windTerm);
+		}
 
-		LinguisticTerm summarizer2 =HumidityValues.wilgotne;
-		summarizer2.setData(humidities);
-		LinguisticTerm qualifier = TimeValues.wieczorna;
-		qualifier.setData(hours);
 
-		Summary summary = new Summary(quantifier, List.of(summarizer1));
-		System.out.println(summary.summarization());
+		// Cisnienie
+		LinguisticVariable pressureVariable = PressureValues.pressureVariable;
+		pressureVariable.addTerm(PressureValues.niskie.getName(), PressureValues.niskie.getFuzzySet());
+		pressureVariable.addTerm(PressureValues.normalne.getName(), PressureValues.normalne.getFuzzySet());
+		pressureVariable.addTerm(PressureValues.wysokie.getName(), PressureValues.wysokie.getFuzzySet());
+		List<LinguisticTerm> pressureTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : pressureVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each pressure term
+			// Set the data for the pressure term
+			LinguisticTerm pressureTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			pressureTerm.setData(pressure);
+			pressureTerms.add(pressureTerm);
+		}
 
-		Summary summary2 = new Summary(quantifier, List.of(summarizer1, summarizer2));
-		System.out.println(summary2.summarization());
 
-		Summary summary3 = new Summary(quantifier, List.of(summarizer1), qualifier);
-		System.out.println(summary3.qualifiedSummarization());
+		// Widoczność
+		LinguisticVariable visibilityVariable = VisibilityValues.visibilityVariable;
+		visibilityVariable.addTerm(VisibilityValues.slaba.getName(), VisibilityValues.slaba.getFuzzySet());
+		visibilityVariable.addTerm(VisibilityValues.umiarkowana.getName(), VisibilityValues.umiarkowana.getFuzzySet());
+		visibilityVariable.addTerm(VisibilityValues.dobra.getName(), VisibilityValues.dobra.getFuzzySet());
+		visibilityVariable.addTerm(VisibilityValues.bardzoDobra.getName(), VisibilityValues.bardzoDobra.getFuzzySet());
+		List<LinguisticTerm> visibilityTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : visibilityVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each visibility term
+			LinguisticTerm visibilityTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			// Set the data for the visibility term
+			visibilityTerm.setData(visibility);
+			visibilityTerms.add(visibilityTerm);
+		}
+
+
+		// Indeks UV
+		LinguisticVariable uvVariable = UvValues.uvIndexVariable;
+		uvVariable.addTerm(UvValues.niskie.getName(), UvValues.niskie.getFuzzySet());
+		uvVariable.addTerm(UvValues.umiarkowane.getName(), UvValues.umiarkowane.getFuzzySet());
+		uvVariable.addTerm(UvValues.wysokie.getName(), UvValues.wysokie.getFuzzySet());
+		uvVariable.addTerm(UvValues.bardzoWysokie.getName(), UvValues.bardzoWysokie.getFuzzySet());
+		uvVariable.addTerm(UvValues.ekstremalne.getName(), UvValues.ekstremalne.getFuzzySet());
+		List<LinguisticTerm> uvTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : uvVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each UV term
+			// Set the data for the UV term
+			LinguisticTerm uvTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			uvTerm.setData(uv);
+			uvTerms.add(uvTerm);
+		}
+
+
+		// Jakość powietrza CO2
+		LinguisticVariable carbonVariable = CoValues.coQualityVariable;
+		carbonVariable.addTerm(CoValues.normalne.getName(), CoValues.normalne.getFuzzySet());
+		carbonVariable.addTerm(CoValues.wysokie.getName(), CoValues.wysokie.getFuzzySet());
+		carbonVariable.addTerm(CoValues.niezdrowe.getName(), CoValues.niezdrowe.getFuzzySet());
+		carbonVariable.addTerm(CoValues.niebezpieczne.getName(), CoValues.niebezpieczne.getFuzzySet());
+		List<LinguisticTerm> carbonTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : carbonVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each carbon term
+			// Set the data for the carbon term
+			LinguisticTerm carbonTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			carbonTerm.setData(carbon);
+			carbonTerms.add(carbonTerm);
+		}
+
+
+		// Jakość powietrza NO2
+		LinguisticVariable nitrogenVariable = NoValues.no2QualityVariable;
+		nitrogenVariable.addTerm(NoValues.normalne.getName(), NoValues.normalne.getFuzzySet());
+		nitrogenVariable.addTerm(NoValues.niezdrowe.getName(), NoValues.niezdrowe.getFuzzySet());
+		nitrogenVariable.addTerm(NoValues.niebezpieczne.getName(), NoValues.niebezpieczne.getFuzzySet());
+		List<LinguisticTerm> nitrogenTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : nitrogenVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each nitrogen term
+			// Set the data for the nitrogen term
+			LinguisticTerm nitrogenTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			nitrogenTerm.setData(nitrogen);
+			nitrogenTerms.add(nitrogenTerm);
+		}
+
+
+		// Jakość powietrza
+		LinguisticVariable qualityVariable = AirValues.airQuality;
+		qualityVariable.addTerm(AirValues.bardzoDobra.getName(), AirValues.bardzoDobra.getFuzzySet());
+		qualityVariable.addTerm(AirValues.dobra.getName(), AirValues.dobra.getFuzzySet());
+		qualityVariable.addTerm(AirValues.umiarkowana.getName(), AirValues.umiarkowana.getFuzzySet());
+		qualityVariable.addTerm(AirValues.zla.getName(), AirValues.zla.getFuzzySet());
+		qualityVariable.addTerm(AirValues.bardzoZla.getName(), AirValues.bardzoZla.getFuzzySet());
+		List<LinguisticTerm> airTerms = new ArrayList<>();
+		for (Map.Entry<String, FuzzySet> entry : qualityVariable.getTerms().entrySet()) {
+			// Create a LinguisticTerm for each air quality term
+			// Set the data for the air quality term
+			LinguisticTerm airTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+			airTerm.setData(quality);
+			airTerms.add(airTerm);
+		}
+
+
+		for (Quantifier quantifier : quantifierTerms) {
+			System.out.println(quantifier.getName());
+			System.out.println("--------------------------------------------------");
+			System.out.println("TEMPERATURES:");
+			for (LinguisticTerm temperatureTerm : temperaturesTerms) {
+				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
+				System.out.println(summary.summarization());
+			}
+
+//			System.out.println("HUMIDITIES:");
+//			for (LinguisticTerm humidityTerm : humidityTerms) {
+//				Summary summary = new Summary(quantifier, List.of(humidityTerm));
+//				System.out.println(summary.summarization());
+//			}
+
+//			System.out.println("TIMES:");
+//			for (LinguisticTerm timeTerm : timeTerms) {
+//				Summary summary = new Summary(quantifier, List.of(timeTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("WINDS:");
+//			for (LinguisticTerm windTerm : windTerms) {
+//				Summary summary = new Summary(quantifier, List.of(windTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("PRESSURES:");
+//			for (LinguisticTerm pressureTerm : pressureTerms) {
+//				Summary summary = new Summary(quantifier, List.of(pressureTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("VISIBILITIES:");
+//			for (LinguisticTerm visibilityTerm : visibilityTerms) {
+//				Summary summary = new Summary(quantifier, List.of(visibilityTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("UVS:");
+//			for (LinguisticTerm uvTerm : uvTerms) {
+//				Summary summary = new Summary(quantifier, List.of(uvTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("CARBONS:");
+//			for (LinguisticTerm carbonTerm : carbonTerms) {
+//				Summary summary = new Summary(quantifier, List.of(carbonTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("NITROGENS:");
+//			for (LinguisticTerm nitrogenTerm : nitrogenTerms) {
+//				Summary summary = new Summary(quantifier, List.of(nitrogenTerm));
+//				System.out.println(summary.summarization());
+//			}
+//			System.out.println("QUALITIES:");
+//			for (LinguisticTerm airTerm : airTerms) {
+//				Summary summary = new Summary(quantifier, List.of(airTerm));
+//				System.out.println(summary.summarization());
+//			}
+			System.out.println("--------------------------------------------------");
+		}
+
+//		Quantifier quantifier1 = QuantifierValues.Q1;
+//		Quantifier quantifier2 = QuantifierValues.Q2;
+//		Quantifier quantifier3 = QuantifierValues.Q3;
+//		Quantifier quantifier4 = QuantifierValues.Q4;
+//		Quantifier quantifier5 = QuantifierValues.Q5;
+//
+//
+//		LinguisticTerm summarizer1 = TempValues.goraca;
+//		summarizer1.setData(temperatures);
+//
+//		LinguisticTerm summarizer2 =HumidityValues.wilgotne;
+//		summarizer2.setData(humidities);
+//		LinguisticTerm qualifier = TimeValues.wieczorna;
+//		qualifier.setData(hours);
+//
+//		Summary summary = new Summary(quantifier2, List.of(summarizer1));
+//		System.out.println(summary.summarization());
+//
+//		Summary summary2 = new Summary(quantifier2, List.of(summarizer1, summarizer2));
+//		System.out.println(summary2.summarization());
+//
+//		Summary summary3 = new Summary(quantifier2, List.of(summarizer1), qualifier);
+//		System.out.println(summary3.summarization());
 	}
 }
