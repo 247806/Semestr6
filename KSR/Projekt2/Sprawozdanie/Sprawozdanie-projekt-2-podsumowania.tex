@@ -29,19 +29,19 @@ jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zada
 \section{Baza danych, zmienne lingwistyczne, kwantyfikatory lingwistyczne}
 
 \subsection{Charakterystyka podsumowywanej bazy danych}
-W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 71331 rekordów. 
+W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 70292 rekordów. 
 
 Zmiennym lingwistycznym przypisuje się znaczenie ze względu na potrzebę lepszej interpretowalności danych przez użytkowników. Ludzie rzadko reagują na dokładne wartości (np. 1033.8 mb ciśnienia), natomiast określenie „wysokie ciśnienie” pozwala im intuicyjnie rozumieć sytuację pogodową. Stąd istnieje zapotrzebowanie na „przekładanie” danych formalnych na język naturalny. \\
 Podmiotem podsumowań jest pomiar atmosferyczny, z bazy World Weather Repository wybrano 10 atrybutów, które zostaną rozmyte, są to następujące kolumny:
 \begin{enumerate}
     \item last\_updated - data przeprowadzenia pomiarów, z tego atrybutu zostanie wykorzystana godzina w celu określenia pory dnia, zakres [0 - 24]. 
     \item temperature\_celsius - temperatura wyrażona w stopniach Celsjusza w zakresie [-25, 50].
-    \item wind\_kph - prędkość wiatru wyrażona w kilometrach na godzinę w zakresie [3, 151]. 
-    \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [947 - 1050]. 
+    \item wind\_kph - prędkość wiatru wyrażona w kilometrach na godzinę w zakresie [3, 92]. 
+    \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [947 - 1052]. 
     \item humidity - wilgotność w zakresie [2 - 100\%].
     \item visibility\_km - widoczność wyrażona w kilometrach w zakresie [0, 32].
     \item uv\_index - wartość promieniowania słonecznego UVI w zakresie [0, 16].
-    \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla, wyrażony w ppm(liczba cząstek CO2 w milionie cząstek powietrza), w zakresie [0 - 2220].
+    \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla, wyrażony w ppm(liczba cząstek CO2 w milionie cząstek powietrza), w zakresie [0 - 3000].
     \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu, wyrażony w ppm(liczba cząstek NO2 w milionie cząstek powietrza) w zakresie [0 - 428].
     \item air\_quality\_gb-defra-index - skala określająca poziomy zanieczyszczenia w powietrzu w zakresie [1 - 10].
 
@@ -177,7 +177,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             L_3 = \langle \mathcal{L}_3, H_3, \mathcal{X}_3 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_3$ – wiatr, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny, gwałtowny, huragan\}, $\mathcal{X}_3 = [3, 151]$. \\
+        gdzie: $\mathcal{L}_3$ – wiatr, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny, gwałtowny\}, $\mathcal{X}_3 = [3, 151]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
                   \begin{equation}
                     \mu_{\text{słaby}}(x) =
@@ -218,15 +218,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                     \mu_{\text{gwałtowny}}(x) =
                     \begin{cases}
                     \frac{x - 60}{20}, & x \in (60, 80) \\
-                    1, & x = 80 \\
-                    0, & \text{w przeciwnym razie}
-                    \end{cases}
-              \end{equation}
-                 \begin{equation}
-                    \mu_{\text{huragan}}(x) =
-                    \begin{cases}
-                    \frac{x - 80}{20}, & x \in (80, 100) \\
-                    1, & x \in (100, 151) \\
+                    1, & x \in [80, 92] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
@@ -264,7 +256,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \mu_{\text{wysokie}}(x) =
                     \begin{cases}
                     \frac{x - 1020}{20}, & x \in (1020, 1040] \\
-                    1, & x \in (1040, 1050] \\
+                    1, & x \in (1040, 1052] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -439,7 +431,17 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
     \mu_{\text{normalne}}(x) =
     \begin{cases}
     1, & x \in [0, 200] \\
-    \frac{400 - x}{200}, & x \in (200, 400] \\
+    \frac{500 - x}{300}, & x \in (200, 500) \\
+    0, & \text{w przeciwnym razie}
+    \end{cases}
+    \end{equation}
+
+    \begin{equation}
+    \mu_{\text{wysokie}}(x) =
+    \begin{cases}
+    \frac{x - 200}{300}, & x \in (200, 500) \\
+    1, & x \in [500, 800] \\
+    \frac{900 - x}{300}, & x \in (800, 1100) \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -447,9 +449,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
     \begin{equation}
     \mu_{\text{niezdrowe}}(x) =
     \begin{cases}
-    \frac{x - 200}{200}, & x \in (200, 400] \\
-    1, & x \in (400, 800] \\
-    \frac{1000 - x}{200}, & x \in (800, 1000) \\
+    \frac{x - 800}{300}, & x \in (800, 1100) \\
+    1, & x \in [1100, 1700] \\
+    \frac{2000 - x}{300}, & x \in (1700, 2000) \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -457,8 +459,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
     \begin{equation}
     \mu_{\text{niebezpieczne}}(x) =
     \begin{cases}
-    \frac{x - 800}{200}, & x \in (800, 1000] \\
-    1, & x > \ in (1000, 2220] \\
+    \frac{x - 1700}{300}, & x \in (1700, 2000) \\
+    1, & x \in [2000, 3000] \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}

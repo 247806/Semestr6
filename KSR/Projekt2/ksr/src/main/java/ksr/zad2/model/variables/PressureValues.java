@@ -5,7 +5,7 @@ import ksr.zad2.fuzzy.LinguisticVariable;
 import ksr.zad2.fuzzy.TrapezoidalFunction;
 
 public class PressureValues {
-    public static LinguisticVariable pressureVariable = new LinguisticVariable("Ciśnienie", 947.0, 1050.0);
+    public static LinguisticVariable pressureVariable = new LinguisticVariable("Ciśnienie", 947.0, 1052.0);
 
     public static LinguisticTerm niskie = new LinguisticTerm(
             "niskie", new TrapezoidalFunction(947, 947, 970, 1000)
@@ -16,6 +16,6 @@ public class PressureValues {
     );
 
     public static LinguisticTerm wysokie = new LinguisticTerm(
-            "wysokie", new TrapezoidalFunction(1020, 1040, 1050, 1050)
+            "wysokie", new TrapezoidalFunction(1020, 1040, 1050, 1052)
     );
 }

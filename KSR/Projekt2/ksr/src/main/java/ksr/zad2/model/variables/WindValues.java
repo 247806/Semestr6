@@ -6,7 +6,7 @@ import ksr.zad2.fuzzy.TrapezoidalFunction;
 import ksr.zad2.fuzzy.TriangularFunction;
 
 public class WindValues {
-    public static LinguisticVariable windVariable = new LinguisticVariable("Wiatr", 3.0, 151.0);
+    public static LinguisticVariable windVariable = new LinguisticVariable("Wiatr", 3.0, 92);
 
     public static LinguisticTerm slaby = new LinguisticTerm(
             "słaby", new TriangularFunction(0, 0, 20)
@@ -25,10 +25,7 @@ public class WindValues {
     );
 
     public static LinguisticTerm gwaltowny = new LinguisticTerm(
-            "gwałtowny", new TriangularFunction(60, 80, 100)  // trójkąt z prawej ramki ściętej
+            "gwałtowny", new TrapezoidalFunction(60, 80, 92, 92)  // trójkąt z prawej ramki ściętej
     );
 
-    public static LinguisticTerm huragan = new LinguisticTerm(
-            "huragan", new TrapezoidalFunction(80, 100, 151, 151)
-    );
 }
