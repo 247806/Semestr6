@@ -9,10 +9,7 @@ public class Quantifier {
     private String name;
     private FuzzySet fuzzySet;
     private boolean isRelative;
+    private double leftLimit;
+    private double rightLimit;
 
-    public Quantifier(String name, FuzzySet fuzzySet, boolean isRelative) {
-        this.name = name;
-        this.fuzzySet = fuzzySet;
-        this.isRelative = isRelative;
-    }
 }

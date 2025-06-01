@@ -13,6 +13,6 @@ public class TempValues {
     public static LinguisticTerm zimna = new LinguisticTerm("zimna", new TrapezoidalFunction(-15, -5, 0, 10));
     public static LinguisticTerm umiarkowana = new LinguisticTerm("umiarkowana", new TrapezoidalFunction(0, 10, 15, 25));
     public static LinguisticTerm ciepla = new LinguisticTerm("ciepła", new TrapezoidalFunction(15, 25, 30, 40));
-    public static LinguisticTerm goraca = new LinguisticTerm("gorąca", new TrapezoidalFunction(30, 40, 50, 51));
+    public static LinguisticTerm goraca = new LinguisticTerm("gorąca", new TrapezoidalFunction(30, 40, 50, 50));
 
 }

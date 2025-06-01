@@ -2,6 +2,7 @@ package ksr.zad2.model.variables;
 
 import ksr.zad2.fuzzy.LinguisticTerm;
 import ksr.zad2.fuzzy.LinguisticVariable;
+import ksr.zad2.fuzzy.TrapezoidalFunction;
 import ksr.zad2.fuzzy.TriangularFunction;
 
 public class WindValues {
@@ -24,10 +25,10 @@ public class WindValues {
     );
 
     public static LinguisticTerm gwaltowny = new LinguisticTerm(
-            "gwałtowny", new TriangularFunction(60, 80, 80)  // trójkąt z prawej ramki ściętej
+            "gwałtowny", new TriangularFunction(60, 80, 100)  // trójkąt z prawej ramki ściętej
     );
 
     public static LinguisticTerm huragan = new LinguisticTerm(
-            "huragan", new TriangularFunction(80, 115, 151)
+            "huragan", new TrapezoidalFunction(80, 100, 151, 151)
     );
 }

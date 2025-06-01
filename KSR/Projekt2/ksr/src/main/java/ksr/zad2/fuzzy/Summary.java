@@ -4,11 +4,13 @@ import lombok.Data;
 
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 @Data
 public class Summary {
     private Quantifier quantifier;
     private List<LinguisticTerm> summarizers;
+    //TODO A MOZE BYC LISTA KWALIFIKATORÓW?
     private LinguisticTerm qualifier;
 
     public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
@@ -83,23 +85,27 @@ public class Summary {
         }
     }
 
-
-    //TODO ZROBIC Z WIELOMA SUMARYZATORAMI JESZCZE
     public double degreeOfTruthWithQualifier() {
-        List<Double> dataQ = qualifier.getData();
-        List<Double> dataS = summarizers.getFirst().getData();
+        if (qualifier != null && quantifier.isRelative()) {
+            List<Double> dataQ = qualifier.getData();
 
-        double sum = 0.0;
+            double sum = 0.0;
 
-        for (int i = 0; i < dataQ.size(); i++) {
-            double muQ = qualifier.getFuzzySet().membership(dataQ.get(i));
-            double muS = summarizers.getFirst().getFuzzySet().membership(dataS.get(i));
-            sum += Math.min(muQ, muS);
+            for (int i = 0; i < dataQ.size(); i++) {
+                double minValue = qualifier.getFuzzySet().membership(dataQ.get(i));;
+                for (LinguisticTerm summarizer : summarizers) {
+                    minValue = Math.min(minValue, summarizer.getFuzzySet().membership(minValue));
+                }
+                sum += minValue;
+            }
+
+            if (sum == 0.0) return 0.0;
+
+            return quantifier.getFuzzySet().membership(sum / qualifier.getFuzzySet().cardinality(dataQ));
+        } else {
+            return 0.0;
         }
 
-        if (sum == 0.0) return 0.0;
-
-        return quantifier.getFuzzySet().membership(sum / qualifier.getFuzzySet().cardinality(dataS));
     }
 
     public double degreeOfImprecision() {
@@ -107,26 +113,50 @@ public class Summary {
         for (LinguisticTerm value : summarizers) {
             sum *= value.getFuzzySet().degreeOfFuzziness(value.getData());
         }
-        return 1 - (Math.pow(sum, 1.0 / summarizers.size()));
+        return 1 - (Math.pow(sum, 1.0 / (double) summarizers.size()));
     }
 
-    //TODO ZROBIC Z WIELOMA SUMARYZATORAMI JESZCZE
     public double degreeOfCovering() {
         double t = 0.0;
         double h = 0.0;
         if (qualifier != null) {
             for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
-                if (summarizers.getFirst().getFuzzySet().contains(summarizers.getFirst().getData().get(i)) > 0.0 &&
-                        qualifier.getFuzzySet().contains(qualifier.getData().get(i)) > 0) {
-                    t += 1;
+                if (qualifier.getFuzzySet().membership(qualifier.getData().get(i)) <= 0.0) {
+                    continue;
+                } else {
+                    h += 1.0;
                 }
-                if (qualifier.getFuzzySet().contains(qualifier.getData().get(i)) > 0.0) {
-                    h += 1;
+
+                boolean correct = true;
+                for (LinguisticTerm summarizer : summarizers) {
+                    if (summarizer.getFuzzySet().membership(summarizer.getData().get(i)) <= 0.0) {
+                        correct = false;
+                        break;
+                    }
+                }
+                if (correct) {
+                    t += 1.0;
                 }
             }
         } else {
-            t = summarizers.getFirst().getFuzzySet().support(summarizers.getFirst().getData()).size();
+            for (int i = 0; i < summarizers.getFirst().getData().size(); i++) {
+                boolean correct = true;
+                for (LinguisticTerm summarizer : summarizers) {
+                    if (summarizer.getFuzzySet().membership(summarizer.getData().get(i)) <= 0.0) {
+                        correct = false;
+                        break;
+                    }
+                }
+                if (correct) {
+                    t += 1.0;
+                }
+            }
+
             h = summarizers.getFirst().getData().size();
+        }
+
+        if (h == 0.0) {
+            return 0.0;
         }
 
         return t / h;
@@ -138,10 +168,10 @@ public class Summary {
             double g = 0.0;
             for (Double value : summarizer.getData()) {
                 if (summarizer.getFuzzySet().membership(value) > 0.0) {
-                    g+= 1.0;
+                    g += 1.0;
                 }
             }
-            sum *= (g * summarizer.getData().size());
+            sum *= (g / summarizer.getData().size());
         }
         return Math.abs(sum - degreeOfCovering());
     }
@@ -150,33 +180,55 @@ public class Summary {
         return (2 * Math.pow(0.5, summarizers.size()));
     }
 
-    //TODO TUTAJ JEST JESZCZE JAKIEŚ S*
-    public double optimalSummary(double w1, double w2, double w3, double w4, double w5) {
-        if (w1 + w2 + w3 + w4 + w5 != 1) {
-            throw new IllegalArgumentException("Weights must sum to one.");
+    //TODO TEGO TO JA NIE JESTEM PEWIEN
+    public double degreeOfQuantifierImprecision() {
+        double result = 0.0;
+        if (quantifier.isRelative()) {
+            result = quantifier.getRightLimit() - quantifier.getLeftLimit();
+        } else {
+            result = (quantifier.getRightLimit() - quantifier.getLeftLimit()) / summarizers.getFirst().getData().size();
         }
 
-        return (w1 * degreeOfTruth() + w2 * degreeOfImprecision() + w3 * degreeOfCovering() + w4 * degreeOfAppropriateness()
-                + w5 * lengthOfSummary());
+        return 1.0 - result;
     }
-
-    //TODO KURDE TO JEST JESZCZE DO ZROBIENIA
-    public double degreeOfQuantifierImprecision() {
-        return 1.0 - quantifier.getFuzzySet().support(summarizers.getFirst().getData()).size();
-    }
-    //TODO KURDE TO JEST JESZCZE DO ZROBIENIA
+    //WGL MY MAMY SAME GAUSSOIDY W KWANTYFIKATORACH TO TA MIARA WYZEJ I NIZEJ NIE MAJA SENSU
+    //TODO NIE WIEM CZY TEGO NIE TRZEBA LICZYC JAKO POLE POD WYKRESEM
     public double degreeOfQuantifierCardinality() {
-        return 1.0;
+        if (quantifier.isRelative()) {
+            double step = 0.01;
+            double sum = 0.0;
+            for (double i = quantifier.getLeftLimit(); i <= quantifier.getRightLimit(); i += step) {
+                sum += quantifier.getFuzzySet().membership(i);
+            }
+            return 1.0 - (sum / ((quantifier.getRightLimit() - quantifier.getLeftLimit()) / step));
+        } else {
+            double sum = 0.0;
+            for (double object : summarizers.getFirst().getData()) {
+                if (quantifier.getFuzzySet().membership(object) > 0.0) {
+                    sum += 1.0;
+                }
+            }
+            return 1.0 - (sum / summarizers.getFirst().getData().size());
+        }
     }
 
+    //TODO PRZESTRZEŃ ROZWAŻAŃ W TYM WYPADKU CHYBA NIE JEST GĘSTA TO MOZNA JA OKRESLIC JAKO ILOSC ELEMENTÓW
     public double degreeOfSummarizerImprecision() {
         double sum = 1.0;
-        for (LinguisticTerm summarizer : summarizers) {
-            sum *= (summarizer.getFuzzySet().fuzzyCardinality(summarizer.getData()) / summarizer.getData().size());
+        if (quantifier.isRelative()) {
+            for (LinguisticTerm summarizer : summarizers) {
+                sum *= (summarizer.getFuzzySet().fuzzyCardinality(summarizer.getData()) / summarizer.getData().size());
+            }
+        } else {
+            for (LinguisticTerm summarizer : summarizers) {
+                sum *= ((double) summarizer.getFuzzySet().cardinality(summarizer.getData()) / summarizer.getData().size());
+            }
         }
+
         return 1 - (Math.pow(sum, 1.0 / summarizers.size()));
     }
 
+    //TODO JESZCZE JEST WZOR Z WIELOMA KWALIFIKATORAMI
     public double degreeOfQualifierImprecision() {
         if (qualifier == null) {
             return 0.0;
@@ -184,10 +236,26 @@ public class Summary {
         return 1.0 - qualifier.getFuzzySet().degreeOfFuzziness(qualifier.getData());
     }
 
+    //TODO UWAGI JAK W przypadku degreeOfSummarizerImprecision
+    //TODO JESZCZE JEST WZOR Z WIELOMA KWALIFIKATORAMI
     public double degreeOfQualifierCardinality() {
         if (qualifier == null) {
             return 0.0;
         }
         return 1.0 - (qualifier.getFuzzySet().fuzzyCardinality(qualifier.getData()) / qualifier.getData().size());
+    }
+
+    public double optimalSummary(List<Double> weights, List<Double> measurements) {
+        if (weights.stream().mapToDouble(Double::doubleValue).sum() != 1.0) {
+            throw new IllegalArgumentException("Weights must sum to 1.0");
+        }
+        double result = 0.0;
+
+        for (int i = 0; i < weights.size(); i++) {
+            result += weights.get(i) * measurements.get(i);
+        }
+
+        return result;
+
     }
 }
