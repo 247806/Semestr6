@@ -60,8 +60,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             \mu_{\text{nocna}}(x) =
             \begin{cases}
-            \frac{8 - x}{3}, & x \in (5, 8] \\
-            1, & x \in [0, 5] \\
+            \frac{7 - x}{3}, & x \in (4, 7) \\
+            1, & x \in [0, 4] \\
             \frac{x - 21}{3}, & x \in [21, 24) \\
             0, & \text{w przeciwnym razie} \\
             \end{cases}
@@ -70,9 +70,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             \mu_{\text{poranna}}(x) =
             \begin{cases}
-            \frac{x - 5}{2}, & x \in (5, 7] \\
-            1, & x \in [7, 10] \\
-            \frac{12 - x}{2}, & x \in (10, 12) \\
+            \frac{x - 4}{3}, & x \in (4, 7) \\
+            1, & x \in [7, 9] \\
+            \frac{12 - x}{3}, & x \in (9, 12) \\
             0, & \text{w przeciwnym razie} \\
             \end{cases}
         \end{equation}
@@ -80,9 +80,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             \mu_{\text{południowa}}(x) =
             \begin{cases}
-            \frac{x - 10}{1}, & x \in (10, 11] \\
-            1, & x \in [11, 13] \\
-            \frac{15 - x}{2}, & x \in (13, 15) \\
+            \frac{x - 9}{3}, & x \in (9, 12) \\
+            1, & x \in [12, 13] \\
+            \frac{16 - x}{3}, & x \in (13, 16) \\
             0, & \text{w przeciwnym razie} \\
             \end{cases}
         \end{equation}
@@ -90,9 +90,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             \mu_{\text{popołudniowa}}(x) =
             \begin{cases}
-            \frac{x - 15}{1}, & x \in (15, 16] \\
-            1, & x \in [16, 18] \\
-            \frac{20 - x}{2}, & x \in (18, 20) \\
+            \frac{x - 13}{3}, & x \in (13, 16) \\
+            1, & x \in [16, 17] \\
+            \frac{20 - x}{3}, & x \in (17, 20) \\
             0, & \text{w przeciwnym razie} \\
              \end{cases}
         \end{equation}
@@ -100,9 +100,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             \mu_{\text{wieczorna}}(x) =
             \begin{cases}
-            \frac{x - 19}{1}, & x \in (19, 20] \\
-            1, & x \in [20, 22] \\
-            \frac{24 - x}{2}, & x \in (22, 24) \\
+            \frac{x - 17}{3}, & x \in (17, 20) \\
+            1, & x \in [20, 21] \\
+            \frac{24 - x}{3}, & x \in (21, 24) \\
             0, & \text{w przeciwnym razie} \\
             \end{cases}
         \end{equation} 
@@ -123,7 +123,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                    \mu_{\text{bardzo\_zimna}}(x) =
                     \begin{cases}
                     1, & x \in [-25, -15] \\
-                    \frac{-5 - x}{10}, & x \in (-15, -5] \\
+                    \frac{-5 - x}{10}, & x \in (-15, -5) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -131,9 +131,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \begin{equation}
                    \mu_{\text{zimna}}(x) =
                     \begin{cases}
-                    \frac{x + 10}{10}, & x \in (-10, 0] \\
-                    1, & x \in (0, 5] \\
-                    \frac{10 - x}{5}, & x \in (5, 10] \\
+                    \frac{x + 10}{10}, & x \in (-15, -5) \\
+                    1, & x \in [-5, 0] \\
+                    \frac{10 - x}{10}, & x \in (0, 10) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -141,9 +141,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \begin{equation}
                     \mu_{\text{umiarkowana}}(x) =
                     \begin{cases}
-                    \frac{x - 5}{5}, & x \in (5, 10] \\
-                    1, & x \in (10, 15] \\
-                    \frac{20 - x}{5}, & x \in (15, 20] \\
+                    \frac{x}{10}, & x \in (0, 10) \\
+                    1, & x \in [10, 15] \\
+                    \frac{20 - x}{10}, & x \in (15, 25) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -151,9 +151,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \begin{equation}
                     \mu_{\text{ciepła}}(x) =
                     \begin{cases}
-                    \frac{x - 15}{5}, & x \in (15, 20] \\
-                    1, & x \in (20, 25] \\
-                    \frac{30 - x}{5}, & x \in (25, 30] \\
+                    \frac{x - 15}{10}, & x \in (15, 25) \\
+                    1, & x \in [25, 30] \\
+                    \frac{30 - x}{10}, & x \in (30, 40) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -161,8 +161,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
                 \begin{equation}
                     \mu_{\text{gorąca}}(x) =
                     \begin{cases}
-                    \frac{x - 25}{10}, & x \in (25, 35] \\
-                    1, & x \in (35, 50] \\
+                    \frac{x - 30}{10}, & x \in (30, 40] \\
+                    1, & x \in 40, 50] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                 \end{equation}
@@ -177,48 +177,56 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
             L_3 = \langle \mathcal{L}_3, H_3, \mathcal{X}_3 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_3$ – wiatr, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny, huragan\}, $\mathcal{X}_3 = [3, 151]$. \\
+        gdzie: $\mathcal{L}_3$ – wiatr, $H_3$ – \{słaby, umiarkowany, silny, bardzo silny, gwałtowny, huragan\}, $\mathcal{X}_3 = [3, 151]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
                   \begin{equation}
                     \mu_{\text{słaby}}(x) =
                     \begin{cases}
-                    1, & x = 3 \\
-                    \frac{20 - x}{17}, & x \in (3, 20] \\
+                    1, & x = 0 \\
+                    \frac{20 - x}{20}, & x \in (0, 20) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                   \end{equation}
                 \begin{equation}
                     \mu_{\text{umiarkowany}}(x) =
                     \begin{cases}
-                    \frac{x - 10}{15}, & x \in (10, 25) \\
-                    1, & x = 25 \\
-                    \frac{40 - x}{15}, & x \in (25, 40) \\
+                    \frac{x}{20}, & x \in (0, 20) \\
+                    1, & x = 20 \\
+                    \frac{40 - x}{20}, & x \in (20, 40) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
                   \end{equation}
                 \begin{equation}
                     \mu_{\text{silny}}(x) =
                     \begin{cases}
-                    \frac{x - 35}{15}, & x \in (35, 50) \\
-                    1, & x = 50 \\
-                    \frac{70 - x}{20}, & x \in (50, 70) \\
+                    \frac{x - 20}{20}, & x \in (20, 40) \\
+                    1, & x = 40 \\
+                    \frac{60 - x}{20}, & x \in (40, 60) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
                 \begin{equation}
                     \mu_{\text{bardzo\_silny}}(x) =
                     \begin{cases}
+                    \frac{x - 40}{20}, & x \in (40, 60) \\
+                    1, & x = 60 \\
+                    \frac{80 - x}{20}, & x \in (60, 80) \\
+                    0, & \text{w przeciwnym razie}
+                    \end{cases}
+              \end{equation}
+              \begin{equation}
+                    \mu_{\text{gwałtowny}}(x) =
+                    \begin{cases}
                     \frac{x - 60}{20}, & x \in (60, 80) \\
                     1, & x = 80 \\
-                    \frac{105 - x}{25}, & x \in (80, 105) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
                  \begin{equation}
                     \mu_{\text{huragan}}(x) =
                     \begin{cases}
-                    \frac{x - 90}{61}, & x \in (90, 151) \\
-                    1, & x = 151 \\
+                    \frac{x - 80}{20}, & x \in (80, 100) \\
+                    1, & x \in (100, 151) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
@@ -277,8 +285,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
         \mu_{\text{sucho}}(x) =
         \begin{cases}
-        1, & x = 0 \\
-        \frac{50 - x}{50}, & x \in (0, 50) \\
+        1, & x \in (0, 10] \\
+        \frac{50 - x}{40}, & x \in (10, 50) \\
         0, & \text{w przeciwnym razie}
         \end{cases}
         \end{equation}
@@ -286,9 +294,9 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
         \mu_{\text{umiarkowane}}(x) =
         \begin{cases}
-        \frac{x - 30}{30}, & x \in (30, 60) \\
-        1, & x = 60 \\
-        \frac{80 - x}{20}, & x \in (60, 80) \\
+        \frac{x - 10}{40}, & x \in (10, 50) \\
+        1, & x = 50 \\
+        \frac{80 - x}{30}, & x \in (50, 80) \\
         0, & \text{w przeciwnym razie}
         \end{cases}
         \end{equation}
@@ -296,8 +304,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
         \begin{equation}
         \mu_{\text{wilgotne}}(x) =
         \begin{cases}
-        \frac{x - 60}{40}, & x \in (60, 100) \\
-        1, & x = 100 \\
+        \frac{x - 50}{30}, & x \in (50, 80) \\
+        1, & x \in [80, 100] \\
         0, & \text{w przeciwnym razie}
         \end{cases}
         \end{equation}
@@ -480,8 +488,8 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
     \begin{equation}
     \mu_{\text{niezdrowe}}(x) =
     \begin{cases}
-    \frac{x - 100}{50}, & x \in (100, 150] \\
-    1, & x \in (150, 200] \\
+    \frac{x - 50}{50}, & x \in (50, 100] \\
+    1, & x \in (100, 200] \\
     \frac{250 - x}{50}, & x \in (200, 250) \\
     0, & \text{w przeciwnym razie}
     \end{cases}
@@ -578,10 +586,12 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
     \item[-] trochę
         \begin{equation}
             \mu_{\text{trochę}}(x) =
-        \begin{cases}
-       \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}3}{0,06} \right)^2 \right), &  x \in (0.15, 0.45) \\
-        0, & \text{w przeciwnym razie}
-\end{cases}
+            \begin{cases}
+            \frac{x - 0.10}{0.15}, & x \in (0.10, 0.25) \\
+            1, & x \in [0.25, 0.30] \\
+            \frac{0.45 - x}{0.15}, & x \in (0.30, 0.45)\\
+            0, & \text{w przeciwnym razie} \\
+            \end{cases}
         \end{equation}
     \item[-] około połowa
         \begin{equation}
@@ -593,10 +603,12 @@ Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami
         \end{equation}
     \item[-] wiele
         \begin{equation}
-            \mu_{\text{wiele}}(x) =
+             \mu_{\text{trochę}}(x) =
             \begin{cases}
-            \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}75}{0,06} \right)^2 \right), & x \in (0.60, 0.85) \\
-            0, & \text{w przeciwnym razie}
+            \frac{x - 0.60}{0.15}, & x \in (0.60, 0.75) \\
+            1, & x \in [0.75, 0.80] \\
+            \frac{0.95 - x}{0.15}, & x \in (0.80, 0.95)\\
+            0, & \text{w przeciwnym razie} \\
             \end{cases}
         \end{equation}
     \item[-] prawie wszystkie
