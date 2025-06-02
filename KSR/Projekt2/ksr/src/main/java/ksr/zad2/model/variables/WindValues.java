@@ -9,7 +9,7 @@ public class WindValues {
     public static LinguisticVariable windVariable = new LinguisticVariable("Wiatr", 3.0, 92);
 
     public static LinguisticTerm slaby = new LinguisticTerm(
-            "słaby", new TriangularFunction(0, 0, 20)
+            "słaby", new TriangularFunction(0, 0.01, 20)
     );
 
     public static LinguisticTerm umiarkowany = new LinguisticTerm(

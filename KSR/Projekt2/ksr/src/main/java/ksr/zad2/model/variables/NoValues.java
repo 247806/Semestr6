@@ -9,7 +9,7 @@ public class NoValues {
 
     // normalne: 1 na [0, 50], opada 50-100
     public static LinguisticTerm normalne = new LinguisticTerm(
-            "normalne", new TrapezoidalFunction(0, 0, 50, 100)
+            "normalne", new TrapezoidalFunction(0, 0.01, 50, 100)
     );
 
     // niezdrowe: rośnie 50-100, 1 na [100, 200], opada 200-250

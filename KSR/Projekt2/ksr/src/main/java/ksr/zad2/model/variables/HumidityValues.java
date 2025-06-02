@@ -9,7 +9,7 @@ public class HumidityValues {
     public static LinguisticVariable humidityVariable = new LinguisticVariable("Wilgotność powietrza", 2.0, 100.0);
 
     public static LinguisticTerm suche = new LinguisticTerm(
-            "suche", new TrapezoidalFunction(0, 0, 10, 50)
+            "suche", new TrapezoidalFunction(0, 0.01, 10, 50)
     );
 
     public static LinguisticTerm umiarkowane = new LinguisticTerm(

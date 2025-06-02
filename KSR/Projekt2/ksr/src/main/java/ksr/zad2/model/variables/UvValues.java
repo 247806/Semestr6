@@ -8,7 +8,7 @@ public class UvValues {
     public static LinguisticVariable uvIndexVariable = new LinguisticVariable("Promieniowanie UV", 0.0, 16.0);
 
     public static LinguisticTerm niskie = new LinguisticTerm(
-            "niskie", new TrapezoidalFunction(0, 0, 2, 3)
+            "niskie", new TrapezoidalFunction(0, 0.01, 2, 3)
     );
 
     public static LinguisticTerm umiarkowane = new LinguisticTerm(

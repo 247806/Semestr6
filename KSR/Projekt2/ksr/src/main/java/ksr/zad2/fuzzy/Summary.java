@@ -32,7 +32,7 @@ public class Summary {
         }
         for (int i = 0; i < summarizers.size(); i++) {
             summaryText.append(" jest/ma ").append(summarizers.get(i).getName());
-            if (i > 0) {
+            if (i != summarizers.size() - 1) {
                 summaryText.append(" i ");
             }
         }
@@ -52,6 +52,10 @@ public class Summary {
         this.t8 = degreeOfSummarizerImprecision();
         this.t9 = degreeOfQualifierImprecision();
         this.t10 = degreeOfQualifierCardinality();
+        this.t11 = T11();
+    }
+
+    public void print() {
         System.out.println(t1);
         System.out.println(t2);
         System.out.println(t3);
@@ -63,9 +67,8 @@ public class Summary {
         System.out.println(t9);
         System.out.println(t10);
         System.out.println(t11);
-        System.out.println(optimalSummary(List.of(0.2, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08),
+        System.out.println(optimalSummary(List.of(0.20, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08),
                 List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
-
     }
 
     public double degreeOfTruth() {
@@ -115,18 +118,20 @@ public class Summary {
             List<Double> dataQ = qualifier.getData();
 
             double sum = 0.0;
+            double temp = 0.0;
 
             for (int i = 0; i < dataQ.size(); i++) {
+                temp+= qualifier.getFuzzySet().membership(dataQ.get(i));
                 double minValue = qualifier.getFuzzySet().membership(dataQ.get(i));
                 for (LinguisticTerm summarizer : summarizers) {
-                    minValue = Math.min(minValue, summarizer.getFuzzySet().membership(minValue));
+                    minValue = Math.min(minValue, summarizer.getFuzzySet().membership(summarizer.getData().get(i)));
                 }
                 sum += minValue;
             }
 
-            if (sum == 0.0) return 0.0;
+            if (sum == 0.0 || temp == 0.0) return 0.0;
 
-            return quantifier.getFuzzySet().membership(sum / qualifier.getFuzzySet().cardinality(dataQ));
+            return quantifier.getFuzzySet().membership(sum / temp);
         } else {
             return 0.0;
         }
