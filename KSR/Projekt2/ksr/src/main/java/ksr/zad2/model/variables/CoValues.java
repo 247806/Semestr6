@@ -9,7 +9,7 @@ public class CoValues {
 
     // normalne: 1 na [0, 200], opada 200-400
     public static LinguisticTerm normalne = new LinguisticTerm(
-            "normalne", new TrapezoidalFunction(0, 0, 200, 500)
+            "normalne", new TrapezoidalFunction(0, 0.01, 200, 500)
     );
 
     public static LinguisticTerm wysokie = new LinguisticTerm(

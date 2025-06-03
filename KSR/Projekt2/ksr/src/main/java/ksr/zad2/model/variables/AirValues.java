@@ -8,7 +8,7 @@ public class AirValues {
     public static LinguisticVariable airQuality = new LinguisticVariable("Jakość powietrza", 1.0, 10.0);
 
     public static LinguisticTerm bardzoDobra = new LinguisticTerm(
-            "bardzo dobra", new TrapezoidalFunction(1, 1, 2, 3)
+            "bardzo dobra", new TrapezoidalFunction(1, 1.01, 2, 3)
     );
 
     public static LinguisticTerm dobra = new LinguisticTerm(

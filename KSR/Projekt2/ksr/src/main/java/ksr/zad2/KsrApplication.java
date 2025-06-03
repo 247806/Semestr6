@@ -233,10 +233,18 @@ public class KsrApplication implements CommandLineRunner {
 		for (Quantifier quantifier : quantifierTerms) {
 			System.out.println(quantifier.getName());
 			System.out.println("--------------------------------------------------");
-			System.out.println("TEMPERATURES:");
-			for (LinguisticTerm temperatureTerm : temperaturesTerms) {
-				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
-				System.out.println(summary.summarization());
+//			System.out.println("TEMPERATURES:");
+			for (LinguisticTerm temperatureTerm : carbonTerms) {
+				for (LinguisticTerm dateTerm : visibilityTerms) {
+					Summary summary = new Summary(quantifier, List.of(temperatureTerm), dateTerm);
+					System.out.println(summary.summarization());
+					if (summary.getT1() > 0.01) {
+						summary.print();
+					}
+
+				}
+//				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
+//				System.out.println(summary.summarization());
 			}
 
 //			System.out.println("HUMIDITIES:");

@@ -9,7 +9,7 @@ public class VisibilityValues {
 
 
     public static LinguisticTerm slaba = new LinguisticTerm(
-            "słaba", new TrapezoidalFunction(0, 0, 4, 8)
+            "słaba", new TrapezoidalFunction(0, 0.01, 4, 8)
     );
 
    public static LinguisticTerm umiarkowana = new LinguisticTerm(
