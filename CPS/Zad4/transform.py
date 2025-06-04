@@ -2,10 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import cmath
+import time
 from continousSignal import sinusoidal
 
 # --- DFT (IDFT jeśli podzielisz przez N) ---
 def transform(x):
+    start_timer = time.perf_counter()
     N = len(x)
     Warg = 2.0 * math.pi / N
     W = cmath.exp(1j * Warg)
@@ -17,7 +19,10 @@ def transform(x):
         for n in range(N):
             sum_ += x[n] * (W ** (-m * n))
         X.append(sum_ / N)
-    return X
+
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+    return X, timer
 
 def reverse_bits(value: int, number_of_bits: int) -> int:
     for i in range(number_of_bits // 2):
@@ -66,6 +71,7 @@ def retrieve_W_from_vector(N, k, vectorW):
         return vectorW[k - len(vectorW)] * complex(-1, 0)
 
 def transformFFT(x):
+    start_timer = time.perf_counter()
     mix_samples(x)  # zakładamy, że ta funkcja jest zaimplementowana i modyfikuje listę x inplace
     W = calculate_vector_of_W_params(len(x))  # zwraca listę wartości W
 
@@ -79,9 +85,13 @@ def transformFFT(x):
                 x[offset + m] = x[offset + m] + tmp
         N *= 2
 
-    return x
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+
+    return x, timer
 
 def dct_transform(x):
+    start_timer = time.perf_counter()
     N = len(x)
     X = [0.0] * N
 
@@ -91,13 +101,69 @@ def dct_transform(x):
             sum_val += x[n] * math.cos(math.pi * (2 * n + 1) * m / (2 * N))
         X[m] = c(m, N) * sum_val
 
-    return X
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+
+    return X, timer
 
 def c(m, N):
     if m == 0:
         return math.sqrt(1.0 / N)
     else:
         return math.sqrt(2.0 / N)
+
+def hadamard_transform(x):
+    start_timer = time.perf_counter()
+    m = round(math.log2(len(x)))
+    H = generate_hadamard_matrix(m)
+    N = len(x)
+    X = [0.0] * N
+    for i in range(N):
+        sum_val = 0.0
+        for j in range(N):
+            sum_val += x[j] * H[i * N + j]
+        X[i] = sum_val
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+    return X, timer
+
+def generate_hadamard_matrix(m):
+    size = 1
+    factor = 1.0
+    H = [1.0]
+    for _ in range(1, m + 1):
+        size *= 2
+        previous = H
+        H = [0.0] * (size * size)
+        paste_matrix(previous, size // 2, H, size, 0, 0, factor)
+        paste_matrix(previous, size // 2, H, size, 0, size // 2, factor)
+        paste_matrix(previous, size // 2, H, size, size // 2, 0, factor)
+        paste_matrix(previous, size // 2, H, size, size // 2, size // 2, -factor)
+    return H
+
+def paste_matrix(src, src_size, dst, dst_size, row, col, factor):
+    for i in range(src_size):
+        for j in range(src_size):
+            dst[(i + row) * dst_size + (j + col)] = src[i * src_size + j] * factor
+
+def haar_transform(x):
+    start_timer = time.perf_counter()
+    mix(x, 0, len(x))
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+    return x, timer
+
+def mix(x, begin, end):
+    N = end - begin
+    if N == 1:
+        return
+    for i in range(N // 2):
+        tmp = x[begin + i]
+        x[begin + i] = tmp + x[begin + N // 2 + i]
+        x[begin + N // 2 + i] = tmp - x[begin + N // 2 + i]
+    mix(x, begin, begin + N // 2)
+    mix(x, begin + N // 2, end)
+
 
 
 # --- Tryby wykresów ---
@@ -124,7 +190,6 @@ def plot_W1(X, fs):
 
     plt.tight_layout()
     plt.show()
-
 
 def plot_W2(X, fs):
     N = len(X)
@@ -171,19 +236,18 @@ def plt3 (X, fs):
 
 
 # --- Przykładowy sygnał ---
-fs = 16  # Hz, częstotliwość próbkowania
+fs = 1000  # Hz, częstotliwość próbkowania
 t = np.arange(0, 1, 1/fs)
 f0 = 50  # Hz
-time = np.arange(0, 0 + 4, 1 / fs)
-signal = sinusoidal(1, 1, time)
+times = np.arange(0, 0 + 4, 1 / fs)
+signal = sinusoidal(1, 1, times)
 x = [complex(s, 0) for s in signal]
 
 # --- Obliczenie DFT ---
-X = transformFFT(x)
-
-tmp = dct_transform(signal)
-plt3(tmp, fs)
-
+X, timer = transformFFT(x)
+#tmp, timer = haar_transform(signal)
+#plt3(tmp, fs)
+print(timer)
 
 # --- Wybór trybu prezentacji ---
 mode = "W22"  # W1 lub W2
