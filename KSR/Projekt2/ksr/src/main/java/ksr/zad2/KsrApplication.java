@@ -333,7 +333,7 @@ public class KsrApplication implements CommandLineRunner {
 		System.out.println("Africa measurements count: " + africaMeasurements.size());
 		System.out.println("America measurements count: " + americaMeasurements.size());
 
-
+		LinguisticTerm qualifier = new LinguisticTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
 		List<String> continents = List.of("Asia", "Africa", "America");
 		List<String> warmTerms = List.of("bardzo zimna", "zimna", "umiarkowana", "ciepla", "goraca");
 
@@ -343,6 +343,8 @@ public class KsrApplication implements CommandLineRunner {
 			for (String temp: warmTerms) {
 				System.out.println("Temperature: " + temp);
 				for (String continent : continents) {
+					qualifier.setData(measurementsRepository.findByContinent(continent).stream()
+							.map(Measurements::getWind_kph).toList());
 					System.out.println("Continent: " + continent);
 					LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
 					LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
@@ -352,10 +354,11 @@ public class KsrApplication implements CommandLineRunner {
 							"Europe",
 							"Asia",
 							linguisticTerm1,
-							linguisticTerm2
+							linguisticTerm2,
+							qualifier
 					);
 
-					doubleSubjectSummary.firstForm();
+					doubleSubjectSummary.secondForm();
 				}
 			}
 		}
