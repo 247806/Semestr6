@@ -337,29 +337,48 @@ public class KsrApplication implements CommandLineRunner {
 		List<String> continents = List.of("Asia", "Africa", "America");
 		List<String> warmTerms = List.of("bardzo zimna", "zimna", "umiarkowana", "ciepla", "goraca");
 
-		for (Quantifier quantifier : quantifierTerms) {
-			System.out.println("Quantifier: " + quantifier.getName());
-			System.out.println("--------------------------------------------------");
-			for (String temp: warmTerms) {
-				System.out.println("Temperature: " + temp);
-				for (String continent : continents) {
-					qualifier.setData(measurementsRepository.findByContinent(continent).stream()
-							.map(Measurements::getWind_kph).toList());
-					System.out.println("Continent: " + continent);
-					LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
-					LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
+//		for (Quantifier quantifier : quantifierTerms) {
+//			System.out.println("Quantifier: " + quantifier.getName());
+//			System.out.println("--------------------------------------------------");
+//			for (String temp: warmTerms) {
+//				System.out.println("Temperature: " + temp);
+//				for (String continent : continents) {
+//					qualifier.setData(measurementsRepository.findByContinent("Europe").stream()
+//							.map(Measurements::getWind_kph).toList());
+//					System.out.println("Continent: " + continent);
+//					LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
+//					LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
+//
+//					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//							quantifier,
+//							"Europe",
+//							"Asia",
+//							linguisticTerm1,
+//							linguisticTerm2,
+//							qualifier
+//					);
+//
+//					doubleSubjectSummary.thirdForm();
+//				}
+//			}
+//		}
 
-					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-							quantifier,
-							"Europe",
-							"Asia",
-							linguisticTerm1,
-							linguisticTerm2,
-							qualifier
-					);
+		for (String temp: warmTerms) {
+			System.out.println("Temperature: " + temp);
+			for (String continent : continents) {
+				LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
+				LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
 
-					doubleSubjectSummary.secondForm();
-				}
+				DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+						QuantifierValues.Q3,
+						"Europe",
+						continent,
+						linguisticTerm1,
+						linguisticTerm2,
+						qualifier
+				);
+
+				doubleSubjectSummary.fourthForm();
 			}
 		}
 

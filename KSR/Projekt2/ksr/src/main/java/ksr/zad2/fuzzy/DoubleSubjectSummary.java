@@ -86,6 +86,57 @@ public class DoubleSubjectSummary {
 
     }
 
+    public void thirdForm() {
+        double sum = 0.0;
+        for (int i = 0; i < subject1Summarizer.getData().size(); i++) {
+            double minValue = Double.MAX_VALUE;
+            minValue = Math.min(minValue, subject1Summarizer.getFuzzySet().membership(subject1Summarizer.getData().get(i)));
+            sum += minValue;
+        }
 
+        double numerator = sum / subject1Summarizer.getData().size();
+
+        double denominator = numerator / subject1Summarizer.getData().size() +
+                subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()) /
+                subject2Summarizer.getData().size();
+
+        double result;
+
+        if (denominator == 0) {
+            result = 0.0;
+        } else {
+            result = quantifier.getFuzzySet().membership(numerator / denominator);
+        }
+
+        StringBuilder summary = new StringBuilder();
+        summary.append(quantifier.getName()).append(" ").append(subject1).append(", które są/mają ").append(qualifier.getName())
+                .append(", w porównaniu do ").append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
+                .append(" [").append(result).append("]. ");
+
+        System.out.println(summary.toString());
+
+    }
+
+    public void fourthForm() {
+        double m = subject1Summarizer.getData().size() / (double)(subject1Summarizer.getData().size() + subject2Summarizer.getData().size());
+        System.out.println("m: " + m);
+        double a = subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()) /
+                subject2Summarizer.getData().size();
+        double b = subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()) /
+                subject1Summarizer.getData().size();;
+        System.out.println("a: " + a);
+        System.out.println("b: " + b);
+        double reichenbach = 1 - a + a * b;
+
+        double result = 1 - m * reichenbach;
+
+        StringBuilder summary = new StringBuilder();
+        summary.append("Więcej ").append(subject1).append(" niż ").append(subject2)
+                .append(" jest/ma ").append(subject1Summarizer.getName())
+                .append(" [").append(result).append("]. ");
+
+        System.out.println(summary.toString());
+
+    }
 
 }
