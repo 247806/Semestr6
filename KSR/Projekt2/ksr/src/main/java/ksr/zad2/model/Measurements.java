@@ -19,13 +19,14 @@ public class Measurements {
     private Integer id;
 
     private LocalDateTime last_updated;
-    private float temperature_celsius;
-    private float wind_kph;
-    private float pressure_mb;
+    private double temperature_celsius;
+    private double wind_kph;
+    private double pressure_mb;
     private int humidity;
-    private float visibility_km;
-    private float uv_index;
-    private float air_quality_Carbon_Monoxide;
-    private float air_quality_Nitrogen_Dioxide;
+    private double visibility_km;
+    private double uv_index;
+    private double air_quality_Carbon_Monoxide;
+    private double air_quality_Nitrogen_Dioxide;
     private int air_quality_gb_defra_index;
+    private String timezone;
 }

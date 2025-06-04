@@ -29,7 +29,12 @@ public class KsrApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Hello World!");
+//		this.singleSubjectSummary();
+		this.twoSubjectSummary();
+	}
 
+
+	public void singleSubjectSummary() {
 		List<Measurements> allMeasurements = measurementsRepository.findAll();
 		List<Double> temperatures = new ArrayList<>();
 		List<Double> humidities = new ArrayList<>();
@@ -229,23 +234,28 @@ public class KsrApplication implements CommandLineRunner {
 			airTerms.add(airTerm);
 		}
 
+		List<Measurements> measurements = measurementsRepository.findByContinent("Europe");
+//		for (int i = 0; i < 4; i++) {
+//			System.out.println(measurements.get(i).getTimezone());
+//		}
+		System.out.println("Measurements count: " + measurements.size());
 
 		for (Quantifier quantifier : quantifierTerms) {
 			System.out.println(quantifier.getName());
 			System.out.println("--------------------------------------------------");
 //			System.out.println("TEMPERATURES:");
-			for (LinguisticTerm temperatureTerm : carbonTerms) {
-				for (LinguisticTerm dateTerm : visibilityTerms) {
-					Summary summary = new Summary(quantifier, List.of(temperatureTerm), dateTerm);
-					System.out.println(summary.summarization());
-					if (summary.getT1() > 0.01) {
-						summary.print();
-					}
-
-				}
+//			for (LinguisticTerm temperatureTerm : carbonTerms) {
+//				for (LinguisticTerm dateTerm : visibilityTerms) {
+//					SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(quantifier, List.of(temperatureTerm), dateTerm);
+//					System.out.println(singleSubjectSummary.summarization());
+//					if (singleSubjectSummary.getT1() > 0.01) {
+//						singleSubjectSummary.print();
+//					}
+//
+//				}
 //				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
 //				System.out.println(summary.summarization());
-			}
+//			}
 
 //			System.out.println("HUMIDITIES:");
 //			for (LinguisticTerm humidityTerm : humidityTerms) {
@@ -295,29 +305,87 @@ public class KsrApplication implements CommandLineRunner {
 //			}
 			System.out.println("--------------------------------------------------");
 		}
+	}
 
-//		Quantifier quantifier1 = QuantifierValues.Q1;
-//		Quantifier quantifier2 = QuantifierValues.Q2;
-//		Quantifier quantifier3 = QuantifierValues.Q3;
-//		Quantifier quantifier4 = QuantifierValues.Q4;
-//		Quantifier quantifier5 = QuantifierValues.Q5;
-//
-//
-//		LinguisticTerm summarizer1 = TempValues.goraca;
-//		summarizer1.setData(temperatures);
-//
-//		LinguisticTerm summarizer2 =HumidityValues.wilgotne;
-//		summarizer2.setData(humidities);
-//		LinguisticTerm qualifier = TimeValues.wieczorna;
-//		qualifier.setData(hours);
-//
-//		Summary summary = new Summary(quantifier2, List.of(summarizer1));
-//		System.out.println(summary.summarization());
-//
-//		Summary summary2 = new Summary(quantifier2, List.of(summarizer1, summarizer2));
-//		System.out.println(summary2.summarization());
-//
-//		Summary summary3 = new Summary(quantifier2, List.of(summarizer1), qualifier);
-//		System.out.println(summary3.summarization());
+	public void twoSubjectSummary() {
+		// Kwalifikatory
+		LinguisticVariable quatifiers = QuantifierValues.linguisticVariableQ;
+		quatifiers.addTerm(QuantifierValues.Q1.getName(), QuantifierValues.Q1.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q2.getName(), QuantifierValues.Q2.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q3.getName(), QuantifierValues.Q3.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q4.getName(), QuantifierValues.Q4.getFuzzySet());
+		quatifiers.addTerm(QuantifierValues.Q5.getName(), QuantifierValues.Q5.getFuzzySet());
+		List<Quantifier> quantifierTerms = new ArrayList<>();
+		quantifierTerms.add(QuantifierValues.Q1);
+		quantifierTerms.add(QuantifierValues.Q2);
+		quantifierTerms.add(QuantifierValues.Q3);
+		quantifierTerms.add(QuantifierValues.Q4);
+		quantifierTerms.add(QuantifierValues.Q5);
+
+
+		List<Measurements> europeMeasurements = measurementsRepository.findByContinent("Europe");
+		List<Measurements> asiaMeasurements = measurementsRepository.findByContinent("Asia");
+		List<Measurements> africaMeasurements = measurementsRepository.findByContinent("Africa");
+		List<Measurements> americaMeasurements = measurementsRepository.findByContinent("America");
+
+		System.out.println("Europe measurements count: " + europeMeasurements.size());
+		System.out.println("Asia measurements count: " + asiaMeasurements.size());
+		System.out.println("Africa measurements count: " + africaMeasurements.size());
+		System.out.println("America measurements count: " + americaMeasurements.size());
+
+
+		List<String> continents = List.of("Asia", "Africa", "America");
+		List<String> warmTerms = List.of("bardzo zimna", "zimna", "umiarkowana", "ciepla", "goraca");
+
+		for (Quantifier quantifier : quantifierTerms) {
+			System.out.println("Quantifier: " + quantifier.getName());
+			System.out.println("--------------------------------------------------");
+			for (String temp: warmTerms) {
+				System.out.println("Temperature: " + temp);
+				for (String continent : continents) {
+					System.out.println("Continent: " + continent);
+					LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
+					LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
+
+					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+							quantifier,
+							"Europe",
+							"Asia",
+							linguisticTerm1,
+							linguisticTerm2
+					);
+
+					doubleSubjectSummary.firstForm();
+				}
+			}
+		}
+
+	}
+
+	public LinguisticTerm getLinguisticTermTemp(String term, String continent) {
+        LinguisticTerm linguisticTerm;
+
+		switch (term) {
+            case "bardzo zimna" -> linguisticTerm = new LinguisticTerm(TempValues.bardzoZimna.getName(), TempValues.bardzoZimna.getFuzzySet());
+            case "zimna" -> linguisticTerm = new LinguisticTerm(TempValues.zimna.getName(), TempValues.zimna.getFuzzySet());
+            case "umiarkowana" -> linguisticTerm = new LinguisticTerm(TempValues.umiarkowana.getName(), TempValues.umiarkowana.getFuzzySet());
+            case "ciepla" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+            case "goraca" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+            default -> throw new IllegalArgumentException("Unknown term: " + term);
+        }
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getTemperature_celsius).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getTemperature_celsius).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getTemperature_celsius).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getTemperature_celsius).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
 	}
 }
+

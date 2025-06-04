@@ -21,11 +21,11 @@ public class WindValues {
     );
 
     public static LinguisticTerm bardzoSilny = new LinguisticTerm(
-            "bardzo_silny", new TriangularFunction(40, 60, 80)
+            "bardzo_silny", new TriangularFunction(40, 60, 75)
     );
 
     public static LinguisticTerm gwaltowny = new LinguisticTerm(
-            "gwałtowny", new TrapezoidalFunction(60, 80, 92, 92)  // trójkąt z prawej ramki ściętej
+            "gwałtowny", new TrapezoidalFunction(60, 75, 81, 81)
     );
 
 }

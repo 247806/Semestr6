@@ -14,11 +14,11 @@ public class NoValues {
 
     // niezdrowe: rośnie 50-100, 1 na [100, 200], opada 200-250
     public static LinguisticTerm niezdrowe = new LinguisticTerm(
-            "niezdrowe", new TrapezoidalFunction(50, 100, 200, 250)
+            "niezdrowe", new TrapezoidalFunction(50, 100, 160, 210)
     );
 
     // niebezpieczne: rośnie 200-250, 1 na [250, 428]
     public static LinguisticTerm niebezpieczne = new LinguisticTerm(
-            "niebezpieczne", new TrapezoidalFunction(200, 250, 428, 428)
+            "niebezpieczne", new TrapezoidalFunction(160, 210, 261, 261)
     );
 }

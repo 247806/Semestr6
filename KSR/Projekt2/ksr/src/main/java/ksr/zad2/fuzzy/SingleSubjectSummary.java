@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Summary {
+public class SingleSubjectSummary {
     private Quantifier quantifier;
     private List<LinguisticTerm> summarizers;
     //TODO A MOZE BYC LISTA KWALIFIKATORÓW?
@@ -14,12 +14,12 @@ public class Summary {
     private double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
     private double optimal;
 
-    public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
+    public SingleSubjectSummary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
         this.quantifier = quantifier;
         this.summarizers = summarizers;
     }
 
-    public Summary(Quantifier quantifier, List<LinguisticTerm> summarizers, LinguisticTerm qualifier) {
+    public SingleSubjectSummary(Quantifier quantifier, List<LinguisticTerm> summarizers, LinguisticTerm qualifier) {
         this.quantifier = quantifier;
         this.summarizers = summarizers;
         this.qualifier = qualifier;
