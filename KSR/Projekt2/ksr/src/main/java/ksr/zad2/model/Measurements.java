@@ -22,11 +22,11 @@ public class Measurements {
     private double temperature_celsius;
     private double wind_kph;
     private double pressure_mb;
-    private int humidity;
+    private double humidity;
     private double visibility_km;
     private double uv_index;
     private double air_quality_Carbon_Monoxide;
     private double air_quality_Nitrogen_Dioxide;
-    private int air_quality_gb_defra_index;
+    private double air_quality_gb_defra_index;
     private String timezone;
 }

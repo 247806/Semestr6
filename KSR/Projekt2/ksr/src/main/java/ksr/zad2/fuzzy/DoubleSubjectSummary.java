@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class DoubleSubjectSummary {
-    private final Quantifier quantifier;
+    private Quantifier quantifier;
     private final String subject1;
     private final String subject2;
     private final LinguisticTerm subject1Summarizer;
@@ -32,6 +32,13 @@ public class DoubleSubjectSummary {
         this.qualifier = qualifier;
     }
 
+    public DoubleSubjectSummary(String subject1, String subject2, LinguisticTerm subject1Summarizer, LinguisticTerm subject2Summarizer) {
+        this.subject1 = subject1;
+        this.subject2 = subject2;
+        this.subject1Summarizer = subject1Summarizer;
+        this.subject2Summarizer = subject2Summarizer;
+    }
+
     public void firstForm() {
 
         double numerator = subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()) /
@@ -48,11 +55,13 @@ public class DoubleSubjectSummary {
             result = quantifier.getFuzzySet().membership(numerator / denominator);
         }
         StringBuilder summary = new StringBuilder();
-        summary.append(quantifier.getName()).append(" ").append(subject1).append(" w porównaniu do ")
+        summary.append(quantifier.getName()).append(" pomiarów z ").append(subject1).append(" w porównaniu do pomiarów z ")
                 .append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        System.out.println(summary.toString());
+//        if (result > 0.01) {
+            System.out.println(summary.toString());
+//        }
 
     }
 
@@ -78,11 +87,13 @@ public class DoubleSubjectSummary {
             result = quantifier.getFuzzySet().membership(numerator / denominator);
         }
         StringBuilder summary = new StringBuilder();
-        summary.append(quantifier.getName()).append(" ").append(subject1).append(" w porównaniu do ")
+        summary.append(quantifier.getName()).append(" pomiarów z ").append(subject1).append(" w porównaniu do pomiarów z ")
                 .append(subject2).append(", które są/mają ").append(qualifier.getName()).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        System.out.println(summary.toString());
+        if (result > 0.01) {
+            System.out.println(summary.toString());
+        }
 
     }
 
@@ -109,34 +120,33 @@ public class DoubleSubjectSummary {
         }
 
         StringBuilder summary = new StringBuilder();
-        summary.append(quantifier.getName()).append(" ").append(subject1).append(", które są/mają ").append(qualifier.getName())
-                .append(", w porównaniu do ").append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
+        summary.append(quantifier.getName()).append(" pomiarów z ").append(subject1).append(", które są/mają ").append(qualifier.getName())
+                .append(", w porównaniu do pomiarów z ").append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        System.out.println(summary.toString());
-
+        if (result > 0.01) {
+            System.out.println(summary.toString());
+        }
     }
 
     public void fourthForm() {
         double m = subject1Summarizer.getData().size() / (double)(subject1Summarizer.getData().size() + subject2Summarizer.getData().size());
-        System.out.println("m: " + m);
         double a = subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()) /
                 subject2Summarizer.getData().size();
         double b = subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()) /
-                subject1Summarizer.getData().size();;
-        System.out.println("a: " + a);
-        System.out.println("b: " + b);
+                subject1Summarizer.getData().size();
         double reichenbach = 1 - a + a * b;
 
         double result = 1 - m * reichenbach;
 
         StringBuilder summary = new StringBuilder();
-        summary.append("Więcej ").append(subject1).append(" niż ").append(subject2)
+        summary.append("Więcej pomiarów z ").append(subject1).append(" niż pomiarów z ").append(subject2)
                 .append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        System.out.println(summary.toString());
-
+        if (result > 0.01) {
+            System.out.println(summary.toString());
+        }
     }
 
 }

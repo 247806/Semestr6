@@ -67,7 +67,7 @@ public class SingleSubjectSummary {
         System.out.println(t9);
         System.out.println(t10);
         System.out.println(t11);
-        System.out.println(optimalSummary(List.of(0.20, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08),
+        System.out.println(optimalSummary(List.of(0.30, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.00, 0.00, 0.00),
                 List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
     }
 
@@ -210,7 +210,6 @@ public class SingleSubjectSummary {
         return (2 * Math.pow(0.5, summarizers.size()));
     }
 
-    //TODO TEGO TO JA NIE JESTEM PEWIEN
     public double degreeOfQuantifierImprecision() {
         double result;
         if (quantifier.isRelative()) {
@@ -221,7 +220,7 @@ public class SingleSubjectSummary {
 
         return 1.0 - result;
     }
-    //TODO NIE WIEM CZY TEGO NIE TRZEBA LICZYC JAKO POLE POD WYKRESEM
+
     public double degreeOfQuantifierCardinality() {
         if (quantifier.isRelative()) {
             double step = 0.01;
@@ -241,7 +240,6 @@ public class SingleSubjectSummary {
         }
     }
 
-    //TODO PRZESTRZEŃ ROZWAŻAŃ W TYM WYPADKU CHYBA NIE JEST GĘSTA TO MOZNA JA OKRESLIC JAKO ILOSC ELEMENTÓW
     public double degreeOfSummarizerImprecision() {
         double sum = 1.0;
         if (quantifier.isRelative()) {
@@ -257,7 +255,6 @@ public class SingleSubjectSummary {
         return 1 - (Math.pow(sum, 1.0 / summarizers.size()));
     }
 
-    //TODO JESZCZE JEST WZOR Z WIELOMA KWALIFIKATORAMI
     public double degreeOfQualifierImprecision() {
         if (qualifier == null) {
             return 0.0;

@@ -29,8 +29,8 @@ public class KsrApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Hello World!");
-//		this.singleSubjectSummary();
-		this.twoSubjectSummary();
+		this.singleSubjectSummary();
+//		this.twoSubjectSummary();
 	}
 
 
@@ -257,51 +257,88 @@ public class KsrApplication implements CommandLineRunner {
 //				System.out.println(summary.summarization());
 //			}
 
+//			System.out.println("TEMPERATURES:");
+//			for (LinguisticTerm tempTerm : temperaturesTerms) {
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(tempTerm));
+//				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
+//			}
+//
 //			System.out.println("HUMIDITIES:");
 //			for (LinguisticTerm humidityTerm : humidityTerms) {
-//				Summary summary = new Summary(quantifier, List.of(humidityTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(humidityTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
-
+//
 //			System.out.println("TIMES:");
 //			for (LinguisticTerm timeTerm : timeTerms) {
-//				Summary summary = new Summary(quantifier, List.of(timeTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(timeTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
+//
 //			}
 //			System.out.println("WINDS:");
 //			for (LinguisticTerm windTerm : windTerms) {
-//				Summary summary = new Summary(quantifier, List.of(windTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(windTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("PRESSURES:");
 //			for (LinguisticTerm pressureTerm : pressureTerms) {
-//				Summary summary = new Summary(quantifier, List.of(pressureTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(pressureTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("VISIBILITIES:");
 //			for (LinguisticTerm visibilityTerm : visibilityTerms) {
-//				Summary summary = new Summary(quantifier, List.of(visibilityTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(visibilityTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("UVS:");
 //			for (LinguisticTerm uvTerm : uvTerms) {
-//				Summary summary = new Summary(quantifier, List.of(uvTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(uvTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("CARBONS:");
 //			for (LinguisticTerm carbonTerm : carbonTerms) {
-//				Summary summary = new Summary(quantifier, List.of(carbonTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(carbonTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("NITROGENS:");
 //			for (LinguisticTerm nitrogenTerm : nitrogenTerms) {
-//				Summary summary = new Summary(quantifier, List.of(nitrogenTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(nitrogenTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 //			System.out.println("QUALITIES:");
 //			for (LinguisticTerm airTerm : airTerms) {
-//				Summary summary = new Summary(quantifier, List.of(airTerm));
+//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(airTerm));
 //				System.out.println(summary.summarization());
+//				if (summary.getT1() > 0.01) {
+//					summary.print();
+//				}
 //			}
 			System.out.println("--------------------------------------------------");
 		}
@@ -333,53 +370,432 @@ public class KsrApplication implements CommandLineRunner {
 		System.out.println("Africa measurements count: " + africaMeasurements.size());
 		System.out.println("America measurements count: " + americaMeasurements.size());
 
-		LinguisticTerm qualifier = new LinguisticTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
-		List<String> continents = List.of("Asia", "Africa", "America");
+		LinguisticTerm qualifier = new LinguisticTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+		List<String> continents = List.of("America", "Europe", "Asia", "Africa");
 		List<String> warmTerms = List.of("bardzo zimna", "zimna", "umiarkowana", "ciepla", "goraca");
+		List<String> dayTerms = List.of("nocna", "poranna", "poludniowa", "popoludniowa", "wieczorna");
+		List<String> windTerms = List.of("slaby", "umiarkowany", "silny", "bardzo silny", "gwaltowny");
+		List<String> humidityTerms = List.of("suche", "umiarkowane", "wilgotne");
+		List<String> pressureTerms = List.of("niskie", "normalne", "wysokie");
+		List<String> visibilityTerms = List.of("slaba", "umiarkowana", "dobra", "bardzo dobra");
+		List<String> uvTerms = List.of("niskie", "umiarkowane", "wysokie", "bardzo wysokie", "ekstremalne");
+		List<String> carbonTerms = List.of("normalne", "wysokie", "niezdrowe", "niebezpieczne");
+		List<String> nitrogenTerms = List.of("normalne", "niezdrowe", "niebezpieczne");
+		List<String> airTerms = List.of("bardzo dobra", "dobra", "umiarkowana", "zla", "bardzo zla");
+
 
 //		for (Quantifier quantifier : quantifierTerms) {
 //			System.out.println("Quantifier: " + quantifier.getName());
 //			System.out.println("--------------------------------------------------");
-//			for (String temp: warmTerms) {
-//				System.out.println("Temperature: " + temp);
-//				for (String continent : continents) {
-//					qualifier.setData(measurementsRepository.findByContinent("Europe").stream()
-//							.map(Measurements::getWind_kph).toList());
-//					System.out.println("Continent: " + continent);
-//					LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
-//					LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
 //
-//					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//							quantifier,
-//							"Europe",
-//							"Asia",
-//							linguisticTerm1,
-//							linguisticTerm2,
-//							qualifier
-//					);
+//			System.out.println("TEMPERATURA");
+//			for (String temp : warmTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
 //
-//					doubleSubjectSummary.thirdForm();
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermTemp(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermTemp(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("PORA DNIA");
+//			for (String temp : dayTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermTime(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermTime(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermTime(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermTime(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("WIATR");
+//			for (String temp : windTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermWind(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermWind(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermWind(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermWind(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("CISNIENIE");
+//			for (String temp : pressureTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("WILGOTNOSC");
+//			for (String temp : humidityTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermHumidity(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermHumidity(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermHumidity(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermHumidity(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("WIDOCZNOSC");
+//			for (String temp : visibilityTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermVisibility(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermVisibility(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermVisibility(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermVisibility(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("UV");
+//			for (String temp : uvTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermUv(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermUv(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermUv(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermUv(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("CARBON");
+//			for (String temp : carbonTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("NITROGEN");
+//			for (String temp : nitrogenTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermNitrogen(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermNitrogen(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermNitrogen(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermNitrogen(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//			System.out.println("AIR");
+//			for (String temp : airTerms) {
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//
+//						continentA = continents.get(j);
+//						continentB = continents.get(i);
+//						linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
+//						linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
+//						doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2
+//						);
+//
+//						doubleSubjectSummary.firstForm();
+//					}
+//				}
+//			}
+//
+//		}
+
+//		for (Quantifier quantifier : quantifierTerms) {
+//			System.out.println("Quantifier: " + quantifier.getName());
+//			System.out.println("--------------------------------------------------");
+//			for (String temp : airTerms) {
+//				System.out.println("Nitrogen: " + temp);
+//				for (int i = 0; i < continents.size(); i++) {
+//					for (int j = i + 1; j < continents.size(); j++) {
+//						String continentA = continents.get(i);
+//						String continentB = continents.get(j);
+//						qualifier.setData(measurementsRepository.findByContinent(continentB).stream()
+//								.map(Measurements::getHumidity).toList());
+//						LinguisticTerm linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
+//						LinguisticTerm linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
+//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//								quantifier,
+//								continentA,
+//								continentB,
+//								linguisticTerm1,
+//								linguisticTerm2,
+//								qualifier
+//						);
+//
+//						doubleSubjectSummary.thirdForm();
+//					}
 //				}
 //			}
 //		}
 
-		for (String temp: warmTerms) {
+		for (String temp: carbonTerms) {
 			System.out.println("Temperature: " + temp);
-			for (String continent : continents) {
-				LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, "Europe");
-				LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continent);
+			for (int i = 0; i < continents.size(); i++) {
+				for (int j = i + 1; j < continents.size(); j++) {
+					String continentA = continents.get(i);
+					String continentB = continents.get(j);
+					LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
+					LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
+					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+							continentA,
+							continentB,
+							linguisticTerm1,
+							linguisticTerm2
+					);
 
-				DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-						QuantifierValues.Q3,
-						"Europe",
-						continent,
-						linguisticTerm1,
-						linguisticTerm2,
-						qualifier
-				);
-
-				doubleSubjectSummary.fourthForm();
+					doubleSubjectSummary.fourthForm();
+				}
 			}
+
 		}
 
 	}
@@ -407,6 +823,245 @@ public class KsrApplication implements CommandLineRunner {
 					.map(Measurements::getTemperature_celsius).toList());
 			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
 		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermWind(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "slaby" -> linguisticTerm = new LinguisticTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
+			case "umiarkowany" -> linguisticTerm = new LinguisticTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
+			case "silny" -> linguisticTerm = new LinguisticTerm(WindValues.silny.getName(), WindValues.silny.getFuzzySet());
+			case "bardzo silny" -> linguisticTerm = new LinguisticTerm(WindValues.bardzoSilny.getName(), WindValues.bardzoSilny.getFuzzySet());
+			case "gwaltowny" -> linguisticTerm = new LinguisticTerm(WindValues.gwaltowny.getName(), WindValues.gwaltowny.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getWind_kph).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getWind_kph).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getWind_kph).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getWind_kph).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermHumidity(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "suche" -> linguisticTerm = new LinguisticTerm(HumidityValues.suche.getName(), HumidityValues.suche.getFuzzySet());
+			case "umiarkowane" -> linguisticTerm = new LinguisticTerm(HumidityValues.umiarkowane.getName(), HumidityValues.umiarkowane.getFuzzySet());
+			case "wilgotne" -> linguisticTerm = new LinguisticTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getHumidity).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getHumidity).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getHumidity).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getHumidity).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermPressure(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "niskie" -> linguisticTerm = new LinguisticTerm(PressureValues.niskie.getName(), PressureValues.niskie.getFuzzySet());
+			case "normalne" -> linguisticTerm = new LinguisticTerm(PressureValues.normalne.getName(), PressureValues.normalne.getFuzzySet());
+			case "wysokie" -> linguisticTerm = new LinguisticTerm(PressureValues.wysokie.getName(), PressureValues.wysokie.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getPressure_mb).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getPressure_mb).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getPressure_mb).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getPressure_mb).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermVisibility(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "slaba" -> linguisticTerm = new LinguisticTerm(VisibilityValues.slaba.getName(), VisibilityValues.slaba.getFuzzySet());
+			case "umiarkowana" -> linguisticTerm = new LinguisticTerm(VisibilityValues.umiarkowana.getName(), VisibilityValues.umiarkowana.getFuzzySet());
+			case "dobra" -> linguisticTerm = new LinguisticTerm(VisibilityValues.dobra.getName(), VisibilityValues.dobra.getFuzzySet());
+			case "bardzo dobra" -> linguisticTerm = new LinguisticTerm(VisibilityValues.bardzoDobra.getName(), VisibilityValues.bardzoDobra.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getVisibility_km).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getVisibility_km).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getVisibility_km).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getVisibility_km).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermUv(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "niskie" -> linguisticTerm = new LinguisticTerm(UvValues.niskie.getName(), UvValues.niskie.getFuzzySet());
+			case "umiarkowane" -> linguisticTerm = new LinguisticTerm(UvValues.umiarkowane.getName(), UvValues.umiarkowane.getFuzzySet());
+			case "wysokie" -> linguisticTerm = new LinguisticTerm(UvValues.wysokie.getName(), UvValues.wysokie.getFuzzySet());
+			case "bardzo wysokie" -> linguisticTerm = new LinguisticTerm(UvValues.bardzoWysokie.getName(), UvValues.bardzoWysokie.getFuzzySet());
+			case "ekstremalne" -> linguisticTerm = new LinguisticTerm(UvValues.ekstremalne.getName(), UvValues.ekstremalne.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getUv_index).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getUv_index).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getUv_index).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getUv_index).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermCarbon(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "normalne" -> linguisticTerm = new LinguisticTerm(CoValues.normalne.getName(), CoValues.normalne.getFuzzySet());
+			case "wysokie" -> linguisticTerm = new LinguisticTerm(CoValues.wysokie.getName(), CoValues.wysokie.getFuzzySet());
+			case "niezdrowe" -> linguisticTerm = new LinguisticTerm(CoValues.niezdrowe.getName(), CoValues.niezdrowe.getFuzzySet());
+			case "niebezpieczne" -> linguisticTerm = new LinguisticTerm(CoValues.niebezpieczne.getName(), CoValues.niebezpieczne.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getAir_quality_Carbon_Monoxide).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getAir_quality_Carbon_Monoxide).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getAir_quality_Carbon_Monoxide).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getAir_quality_Carbon_Monoxide).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermNitrogen(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "normalne" -> linguisticTerm = new LinguisticTerm(NoValues.normalne.getName(), NoValues.normalne.getFuzzySet());
+			case "niezdrowe" -> linguisticTerm = new LinguisticTerm(NoValues.niezdrowe.getName(), NoValues.niezdrowe.getFuzzySet());
+			case "niebezpieczne" -> linguisticTerm = new LinguisticTerm(NoValues.niebezpieczne.getName(), NoValues.niebezpieczne.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getAir_quality_Nitrogen_Dioxide).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getAir_quality_Nitrogen_Dioxide).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getAir_quality_Nitrogen_Dioxide).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getAir_quality_Nitrogen_Dioxide).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermAirQuality(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "bardzo dobra" -> linguisticTerm = new LinguisticTerm(AirValues.bardzoDobra.getName(), AirValues.bardzoDobra.getFuzzySet());
+			case "dobra" -> linguisticTerm = new LinguisticTerm(AirValues.dobra.getName(), AirValues.dobra.getFuzzySet());
+			case "umiarkowana" -> linguisticTerm = new LinguisticTerm(AirValues.umiarkowana.getName(), AirValues.umiarkowana.getFuzzySet());
+			case "zla" -> linguisticTerm = new LinguisticTerm(AirValues.zla.getName(), AirValues.zla.getFuzzySet());
+			case "bardzo zla" -> linguisticTerm = new LinguisticTerm(AirValues.bardzoZla.getName(), AirValues.bardzoZla.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		switch (continent) {
+			case "Europe" -> linguisticTerm.setData(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getAir_quality_gb_defra_index).toList());
+			case "Asia" -> linguisticTerm.setData(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getAir_quality_gb_defra_index).toList());
+			case "Africa" -> linguisticTerm.setData(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getAir_quality_gb_defra_index).toList());
+			case "America" -> linguisticTerm.setData(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getAir_quality_gb_defra_index).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+		return linguisticTerm;
+	}
+
+	public LinguisticTerm getLinguisticTermTime(String term, String continent) {
+		LinguisticTerm linguisticTerm;
+
+		switch (term) {
+			case "nocna" ->
+					linguisticTerm = new LinguisticTerm(TimeValues.nocna.getName(), TimeValues.nocna.getFuzzySet());
+			case "poranna" ->
+					linguisticTerm = new LinguisticTerm(TimeValues.poranna.getName(), TimeValues.poranna.getFuzzySet());
+			case "poludniowa" ->
+					linguisticTerm = new LinguisticTerm(TimeValues.poludniowa.getName(), TimeValues.poludniowa.getFuzzySet());
+			case "popoludniowa" ->
+					linguisticTerm = new LinguisticTerm(TimeValues.popoludniowa.getName(), TimeValues.popoludniowa.getFuzzySet());
+			case "wieczorna" ->
+					linguisticTerm = new LinguisticTerm(TimeValues.wieczorna.getName(), TimeValues.wieczorna.getFuzzySet());
+			default -> throw new IllegalArgumentException("Unknown term: " + term);
+		}
+
+		List<LocalDateTime> dates = new ArrayList<>();
+		List<Double> hours = new ArrayList<>();
+
+		switch (continent) {
+			case "Europe" -> dates.addAll(measurementsRepository.findByContinent("Europe").stream()
+					.map(Measurements::getLast_updated).toList());
+			case "Asia" -> dates.addAll(measurementsRepository.findByContinent("Asia").stream()
+					.map(Measurements::getLast_updated).toList());
+			case "Africa" -> dates.addAll(measurementsRepository.findByContinent("Africa").stream()
+					.map(Measurements::getLast_updated).toList());
+			case "America" -> dates.addAll(measurementsRepository.findByContinent("America").stream()
+					.map(Measurements::getLast_updated).toList());
+			default -> throw new IllegalArgumentException("Unknown continent: " + continent);
+		}
+
+		for (LocalDateTime date : dates) {
+			hours.add((double) date.getHour() + date.getMinute() / 60.0);
+		}
+		linguisticTerm.setData(hours);
 		return linguisticTerm;
 	}
 }
