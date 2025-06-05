@@ -5,8 +5,33 @@ import cmath
 import time
 from continousSignal import sinusoidal
 
+def s1(t):
+    component1 = 2 * np.sin(2 * np.pi * (1 / 2) * t + np.pi / 2)  # 1 Hz
+    component2 = 5 * np.sin(2 * np.pi * (1 / 0.5) * t + np.pi / 2)  # 2 Hz
+
+    # Sygnał złożony
+    s = component1 + component2
+    return s
+
+def s2(t):
+    component1 = 2 * np.sin(2 * np.pi * (1 / 2) * t)  # 0.5 Hz
+    component2 = 1 * np.sin(2 * np.pi * 1 * t)  # 1 Hz
+    component3 = 5 * np.sin(2 * np.pi * 2 * t)  # 2 Hz
+
+    # Złożony sygnał
+    s = component1 + component2 + component3
+    return s
+
+def s3(t):
+    component1 = 5 * np.sin(2 * np.pi * (1 / 2) * t)  # 0.5 Hz
+    component2 = 1 * np.sin(2 * np.pi * 4 * t)  # 4 Hz
+
+    # Złożony sygnał
+    s = component1 + component2
+    return s
+
 # --- DFT (IDFT jeśli podzielisz przez N) ---
-def transform(x):
+def dft(x):
     start_timer = time.perf_counter()
     N = len(x)
     Warg = 2.0 * math.pi / N
@@ -23,6 +48,28 @@ def transform(x):
     end_timer = time.perf_counter()
     timer = end_timer - start_timer
     return X, timer
+
+
+
+def fft(x):
+    start_timer = time.perf_counter()
+    mix_samples(x)  # zakładamy, że ta funkcja jest zaimplementowana i modyfikuje listę x inplace
+    W = calculate_vector_of_W_params(len(x))  # zwraca listę wartości W
+
+    N = 2
+    while N <= len(x):
+        for i in range(len(x) // N):  # dzielenie całkowite
+            for m in range(N // 2):
+                offset = i * N
+                tmp = x[offset + m + N // 2] * retrieve_W_from_vector(N, -m, W)
+                x[offset + m + N // 2] = x[offset + m] - tmp
+                x[offset + m] = x[offset + m] + tmp
+        N *= 2
+
+    end_timer = time.perf_counter()
+    timer = end_timer - start_timer
+
+    return x, timer
 
 def reverse_bits(value: int, number_of_bits: int) -> int:
     for i in range(number_of_bits // 2):
@@ -70,27 +117,9 @@ def retrieve_W_from_vector(N, k, vectorW):
     else:
         return vectorW[k - len(vectorW)] * complex(-1, 0)
 
-def transformFFT(x):
-    start_timer = time.perf_counter()
-    mix_samples(x)  # zakładamy, że ta funkcja jest zaimplementowana i modyfikuje listę x inplace
-    W = calculate_vector_of_W_params(len(x))  # zwraca listę wartości W
 
-    N = 2
-    while N <= len(x):
-        for i in range(len(x) // N):  # dzielenie całkowite
-            for m in range(N // 2):
-                offset = i * N
-                tmp = x[offset + m + N // 2] * retrieve_W_from_vector(N, -m, W)
-                x[offset + m + N // 2] = x[offset + m] - tmp
-                x[offset + m] = x[offset + m] + tmp
-        N *= 2
 
-    end_timer = time.perf_counter()
-    timer = end_timer - start_timer
-
-    return x, timer
-
-def dct_transform(x):
+def dct(x):
     start_timer = time.perf_counter()
     N = len(x)
     X = [0.0] * N
@@ -112,7 +141,9 @@ def c(m, N):
     else:
         return math.sqrt(2.0 / N)
 
-def hadamard_transform(x):
+
+
+def Walsh(x):
     start_timer = time.perf_counter()
     m = round(math.log2(len(x)))
     H = generate_hadamard_matrix(m)
@@ -146,7 +177,9 @@ def paste_matrix(src, src_size, dst, dst_size, row, col, factor):
         for j in range(src_size):
             dst[(i + row) * dst_size + (j + col)] = src[i * src_size + j] * factor
 
-def haar_transform(x):
+
+
+def FastWalsh(x):
     start_timer = time.perf_counter()
     mix(x, 0, len(x))
     end_timer = time.perf_counter()
@@ -223,9 +256,9 @@ def plot_W2(X, fs):
 def plt3 (X, fs):
     N = len(X)
     freqs = np.arange(N) * fs / N
-
+    #freqs = np.arange(0, 0 + 16, 1 / fs)
     # Transformata DCT
-    plt.stem(freqs, X, basefmt=" ")
+    plt.stem(freqs, X)
     plt.title("DCT sygnału")
     plt.xlabel("m")
     plt.ylabel("X[m]")
@@ -236,7 +269,7 @@ def plt3 (X, fs):
 
 
 # --- Przykładowy sygnał ---
-fs = 1000  # Hz, częstotliwość próbkowania
+fs = 16  # Hz, częstotliwość próbkowania
 t = np.arange(0, 1, 1/fs)
 f0 = 50  # Hz
 times = np.arange(0, 0 + 4, 1 / fs)
@@ -244,10 +277,10 @@ signal = sinusoidal(1, 1, times)
 x = [complex(s, 0) for s in signal]
 
 # --- Obliczenie DFT ---
-X, timer = transformFFT(x)
-#tmp, timer = haar_transform(signal)
+#X, timer = transformFFT(x)
+#tmp = dct(signal)
 #plt3(tmp, fs)
-print(timer)
+#print(timer)
 
 # --- Wybór trybu prezentacji ---
 mode = "W22"  # W1 lub W2

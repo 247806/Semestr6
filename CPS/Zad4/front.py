@@ -17,12 +17,13 @@ from correlation import cross_convolution, cross_correlation_direct
 from filters import low_pass_filter, band_pass_filter, high_pass_filter, rectangular_window, black_window, hann_window, \
     hamming_window
 from functionType import function_type
-from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant
+from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant, plot_transform
 from quantization import clippQuant, roundQuant
 from radar import open_new_window
 from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
 from similarityMeasure import mse, snr, psnr, max_diff, enob
+from transform import dft, fft, dct, Walsh, FastWalsh
 
 signal_1 = None
 time_1 = None
@@ -726,6 +727,46 @@ def generate_filters():
         plot_histogram(histogram_frame_1, signal_1, int(bins_var.get()))
         time_1 = time_conv
 
+def transform():
+    global signal_1, time_1, signal_2, time_2
+
+    if sig_dropdown.get() == "Sygnał 1":
+        temp_signal = signal_1
+        temp_time = time_1
+    elif sig_dropdown.get() == "Sygnał 2":
+        temp_signal = signal_2
+        temp_time = time_2
+    else:
+        print("Signal not found")
+        return -1
+
+    if transform_dropdown.get() == "DFT":
+        x = [complex(s, 0) for s in temp_signal]
+        result, timer = dft(x)
+    elif transform_dropdown.get() == "FFT":
+        x = [complex(s, 0) for s in temp_signal]
+        result, timer = fft(x)
+    elif transform_dropdown.get() == "DCT":
+        result, timer = dct(temp_signal)
+    elif transform_dropdown.get() == "Walsh":
+        result, timer = Walsh(temp_signal)
+    elif transform_dropdown.get() == "FastWalsh":
+        result, timer = FastWalsh(temp_signal)
+    else:
+        print("Transform not found")
+        return -1
+
+    time_label = ttk.Label(tab_transform, text=f"Czas: {timer:.3f}")
+    time_label.grid(row=3, column=0, padx=5, pady=5)
+
+    if transform_dropdown.get() not in ["DFT", "FFT"]:
+        plot_transform(temp_time, result, plot_frame_3)
+
+def signal_gen():
+    print("Generating signal")
+
+
+
 root = ThemedTk()
 base_dir = os.path.dirname(__file__)
 
@@ -753,6 +794,7 @@ tab_save = ttk.Frame(main_notebook)
 tab_sampAndQuant = ttk.Frame(main_notebook)
 tab_reconstruction = ttk.Frame(main_notebook)
 tab_similarity = ttk.Frame(main_notebook)
+tab_transform = ttk.Frame(main_notebook)
 
 main_notebook.add(tab_generate, text="Generowanie")
 main_notebook.add(tab_operations, text="Operacje")
@@ -761,6 +803,7 @@ main_notebook.add(tab_save, text="Zapis i odczyt")
 main_notebook.add(tab_sampAndQuant, text="Próbkowanie i kwantyzacja")
 main_notebook.add(tab_reconstruction, text="Rekonstrukcja")
 main_notebook.add(tab_similarity, text="Porównanie")
+main_notebook.add(tab_transform, text="Transformacja")
 
 # --- GENEROWANIE ---
 ttk.Label(tab_generate, text="Typ sygnału:").grid(row=0, column=0, padx=5, pady=5)
@@ -936,6 +979,36 @@ signal_sim_2.bind("<<ComboboxSelected>>")
 
 ttk.Button(tab_similarity, text="Porównaj", command=lambda: similarityCheck()).grid(row=2, column=0, padx=10, pady=10)
 
+# --- Transformacja ---
+ttk.Label(tab_transform, text="Transformacja:").grid(row=0, column=0, padx=5, pady=5)
+transform_type = tk.StringVar(value="DFT")
+transform_dropdown = ttk.Combobox(tab_transform, textvariable=transform_type,
+                               values=["DFT", "FFT", "DCT", "Walsh", "FastWaslh"],
+                               state="readonly", width=50)
+transform_dropdown.grid(row=0, column=1, padx=5, pady=5)
+transform_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Label(tab_transform, text="Sygnał:").grid(row=1, column=0, padx=5, pady=5)
+sig_type = tk.StringVar(value="Sygnał 1")
+sig_dropdown = ttk.Combobox(tab_transform, textvariable=sig_type,
+                               values=["Sygnał 1", "Sygnał 2"],
+                               state="readonly", width=50)
+sig_dropdown.grid(row=1, column=1, padx=5, pady=5)
+sig_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Button(tab_transform, text="Generuj", command=lambda: transform()).grid(row=2, column=0, padx=10, pady=10)
+
+ttk.Label(tab_transform, text="Typ sygnału:").grid(row=4, column=0, padx=5, pady=5)
+gen_type = tk.StringVar(value="S1")
+gen_dropdown = ttk.Combobox(tab_transform, textvariable=gen_type,
+                               values=["S1", "S2", "S3"],
+                               state="readonly", width=50)
+gen_dropdown.grid(row=4, column=1, padx=5, pady=5)
+gen_dropdown.bind("<<ComboboxSelected>>")
+
+ttk.Button(tab_transform, text="Generuj", command=lambda: signal_gen()).grid(row=5, column=0, padx=10, pady=10)
+
+
 # --- WYKRESY ---
 signal_notebook = ttk.Notebook(root)
 signal_notebook.grid(row=0, column=2, rowspan=10, columnspan=10, padx=10, pady=10)
@@ -943,10 +1016,14 @@ signal_notebook.grid(row=0, column=2, rowspan=10, columnspan=10, padx=10, pady=1
 signal_frame_1 = ttk.Frame(signal_notebook)
 signal_frame_2 = ttk.Frame(signal_notebook)
 signal_frame_3 = ttk.Frame(signal_notebook)
+signal_frame_4 = ttk.Frame(signal_notebook)
+signal_frame_5 = ttk.Frame(signal_notebook)
 
 signal_notebook.add(signal_frame_1, text="Sygnał 1")
 signal_notebook.add(signal_frame_2, text="Sygnał 2")
 signal_notebook.add(signal_frame_3, text="Wynik")
+signal_notebook.add(signal_frame_4, text="W1")
+signal_notebook.add(signal_frame_5, text="W2")
 
 notebook = ttk.Notebook(signal_frame_1)
 notebook.pack(expand=True, fill='both')
