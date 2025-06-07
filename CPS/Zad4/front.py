@@ -8,8 +8,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from ttkthemes import ThemedTk
 
 import calculateParams as cp
-import continousSignal
-import discretSignal
 import ioModule
 import signalOperation as so
 from convolve import convolve, convolve_time_axis
@@ -17,13 +15,13 @@ from correlation import cross_convolution, cross_correlation_direct
 from filters import low_pass_filter, band_pass_filter, high_pass_filter, rectangular_window, black_window, hann_window, \
     hamming_window
 from functionType import function_type
-from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant, plot_transform
+from myPlots import plot_signal, plot_histogram, plot_signal_samp, plot_signal_quant, plot_transform, plot_w2, plot_w1
 from quantization import clippQuant, roundQuant
 from radar import open_new_window
 from reconstructionSignal import zeroOrderHold, firstOrderHold, valueFunc
 from sampling import sampling
 from similarityMeasure import mse, snr, psnr, max_diff, enob
-from transform import dft, fft, dct, Walsh, FastWalsh
+from transform import dft, fft, dct, Walsh, FastWalsh, s1, s2, s3
 
 signal_1 = None
 time_1 = None
@@ -761,10 +759,34 @@ def transform():
 
     if transform_dropdown.get() not in ["DFT", "FFT"]:
         plot_transform(temp_time, result, plot_frame_3)
+    else:
+        plot_w1(temp_time, result, signal_frame_4)
+        plot_w2(temp_time, result, signal_frame_5)
 
 def signal_gen():
-    print("Generating signal")
+    global signal_1, time_1, signal_2, time_2
+    t1 = int(time_start_entry.get())
+    d = int(time_end_entry.get())
 
+    times = np.arange(t1, t1 + d, 1 / 16)
+    if gen_dropdown.get() == "S1":
+        signal = s1(times)
+    elif gen_dropdown.get() == "S2":
+        signal = s2(times)
+    elif gen_dropdown.get() == "S3":
+        signal = s3(times)
+    else:
+        print("Signal not found")
+        return -1
+
+    if signal_notebook.index(signal_notebook.select()) == 1:
+        signal_2 = signal
+        time_2 = times
+        plot_signal(time_2, signal_2, "t", plot_frame_2, histogram_frame_2)
+    else:
+        signal_1 = signal
+        time_1 = times
+        plot_signal(time_1, signal_1, "t", plot_frame_1, histogram_frame_1)
 
 
 root = ThemedTk()
@@ -1006,7 +1028,17 @@ gen_dropdown = ttk.Combobox(tab_transform, textvariable=gen_type,
 gen_dropdown.grid(row=4, column=1, padx=5, pady=5)
 gen_dropdown.bind("<<ComboboxSelected>>")
 
-ttk.Button(tab_transform, text="Generuj", command=lambda: signal_gen()).grid(row=5, column=0, padx=10, pady=10)
+ttk.Label(tab_transform, text="Czas początkowy:").grid(row=5, column=0, padx=5, pady=5)
+time_start_var = tk.StringVar(value="0")
+time_start_entry = ttk.Entry(tab_transform, textvariable=time_start_var)
+time_start_entry.grid(row=5, column=1, padx=5, pady=5)
+
+ttk.Label(tab_transform, text="Czas trwania:").grid(row=6, column=0, padx=5, pady=5)
+time_end_var = tk.StringVar(value="4")
+time_end_entry = ttk.Entry(tab_transform, textvariable=time_end_var)
+time_end_entry.grid(row=6, column=1, padx=5, pady=5)
+
+ttk.Button(tab_transform, text="Generuj", command=lambda: signal_gen()).grid(row=7, column=0, padx=10, pady=10)
 
 
 # --- WYKRESY ---

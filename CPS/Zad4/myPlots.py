@@ -1,5 +1,62 @@
+import cmath
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+def plot_w1(freqs, X, plot):
+    real = [z.real for z in X]
+    imag = [z.imag for z in X]
+
+    # Tworzenie figury Matplotlib
+    fig, axs = plt.subplots(2, 1, figsize=(10, 6))
+
+    # Wykres części rzeczywistej
+    axs[0].stem(freqs, real, basefmt=" ")
+    axs[0].set_title("W1 – Część rzeczywista amplitudy 0–10 Hz")
+    axs[0].set_xlabel("Częstotliwość [Hz]")
+    axs[0].set_ylabel("Re")
+    axs[0].grid(True)
+
+    # Wykres części urojonej
+    axs[1].stem(freqs, imag, basefmt=" ")
+    axs[1].set_title("W1 – Część urojona amplitudy 0–10 Hz")
+    axs[1].set_xlabel("Częstotliwość [Hz]")
+    axs[1].set_ylabel("Im")
+    axs[1].grid(True)
+
+    fig.tight_layout()
+
+    canvas = FigureCanvasTkAgg(fig, master=plot)
+    canvas.draw()
+    canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
+
+def plot_w2(freqs, X, plot):
+    magnitudes = [abs(z) for z in X]
+    phases = [cmath.phase(z) for z in X]
+
+    # Tworzenie figury Matplotlib
+    fig, axs = plt.subplots(2, 1, figsize=(10, 6))
+
+    # Wykres modułu
+    axs[0].stem(freqs, magnitudes, basefmt=" ")
+    axs[0].set_title("W2 – Moduł (amplituda)")
+    axs[0].set_xlabel("Częstotliwość [Hz]")
+    axs[0].set_ylabel("|X(f)|")
+    axs[0].grid(True)
+
+    # Wykres fazy
+    axs[1].stem(freqs, phases, basefmt=" ")
+    axs[1].set_title("W2 – Argument (faza)")
+    axs[1].set_xlabel("Częstotliwość [Hz]")
+    axs[1].set_ylabel("∠X(f) [rad]")
+    axs[1].grid(True)
+
+    fig.tight_layout()
+
+    # Osadzenie wykresu w oknie Tkinter
+    canvas = FigureCanvasTkAgg(fig, master=plot)
+    canvas.draw()
+    canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
+
 
 def plot_transform(time, signal, plot):
     plt.style.use('classic')

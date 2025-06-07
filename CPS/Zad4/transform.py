@@ -1,9 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import math
 import cmath
+import math
 import time
-from continousSignal import sinusoidal
+
+import numpy as np
+
 
 def s1(t):
     component1 = 2 * np.sin(2 * np.pi * (1 / 2) * t + np.pi / 2)  # 1 Hz
@@ -196,99 +196,3 @@ def mix(x, begin, end):
         x[begin + N // 2 + i] = tmp - x[begin + N // 2 + i]
     mix(x, begin, begin + N // 2)
     mix(x, begin + N // 2, end)
-
-
-
-# --- Tryby wykresów ---
-def plot_W1(X, fs):
-    N = len(X)
-    freqs = np.arange(N) * fs / N
-    real = [z.real for z in X]
-    imag = [z.imag for z in X]
-
-    plt.figure(figsize=(10, 6))
-    plt.subplot(2, 1, 1)
-    plt.stem(freqs, real)
-    plt.title("W1 – Część rzeczywista amplitudy 0–10 Hz")
-    plt.xlabel("Częstotliwość [Hz]")
-    plt.ylabel("Re")
-    plt.grid(True)
-
-    plt.subplot(2, 1, 2)
-    plt.stem(freqs, imag)
-    plt.title("W1 – Część urojona amplitudy 0–10 Hz")
-    plt.xlabel("Częstotliwość [Hz]")
-    plt.ylabel("Im")
-    plt.grid(True)
-
-    plt.tight_layout()
-    plt.show()
-
-def plot_W2(X, fs):
-    N = len(X)
-    freqs = np.arange(N) * fs / N
-    magnitudes = [abs(z) for z in X]
-    phases = [cmath.phase(z) for z in X]
-
-    print("Min freq:", min(freqs))
-    print("Max freq:", max(freqs))
-    print("Sample rate fs:", fs)
-    print("N (długość sygnału):", N)
-
-    plt.figure(figsize=(10, 6))
-    plt.subplot(2, 1, 1)
-    plt.stem(freqs, magnitudes)
-    plt.title("W2 – Moduł (amplituda) 0–10 Hz")
-    plt.xlabel("Częstotliwość [Hz]")
-    plt.ylabel("|X(f)|")
-    plt.grid(True)
-
-    plt.subplot(2, 1, 2)
-    plt.stem(freqs, phases)
-    plt.title("W2 – Argument (faza) 0–10 Hz")
-    plt.xlabel("Częstotliwość [Hz]")
-    plt.ylabel("∠X(f) [rad]")
-    plt.grid(True)
-
-    plt.tight_layout()
-    plt.show()
-
-def plt3 (X, fs):
-    N = len(X)
-    freqs = np.arange(N) * fs / N
-    #freqs = np.arange(0, 0 + 16, 1 / fs)
-    # Transformata DCT
-    plt.stem(freqs, X)
-    plt.title("DCT sygnału")
-    plt.xlabel("m")
-    plt.ylabel("X[m]")
-    plt.grid(True)
-
-    plt.tight_layout()
-    plt.show()
-
-
-# --- Przykładowy sygnał ---
-fs = 16  # Hz, częstotliwość próbkowania
-t = np.arange(0, 1, 1/fs)
-f0 = 50  # Hz
-times = np.arange(0, 0 + 4, 1 / fs)
-signal = sinusoidal(1, 1, times)
-x = [complex(s, 0) for s in signal]
-
-# --- Obliczenie DFT ---
-#X, timer = transformFFT(x)
-#tmp = dct(signal)
-#plt3(tmp, fs)
-#print(timer)
-
-# --- Wybór trybu prezentacji ---
-mode = "W22"  # W1 lub W2
-
-# if mode == "W1":
-#     plot_W1(X, fs)
-# elif mode == "W2":
-#     plot_W2(X, fs)
-# else:
-#     plot_W1(X, fs)
-#     plot_W2(X, fs)
