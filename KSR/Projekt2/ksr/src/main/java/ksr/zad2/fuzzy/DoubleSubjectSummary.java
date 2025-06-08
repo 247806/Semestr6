@@ -13,6 +13,10 @@ public class DoubleSubjectSummary {
     private final LinguisticTerm subject1Summarizer;
     private final LinguisticTerm subject2Summarizer;
     private LinguisticTerm qualifier;
+    private double t1;
+    private double t2;
+    private double t3;
+    private double t4;
 
     public DoubleSubjectSummary(Quantifier quantifier, String subject1, String subject2, LinguisticTerm subject1Summarizer, LinguisticTerm subject2Summarizer) {
         this.quantifier = quantifier;
@@ -59,9 +63,10 @@ public class DoubleSubjectSummary {
                 .append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-//        if (result > 0.01) {
+        this.t1 = result;
+        if (result > 0.01) {
             System.out.println(summary.toString());
-//        }
+        }
 
     }
 

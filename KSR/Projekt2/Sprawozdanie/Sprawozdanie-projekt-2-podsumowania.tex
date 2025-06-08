@@ -29,27 +29,27 @@ jest lingwistyczna agregacja zawartości wybranego zbioru danych. Ma ona za zada
 \section{Baza danych, zmienne lingwistyczne, kwantyfikatory lingwistyczne}
 
 \subsection{Charakterystyka podsumowywanej bazy danych}
-W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 70292 rekordów. 
+W tym projekcie został wykorzystany zbiór danych zapisany w pliku w formacie .csv, na podstawie którego utworzono bazę danych - PostgresSQL. Baza danych o nazwie World Weather Repository zawiera różnego rodzaju pomiary danych atmosferycznych, np. temperatura lub prędkość wiatru. \cite{baza} Użteczność bazy jest określona na stronie Kaggle jako 10.0, a dane z niej są wykorzystywane do prognozowanie pogody oraz analizy klimatu na różnych kontynentach. Baza jest nabieżąco aktualizowana, natomiast na dzień 18.05.2025r. składa się z 62603 rekordów. 
 
 Zmiennym lingwistycznym przypisuje się znaczenie ze względu na potrzebę lepszej interpretowalności danych przez użytkowników. Ludzie rzadko reagują na dokładne wartości (np. 1033.8 mb ciśnienia), natomiast określenie „wysokie ciśnienie” pozwala im intuicyjnie rozumieć sytuację pogodową. Stąd istnieje zapotrzebowanie na „przekładanie” danych formalnych na język naturalny. \\
 Podmiotem podsumowań jest pomiar atmosferyczny, z bazy World Weather Repository wybrano 10 atrybutów, które zostaną rozmyte, są to następujące kolumny:
 \begin{enumerate}
     \item last\_updated - data przeprowadzenia pomiarów, z tego atrybutu zostanie wykorzystana godzina w celu określenia pory dnia, zakres [0 - 24]. 
     \item temperature\_celsius - temperatura wyrażona w stopniach Celsjusza w zakresie [-25, 50].
-    \item wind\_kph - prędkość wiatru wyrażona w kilometrach na godzinę w zakresie [3, 92]. 
-    \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [947 - 1052]. 
+    \item wind\_kph - prędkość wiatru wyrażona w kilometrach na godzinę w zakresie [3, 81]. 
+    \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [964 - 1052]. 
     \item humidity - wilgotność w zakresie [2 - 100\%].
-    \item visibility\_km - widoczność wyrażona w kilometrach w zakresie [0, 32].
-    \item uv\_index - wartość promieniowania słonecznego UVI w zakresie [0, 16].
+    \item visibility\_km - widoczność wyrażona w kilometrach w zakresie [0, 24].
+    \item uv\_index - wartość promieniowania słonecznego UV w zakresie [0, 16].
     \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla, wyrażony w ppm(liczba cząstek CO2 w milionie cząstek powietrza), w zakresie [0 - 3000].
-    \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu, wyrażony w ppm(liczba cząstek NO2 w milionie cząstek powietrza) w zakresie [0 - 428].
+    \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu, wyrażony w ppm(liczba cząstek NO2 w milionie cząstek powietrza) w zakresie [0 - 261].
     \item air\_quality\_gb-defra-index - skala określająca poziomy zanieczyszczenia w powietrzu w zakresie [1 - 10].
 
     
 \end{enumerate}
 
 \subsection{Zmienne lingwistyczne (atrybuty/własności obiektów)}
-Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1 oraz ich wzory analityczne. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, $\mathcal{L}_x$ - nazwa zmiennej lingwistycznej , \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej ligwistycznej. 
+Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych w sekcji 2.1 oraz ich wzory analityczne. W każdym z poniższych wzorów \(L_x\) to zmienna ligwistyczna, $\mathcal{L}_x$ - nazwa zmiennej lingwistycznej , \(H_x\) zbiór możliwych przyjmowanych wartości, \(X_x\) - przestrzeń rozważań, \(x\) - numer kolejnej zmiennej lingwistycznej. 
 \begin{enumerate}
     \item last\_updated
         \begin{equation}
@@ -107,7 +107,7 @@ Poniżej zostały zaprezentowane zmienne lingwistyczne dla atrybutów opisanych 
             \end{cases}
         \end{equation} 
         
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/day.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/day.png.
     
     \item temperature\_celsius
         \begin{equation}
@@ -163,7 +163,7 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/day.png
                     \end{cases}
                 \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/temp.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/temp.png.
 
     \item wind\_kph
         \begin{equation}
@@ -202,20 +202,20 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/temp.pn
                     \begin{cases}
                     \frac{x - 40}{20}, & x \in (40, 60) \\
                     1, & x = 60 \\
-                    \frac{80 - x}{20}, & x \in (60, 80) \\
+                    \frac{75 - x}{15}, & x \in (60, 75) \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
               \begin{equation}
                     \mu_{\text{gwałtowny}}(x) =
                     \begin{cases}
-                    \frac{x - 60}{20}, & x \in (60, 80) \\
-                    1, & x \in [80, 92] \\
+                    \frac{x - 60}{15}, & x \in (60, 75) \\
+                    1, & x \in [75, 81] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
               \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/wind.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/wind.png.
               
     \item pressure\_mb
         \begin{equation}
@@ -226,7 +226,7 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/wind.pn
                 \begin{equation}
                     \mu_{\text{niskie}}(x) =
                     \begin{cases}
-                    1, & x \in [947, 970] \\
+                    1, & x \in [964, 970] \\
                     \frac{1000 - x}{30}, & x \in (970, 1000] \\
                     0, & \text{w przeciwnym razie}
                     \end{cases}
@@ -250,7 +250,7 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/wind.pn
                     \end{cases}
                 \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/pressure.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/pressure.png.
     
     \item humidity
     \begin{equation}
@@ -287,7 +287,7 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/pressur
         \end{cases}
         \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/humidity.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/humidity.png.
 
     \item visibility\_km
     \begin{equation}
@@ -299,8 +299,8 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/humidit
     \begin{equation}
     \mu_{\text{słaba}}(x) =
     \begin{cases}
-    1, & x \in [0, 4] \\
-    \frac{8 - x}{4}, & x \in (4, 8] \\
+    1, & x \in [0, 2] \\
+    \frac{6 - x}{4}, & x \in (2, 6] \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -308,9 +308,9 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/humidit
     \begin{equation}
     \mu_{\text{umiarkowana}}(x) =
     \begin{cases}
-    \frac{x - 4}{4}, & x \in (4, 8] \\
-    1, & x \in (8, 12] \\
-    \frac{16 - x}{4}, & x \in (12, 16] \\
+    \frac{x - 2}{4}, & x \in (2, 6] \\
+    1, & x \in (6, 10] \\
+    \frac{14 - x}{4}, & x \in (10, 14] \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -318,9 +318,9 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/humidit
     \begin{equation}
     \mu_{\text{dobra}}(x) =
     \begin{cases}
-    \frac{x - 12}{4}, & x \in (12, 16] \\
-    1, & x \in (16, 24] \\
-    \frac{28 - x}{4}, & x \in (24, 28] \\
+    \frac{x - 10}{4}, & x \in (10, 14) \\
+    1, & x \in [14, 18] \\
+    \frac{22 - x}{4}, & x \in (18, 22) \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -328,13 +328,13 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/humidit
     \begin{equation}
     \mu_{\text{bardzo\_dobra}}(x) =
     \begin{cases}
-    \frac{x - 24}{4}, & x \in (24, 28] \\
-    1, & x \in (28, 32] \\
+    \frac{x - 18}{4}, & x \in (18, 22) \\
+    1, & x \in [22, 24] \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/visibility.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/visibility.png.
 
     \item uv\_index
     \begin{equation}
@@ -391,13 +391,13 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/visibil
     \end{cases}
     \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/uv.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/uv.png.
 
     \item air\_quality\_Carbon\_Monoxide
             \begin{equation}
             L_8 = \langle \mathcal{L}_8, H_8, \mathcal{X}_8 \rangle
         \end{equation}
-        gdzie: $\mathcal{L}_8$ – zanieczyszczenie CO2, $H_8$ – \{normalne, niezdrowe, niebezpieczne\}, $\mathcal{X}_8 = [0, 2220]$. \\
+        gdzie: $\mathcal{L}_8$ – zanieczyszczenie CO2, $H_8$ – \{normalne, wysokie, niezdrowe, niebezpieczne\}, $\mathcal{X}_8 = [0, 2220]$. \\
         Poniżej wzory dla wszystkich możliwych etykiet.
 
     \begin{equation}
@@ -438,7 +438,7 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/uv.png.
     \end{cases}
     \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/co.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/co.png.
     
     \item air\_quality\_Nitrogen\_dioxide
                 \begin{equation}
@@ -459,9 +459,9 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/co.png.
     \begin{equation}
     \mu_{\text{niezdrowe}}(x) =
     \begin{cases}
-    \frac{x - 50}{50}, & x \in (50, 100] \\
-    1, & x \in (100, 200] \\
-    \frac{250 - x}{50}, & x \in (200, 250) \\
+    \frac{x - 50}{50}, & x \in (50, 100) \\
+    1, & x \in [100, 160] \\
+    \frac{210 - x}{50}, & x \in (160, 210) \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
@@ -469,13 +469,13 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/co.png.
     \begin{equation}
     \mu_{\text{niebezpieczne}}(x) =
     \begin{cases}
-    \frac{x - 200}{50}, & x \in (200, 250] \\
-    1, & x \in (250, 428] \\
+    \frac{x - 160}{50}, & x \in (160, 210) \\
+    1, & x \in [210, 261] \\
     0, & \text{w przeciwnym razie}
     \end{cases}
     \end{equation}
 
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/no.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/no.png.
         
     \item Indeks jakości powietrza
                 \begin{equation}
@@ -531,11 +531,11 @@ Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/no.png.
                     0, & \text{w przeciwnym razie} \\
                     \end{cases}
                 \end{equation}
-Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/air.png.
+Wykres funkcji przynależności znajduje się w załączniku pod nazwą img/air.png.
 \end{enumerate}
 
 \subsection{Kwantyfikatory lingwistyczne (liczności obiektów)}
-Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami analitycznymi. Wykresem funkcji przynależności znajduje w załączniku pod nazwą img/a.png.
+Poniżej zostały zaprezentowane kwantyfikatory lingwistyczne wraz z ich wzorami analitycznymi. Wykrese funkcji przynależności znajduje się w załączniku pod nazwą img/a.png.
 \begin{itemize}
     \item[-] prawie żaden
         \begin{equation}
@@ -589,7 +589,8 @@ Program został napisany w języku Java w wersji JDK 24. Do obsługi relacyjnej 
 Oprócz modelu zbiorów rozmytych, pakiet \texttt{fuzzy} zawiera również klasy odpowiedzialne za tworzenie i przetwarzanie podsumowań lingwistycznych. Klasa \texttt{LinguisticVariable} reprezentuje zmienną lingwistyczną, która zawiera nazwę, przestrzeń rozważań oraz zestaw powiązanych z nią terminów lingwistycznych, np. „bardzo zimno”, „ciepło”, „gorąco”, które są reprezentowane przez odpowiednie zbiory rozmyte.
 W strukturze podsumowań lingwistycznych wyróżniamy także kwalifikatory i sumaryzatory, które mają bardzo podobną strukturę, ponieważ są złożone z nazwy oraz przypisanego im zbioru rozmytego. Ich różnice wynikają jedynie z zastosowania, w jaki sposób są wykorzystywane w podsumowaniach lingwistycznych. W celu zachowania przejrzystości i uniknięcia duplikacji kodu, stworzona została wspólna klasa bazowa \texttt{LinguisticTerm}. 
 Klasa \texttt{Quantifier} odpowiada za reprezentację kwantyfikatorów, takich jak „około połowy” czy „prawie żaden”. Kwantyfikator opisany jest za pomocą nazwy, funkcji przynależności oraz typu — może być kwantyfikatorem absolutnym lub względnym.
-Ostatnim elementem pakietu jest klasa \texttt{Summary}. To ona odpowiada za generowanie podsumowań lingwistycznych oraz obliczanie miar jakości na podstawie przekazanych obiektów: sumaryzatora, kwalifikatora oraz kwantyfikatora. \\
+Kolejnym elementem pakietu jest klasa \texttt{SingleSubjectSummary}. To ona odpowiada za generowanie jednopodmiotowych podsumowań lingwistycznych oraz obliczanie miar jakości na podstawie przekazanych obiektów: sumaryzatora, kwalifikatora oraz kwantyfikatora. \\
+Ostanim elementem jest klasa \texttt{DoubleSubjectSummary}, która generuje dwupodmiotowe podsumowania lingwistyczne wraz z ich miarami. \\
 Strukturę logiczną opisanych klas oraz zależności między nimi przedstawiono na poniższym diagramie UML.
 
 
@@ -601,83 +602,76 @@ Strukturę logiczną opisanych klas oraz zależności między nimi przedstawiono
 
 
 \section{ Jednopodmiotowe podsumowania lingwistyczne. Miary jakości, podsumowanie optymalne}
-Poniżej zaprezentowano wyniki eksperymentów polegających na generowaniu jednopodmiotowych podsumowań lingwistycznych. Eksperymenty zostały podzielone na trzy części. W każdym eksperymencie wykorzystano tylko kwalifikator relatywny. Dla każdego utworzonego podsumowania lingwistycznego obliczane były miary jakości oraz miara podsumowania optymalnego. W każdej z poniższych sekcji w tabelach przedstawiono wybrane podsumowania, dla których wartość miary \textit{degree of truth} (\(T_1\)) była większa niż 0{,}1. \\
-W tabelach zaprezentowano treść podsumowania oraz wartość miary \(T_1\). Pozostałe miary jakości (\(T_2\)–\(T_{11}\)) zostały załączone w pliku \textit{Załącznik1.pdf}. Dodatkowo dla wybranego przykładu w każdej sekcji przedstawiono również pełny zestaw miar jakości.
+Poniżej zaprezentowano wyniki eksperymentów polegających na generowaniu jednopodmiotowych podsumowań lingwistycznych. Eksperymenty zostały podzielone na trzy części. W każdym eksperymencie wykorzystano tylko kwalifikator relatywny. Dla każdego utworzonego podsumowania lingwistycznego obliczane były miary jakości oraz miara podsumowania optymalnego. W każdej z poniższych sekcji w tabelach przedstawiono wybrane podsumowania, dla których wartość miary \textit{degree of truth} (\(T_1\)) dla danego kwantyfikatora nie była mniejsza niż 0{,}01. \\
+W tabelach zaprezentowano treść podsumowania oraz wartość optymalnej miary, która jest obliczana na podstawie sumy iloczynów wag i wartości pozostałych miar (\(T_1\)–\(T_{11}\)). Pozostałe miary jakości zostały załączone w pliku \textit{Załącznik1.pdf}. W celu obliczenia miary podsumowania optymalnego przyjęto następujące wagi: \(w1 = 0.30\), \(w2 = 0.07\), \(w3 = 0.07\), \(w4 = 0.07\), \(w5 = 0.07\), \(w6 = 0.07\), \(w7 = 0.07\), \(w8 = 0.07\), \(w9 = 0.07\), \(w_{10} = 0.07\), \(w_{11} = 0.70\).
 
 
 \subsection{Podsumowania lingwistyczne pierwszego typu}
 W tej sekcji zostały przedstawione wyniki dla podsumowań lingwistycznych z jednym sumaryzatorem.
-W celu obliczenia miary podsumowania optymalnego przyjęto następujące wagi: \(w1 = 0.23\), \(w2 = 0.11\), \(w3 = 0.11\), \(w4 = 0.11\), \(w5 = 0.11\), \(w6 = 0.11\), \(w7 = 0.11\), \(w8 = 0.11\), \(w9 = 0.00\), \(w_{10} = 0.00\), \(w_{11} = 0.00\). Dla miar jakości \(T_9\), \(T_{10}\) oraz \(T_{11}\) przyjęto wagi o wartościach 0.00, ponieważ w tych podsuwowaniach nie korzystano z kwalifikatora.
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{|c|c|c|}
+    \normalsize
+    \begin{tabular}{|c|p{8cm}|c|c|}
     \hline
-    \textbf{Lp.} &\textbf{Podsumowanie} & \textbf{T1}  \\ \hline
-    1. & Prawie żaden pomiarów  jest/ma zimną temperaturę & 0.58 \\ \hline
-    2. & Około połowy pomiarów  jest/ma ciepła temperaturę & 0.22 \\ \hline
-    3. & Trochę pomiarów  jest/ma popołudniową godzinę & 0.85 \\ \hline
-    4. & Prawie żaden pomiarów jest/ma wieczorną godzinę & 0.36 \\ \hline
-    5. & Około połowy pomiarów jest/ma wilgotne powietrze & 0.85 \\ \hline
-    6. & Trochę pomiarów  jest/ma umiarkowane powietrze & 0.77 \\ \hline
-    7. & Prawie żaden pomiarów jest/ma silny wiatr & 0.57\\ \hline
-    8. & Około połowy pomiarów jest/ma słaby wiatr & 0.25 \\ \hline
-    9. & Prawie wszystkie pomiarów jest/ma normalne cieśnienie & 0.73 \\ \hline
-    10. & Prawie żaden pomiarów  jest/ma wysokie cisnienie & 0.77 \\ \hline
-    11. & Prawie wszystkie pomiarów jest/ma umiarkowana widoczność & 0.35 \\ \hline
-    12. & Prawie żaden pomiarów jest/ma dobra widoczność & 0.93 \\ \hline
-    13. & Trochę pomiarów  jest/ma bardzo wysokie promieniowe UV & 0.23 \\ \hline
-    14. & Prawie żaden pomiarów  jest/ma umiarkowane promieniowanie UV & 0.02 \\ \hline
-    15. & Około połowy pomiarów  jest/ma normalne zanieczyszczenie CO2 & 0.34 \\ \hline
-    16. & Prawie żaden pomiarów  jest/ma niebezpieczne zanieczyszczenie CO2 & 0.95 \\ \hline 
-    17. & Prawie wszystkie pomiarów jest/ma normalne zanieczyszczenie NO2 & 0.52 \\ \hline
-    18. & Prawie żaden pomiarów  jest/ma niezdrowe zanieczyszczenie NO2 & 0.81 \\ \hline
-    19. & Trochę pomiarów jest/ma dobra jakość powietrza & 0.40 \\ \hline
-    20. & Prawie żaden pomiarów  jest/ma bardzo złą jakość powietrza & 0.59 \\ \hline
+    \textbf{Lp.} &\textbf{Podsumowanie} & \textbf{\(T_1\)} & \textbf{T} \\ \hline
+    1. & Prawie żaden pomiarów jest/ma zimną temperaturę & 0.54 & 0.59 \\ \hline
+    2. & Około połowy pomiarów jest/ma ciepła temperaturę & 0.43 & 0.49 \\ \hline
+    3. & Trochę pomiarów  jest/ma popołudniową godzinę & 0.92 & 0.66 \\ \hline
+    4. & Prawie żaden pomiarów jest/ma wieczorną godzinę & 0.66 & 0.63 \\ \hline
+    5. & Prawie żaden pomiarów jest/ma suche powietrze & 0.05 & 0.31 \\ \hline
+    6. & Trochę pomiarów jest/ma suche powietrze & 0.30 & 0.37 \\ \hline
+    7. & Prawie żaden pomiarów jest/ma silny wiatr & 0.66 & 0.63 \\ \hline
+    8. & Około połowy pomiarów jest/ma słaby wiatr & 0.37 & 0.49 \\ \hline
+    9. & Prawie wszystkie pomiarów jest/ma normalne cieśnienie & 0.70 & 0.56 \\ \hline
+    10. & Prawie żaden pomiarów  jest/ma wysokie cisnienie & 0.73 & 0.66 \\ \hline
+    11. & Prawie wszystkie pomiarów jest/ma umiarkowana widoczność & 0.68 & 0.55 \\ \hline
+    12. & Prawie żaden pomiarów jest/ma dobra widoczność & 0.99 & 0.73 \\ \hline
+    13. & Prawie wszystkie pomiarów  jest/ma normalne zanieczyszczenie NO2 & 0.72 & 0.46 \\ \hline
+    14. & Około połowy pomiarów  jest/ma normalne zanieczyszczenie CO2 & 0.74 & 0.60 \\ \hline
+    15. & Prawie żaden pomiarów  jest/ma niezdrowe zanieczyszczenie NO2 & 0.76 & 0.66 \\ \hline
 
     \end{tabular}
     \caption{Wyniki jednopodmiotowych podsumowań lingwistycznych typu 1 z \textit{degree of truth}.}
 \end{table}
 
-W poniższej tabeli przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.1 z tabeli nr.1. Zdanie: \textit{„Prawie żaden pomiarów jest/ma zimną temperaturę”} zostało ocenione na podstawie następujących wskaźników: \(T_1\) – degree of truth (0{,}58) oznacza, że podsumowanie jest zgodne z danymi w~58\%. \(T_2\) – degree of imprecision (0{,}88) wskazuje na dużą nieprecyzyjność sumaryzatora wynikającą z szerokiego nośnika funkcji przynależności. \(T_3\) – degree of covering (0{,}12) oznacza, że tylko niewielka część danych spełnia warunki zawarte w podsumowaniu. \(T_4\) – degree of appropriateness (0{,}00) przyjmuje wartość zerową ze względu na jeden sumaryzator. \(T_5\) – length of summary (1{,}0) wskazuje, że podsumowanie zawiera jeden sumaryzator. \(T_6\) – degree of quantifier imprecision (0{,}80) oznacza wysoką nieprecyzyjność kwantyfikatora „prawie żaden”, wynikającą z szerokiego obszaru przynależności. \(T_7\) – degree of quantifier cardinality (0{,}60) oznacza umiarkowaną liczebność kwantyfikatora. \(T_8\) – degree of summarizer imprecision (0{,}94) wskazuje na bardzo wysoką nieprecyzyjność summarizera „zimna temperatura”. \(T_9\), \(T_{10}\) i \(T_{11}\) przyjmują wartość 0{,}00, co wynika z braku kwalifikatora w podsumowaniu. Ostateczna miara podsumowania optymalnego (\(T\)) wynosi 0{,}61 i wskazuje na umiarkowanie dobrą jakość wygenerowanego podsumowania.
-
+W tabeli nr.2 przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.1 z tabeli nr.1. Zdanie: \textit{„Prawie żaden pomiarów jest/ma zimną temperaturę”} zostało ocenione na podstawie następujących wskaźników: \(T_1\) – degree of truth, \(T_2\) – degree of imprecision (0{,}88), \(T_3\) – degree of covering, \(T_4\) – degree of appropriateness, \(T_5\) – length of summary (1{,}0), \(T_6\) – degree of quantifier imprecision, \(T_7\) – degree of quantifier cardinality, \(T_8\), \(T_9\) - degree of qualifier imprecision, \(T_{10}\) - degree of qualifier cardinality, \(T_{11}\), (\(T\)) - miara podsumowania optymalnego. Znaczenia wartości odpowiednich miar zostały opisane w sekcji 6.1.
 
   \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
     \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)} \\ \hline
-    0.58 & 0.88 & 0.12 & 0.00 & 1.00 & 0.80 & 0.60 & 0.94 & 0.00 & 0.00 & 0.00 & 0.61 \\ \hline
+    0.54 & 0.88 & 0.12 & 0.00 & 1.00 & 0.80 & 0.60 & 0.93 & 0.00 & 0.00 & 0.00 & 0.59 \\ \hline
     \end{tabular}
     \caption{Miary jakości dla podsumowania nr. 1 z tabeli nr.1.}
 \end{table}  
 
 \subsection{Podsumowania lingwistyczne pierwszego typu z dwoma sumaryzatorami}
 W tej sekcji zostały przedstawione wyniki dla podsumowań lingwistycznych z dwoma sumaryzatorami.
-W celu obliczenia miary podsumowania optymalnego przyjęto następujące wagi: \(w1 = 0.23\), \(w2 = 0.11\), \(w3 = 0.11\), \(w4 = 0.11\), \(w5 = 0.11\), \(w6 = 0.11\), \(w7 = 0.11\), \(w8 = 0.11\), \(w9 = 0.00\), \(w2 = 0.00\), \(w2 = 0.00\). Dla miar jakości \(T_9\), \(T_{10}\) oraz \(T_{11}\) przyjęto wagi o wartościach 0.00, ponieważ w tych podsumowaniach nie korzystano z kwalifikatora.
 
 \begin{table}[H]
 \begin{center}
 \normalsize % lub \Large, \normalsize, itp.
-\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\begin{tabular}{|c|p{8cm}|c|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
 \hline
-\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{T1} \\ \hline
-1. & Trochę pomiarów jest/ma ciepła temperaturę i jest/ma popołudniowa godzinę & 0.41 \\ \hline
-2. & Prawie żaden pomiarów jest/ma ciepła temperaturę i jest/ma umiarkowane UV & 0.38 \\ \hline
-3. & Około połowy pomiarów jest/ma normalne ciśnienie i jest/ma umiarkowany wiatr & 0.91 \\ \hline
-4. & Trochę pomiarów jest/ma normalne ciśnienie i jest/ma popołudniowa godzinę & 0.83 \\ \hline
-5. & Około połowy pomiarów jest/ma normalne ciśnienie i jest/ma ciepła temperaturę & 0.24 \\ \hline
-6. & Trochę pomiarów jest/ma popołudniowa godzinę i jest/ma umiarkowany wiatr & 0.41 \\ \hline
-7. & Trochę pomiarów jest/ma popołudniowa godzinę i jest/ma umiarkowaną wilgotność & 0.19 \\ \hline
-8. & Prawie żaden pomiarów jest/ma wieczorną godzinę i jest/ma dobrą widoczność & 0.99 \\ \hline
-9. & Trochę pomiarów jest/ma popołudniową godzinę i jest/ma normalne zanieczyszczenie NO2 & 0.79 \\ \hline
-10. & Prawie żaden pomiarów jest/ma niezdrowe zanieczyszczenie NO2 i jest/ma bardzo złą jakość powietrza & 0.96 \\ \hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} & \textbf{T} \\ \hline
+1. & Trochę pomiarów jest/ma ciepła temperaturę i jest/ma popołudniowa godzinę & 0.43 & 0.34 \\ \hline
+2. & Prawie żaden pomiarów jest/ma ciepła temperaturę i jest/ma umiarkowane UV & 0.32 & 0.33 \\ \hline
+3. & Prawie żaden pomiarów jest/ma wieczorną godzinę i jest/ma dobrą widoczność & 0.99 & 0.55 \\ \hline
+4. & Około połowy pomiarów  jest/ma umiarkowany waitr i jest/ma normalne ciśnienie powietrza & 0.94 & 0.49 \\ \hline
+5. & Trochę pomiarów jest/ma popołudniowa godzinę i jest/ma normalne ciśnienie powietrza & 0.90 & 0.47 \\ \hline
+6. & Około połowy pomiarów jest/ma ciepła temperaturę i jest/ma normalne ciśnienie  powietrza & 0.45 & 0.33 \\ \hline
+7. & Wiele pomiarów  jest/ma normalne zanieczyszczenie CO2 i jest/ma normalne ciśnienie powietrza & 0.28 & 0.27 \\ \hline
+8. & wiele pomiarów  jest/ma umiarkowana jakość powietrza i jest/ma normalne zanieczyszczenie NO2 & 0.31 & 0.28 \\ \hline
+9. & Prawie wszystkie pomiarów  jest/ma umiarkowana widoczność i jest/ma normalne zanieczysczenie NO2 & 0.26 & 0.28 \\ \hline
+10. & Prawie wszystkie pomiarów  jest/ma normalne zanieczysczenie NO2 i jest/ma normalne ciśnienie powietrza & 0.31 & 0.30 \\ \hline
 \end{tabular}
 \caption{Wyniki jednopodmiotowych podsumowań lingwistycznych typu 1 z dwoma sumaryzatorami z miarą \textit{degree of truth}.}
 \end{center}
 \end{table}
 
-W poniższej tabeli przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.3 z tabeli nr.3. Zdanie: \textit{„Około połowy pomiarów jest/ma normalne ciśnienie i jest/ma umiarkowany wiatr”} uzyskało bardzo wysoką wartość \(T_1\) – (0{,}91), co oznacza, że podsumowanie to jest w~91\% zgodne z danymi. \(T_2\) – (0{,}01) wskazuje na bardzo niski poziom nieprecyzyjności sumaryzatorów, co świadczy o ich dobrej definicji. \(T_3\) – (0{,}99), znaczna część danych spełnia warunki podsumowania. \(T_4\) – przyjmuje wartość bardzo niską (\(1{,}60 \times 10^{-5}\)). \(T_5\) –  (0{,}5) wskazuje, że w podsumowaniu użyto dwóch sumaryzatorów. \(T_6\) – degree of quantifier imprecision (0{,}60) sugeruje umiarkowaną trudność w precyzyjnym zdefiniowaniu kwantyfikatora „około połowy”. \(T_7\) – (0{,}62) oznacza, że użyty kwantyfikator nie jest szczególnie precyzyjny pod względem liczebności. \(T_8\) - (0{,}28) wskazuje na stosunkowo niski poziom nieprecyzyjności sumaryzatorów. Wartości \(T_9\), \(T_{10}\) i \(T_{11}\) są równe 0{,}00, ponieważ podsumowanie nie zawiera kwalifikatora. Ostateczna miara jakości podsumowania (\(T\)) wynosi 0{,}54, co sugeruje umiarkowaną jakość podsumowania, mimo jego wysokiej zgodności z danymi.
+W tabeli nr.4 przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.4 z tabeli nr.3. Zdanie: \textit{„Około połowy pomiarów  jest/ma umiarkowany waitr i jest/ma normalne ciśnienie powietrza”}. Wszystkie miary zostały opisane w sekcji 6.1.
 
 
 \begin{table}[H]
@@ -685,7 +679,7 @@ W poniższej tabeli przedstawiono miary jakości oraz miarę podsumowania optyma
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
     \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)} \\ \hline
-    0.91 & 0.01 & 0.99 & \(1.60 \times 10^{-5}\) & 0.5 & 0.60 & 0.62 & 0.28 & 0.00 & 0.00 & 0.00 & 0.54 \\ \hline
+    0.94 & 0.01 & 0.99 & 0.00 & 0.50 & 0.60 & 0.62 & 0.29 & 0.00 & 0.00 & 0.00 & 0.49 \\ \hline
     \end{tabular}
     \caption{Miary jakości dla podsumowania nr. 3 z tabeli nr.3.}
 \end{table}  
@@ -693,50 +687,132 @@ W poniższej tabeli przedstawiono miary jakości oraz miarę podsumowania optyma
 
 \subsection{Podsumowania lingwistyczne drugiego typu z jednym sumaryzatorem}
 W tej sekcji zostały przedstawione wyniki dla podsumowań lingwistycznych z jednym sumaryzatorem i jednym kwalifikatorem.
-W celu obliczenia miary podsumowania optymalnego przyjęto następujące wagi: \(w1 = 0.20\), \(w2 = 0.08\), \(w3 = 0.08\), \(w4 = 0.08\), \(w5 = 0.08\), \(w6 = 0.08\), \(w7 = 0.08\), \(w8 = 0.08\), \(w9 = 0.08\), \(w2 = 0.08\), \(w2 = 0.08\).
 
 \begin{table}[H]
 \begin{center}
 \normalsize % lub \Large, \normalsize, itp.
-\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\begin{tabular}{|c|p{8cm}|c|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
 \hline
-\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{T1} \\ \hline
-1. & Wiele pomiarów będący/mający wysokie ciśnienie jest/ma południowa godzine & 1.0 \\\hline
-2. & Trochę pomiarów będący/mający wysokie ciśnienie jest/ma popołudniowa godzine & 0.72 \\ \hline
-3. & Prawie żaden pomiarów będący/mający wysokie ciśnienie jest/ma wieczorna godzine & 0.70 \\ \hline
-4. & Około połowy pomiarów będący/mający gwałtowny waitr jest/ma południowa godzinę & 0.94 \\ \hline
-5. & Wiele pomiarów będący/mający gorąca temperaturę jest/ma popołudniowa godzinę & 0.55 \\ \hline
-6. & Około połowy pomiarów będący/mający suche powietrze jest/ma popołudniowa godzinę & 0.99 \\\hline
-7. & Wiele pomiarów będący/mający silny wiatr jest/ma ciepła temperaturę & 0.84 \\ \hline
-8. & Prawie wszystkie pomiarów będący/mający wysokie UV jest/ma ciepła temperaturę & 0.16 \\ \hline
-9. & Prawie żaden pomiarów będący/mający normalne zanieczyszczenie CO2 jest/ma gorąca temperaturę & 0.58 \\ \hline
-10. & Około połowy pomiarów będący/mający zła jakość powietrza jest/ma ciepła temperaturę & 0.89 \\ \hline
-11. & Prawie wszystkie pomiarów będący/mający normalne zanieczysczenie CO2 jest/ma normalne zanieczysczenie NO2 & 0.74 \\ \hline
-12. & Prawie żaden pomiarów będący/mający bardzo wysokie UV jest/ma niebezpieczne zanieczyszczenie NO2 & 0.99 \\ \hline
-13. & Trochę pomiarów będący/mający normalne cisnienie jest/ma umiarkowane wilgotność & 0.72 \\ \hline
-14. & Trochę pomiarów będący/mający gwałtowny wiatr jest/ma słaba widoczność & 0.86 \\ \hline
-15. & Prawie żaden pomiarów będący/mający dobra widoczność jest/ma niebezpieczne zanieczysczenie CO2 & 0.91 \\ \hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} & \textbf{T} \\ \hline
+1. & Prawie żaden pomiarów będący/mający wieczorna godzinę jest/ma bardzo silny wiatr & 1.0 & 0.81\\\hline
+2. & Prawie żaden pomiarów będący/mający ciepła temperature jest/ma umiarkowana widoczność & 0.69 & 0.63 \\ \hline
+3. & Trochę pomiarów będący/mający ekstremalne UV jest/ma dobra jakość powietrza & 0.84 & 0.74 \\ \hline
+4. & Trochę pomiarów będący/mający wysokie cisnienie jest/ma poranna godzine & 0.47 & 0.62 \\ \hline
+5. & Około połowy pomiarów będący/mający południowa godzinę jest/ma słaby wiatr & 0.99 & 0.70 \\ \hline
+6. & Około połowy pomiarów będący/mający normalne cisnienie jest/ma umiarkowany wiatr & 0.72 & 0.55 \\\hline
+7. & Wiele pomiarów będący/mający ekstremalne UV jest/ma południowa godzinę & 0.20 & 0.57 \\ \hline
+8. & Wiele pomiarów będący/mający niskie cisnienie jest/ma wilgotne powietrze & 0.42 & 0.56 \\ \hline
+9. & Prawie wszystkie pomiarów będący/mający gorąca temperaturę jest/ma normalne zanieczysczenie NO2 & 0.86 & 0.70 \\ \hline
+10. & Prawie wszystkie pomiarów będący/mający normalne zanieczysczenie NO2 jest/ma umiarkowana widoczność & 0.70 & 0.58 \\ \hline
 
 \end{tabular}
 \caption{Wyniki jednopodmiotowych podsumowań lingwistycznych typu 2 z miarą \textit{degree of truth}.}
 \end{center}
 \end{table}
 
-W poniższej tabeli przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.15 z tabeli nr.5. Zdanie: \textit{„Prawie żaden pomiarów jest/ma niezdrowe zanieczyszczenie NO\textsubscript{2} i jest/ma bardzo złą jakość powietrza”} uzyskało bardzo wysoką wartość \(T_1\) – (0{,}91), co świadczy o wysokiej zgodności podsumowania. \(T_2\)  – (0{,}98) wskazuje na wysoki poziom nieprecyzyjności sumaryzatorów. \(T_3\)  – (0{,}03) oznacza, że tylko niewielka część danych spełnia warunki podsumowania. \(T_4\)  – (0{,}01). \(T_5\)  – (1{,}00) wskazuje na obecność jednego sumaryzatora. \(T_6\)  – (0{,}80) świadczy o trudności w precyzyjnym określeniu kwantyfikatora „prawie żaden”. \(T_7\)  – (0{,}60) wskazuje na średnią wartość liczebności kwantyfikatora. \(T_8\)  – (0{,}98) potwierdza dużą nieprecyzyjność sumaryzatora. Wartości \(T_9\)  (0{,}97) oraz \(T_{10}\)  – (0{,}97) wskazują na znaczną nieprecyzyjność i rozmycie kwalifikatora. \(T_{11}\)  – 1{,}00 oznacza, że wystepuje jeden kwalifikator. Miara \(T\)  – optymalna jakość podsumowania – wynosi 0{,}77, co wskazuje na stosunkowo wysoką jakość końcową.
-
+W tabelo nr.6 przedstawiono miary jakości oraz miarę podsumowania optymalnego dla podsumowania lingwistycznego nr.9 z tabeli nr.5. Zdanie: \textit{„Prawie wszystkie pomiarów będący/mający gorąca temperaturę jest/ma normalne zanieczysczenie NO2”}, wszystkie przedstawione w niej miary zostały opisane w sekcji 6.1. 
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
     \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)} \\ \hline
-    0.91 & 0.98 & 0.03 & 0.01 & 1.00 & 0.80 & 0.60 & 0.98 & 0.97 & 0.97 & 1.00 & 0.77 \\ \hline
+    0.86 & 0.02 & 0.98 & 0.00 & 1.00 & 0.80 & 0.65 & 0.05 & 0.82 & 0.94 & 1.00 & 0.70 \\ \hline
     \end{tabular}
     \caption{Miary jakości dla podsumowania nr. 15 z tabeli nr.5.}
 \end{table}  
 
 
 \section{Wielopodmiotowe podsumowania lingwistyczne i~ich miary jakości} 
+Poniżej zaprezentowano wyniki eksperymentów polegających na generowaniu wielopodmiotowych podsumowań lingwistycznych. Z bazy danych opisanej w sekcji 2.1 zostały wyodrębnione cztery podmioty, które dzielą podmiot główny - pomiar, na pomiar wykonany na danym kontynencie. Wyróżnione zostały cztery kontynenty - Europe, Asia, Africa, America. Podsumownania wielopodmiotowe będą generowane w czterech formach, ograniczając się przy tym do wykorzystania w tym samym momencie tylko dwóch podmiotów. W tabelach zaprezentowano treść podsumowania oraz wartość miary degree of truth, która za każdym razem opisuje prawdziwość danego wyrażenia.
+
+\subsection{Dwupodmiotowe podsumowania w pierwszej formie}
+W tej sekcji zostały przedstawione wyniki dla dwupodmiotowych podsumowań lingwistycznych z jednym sumaryzatorem.
+
+\begin{table}[H]
+\begin{center}
+\normalsize % lub \Large, \normalsize, itp.
+\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} \\ \hline
+1. & Prawie żaden pomiarów z Africa w porównaniu do pomiarów z America jest/ma bardzo zimna temperature & 1.0 \\\hline
+2. & Prawie żaden pomiarów z Asia w porównaniu do pomiarów z Africa jest/ma poranna godzinę & 0.96 \\\hline
+3. & Prawie żaden pomiarów z America w porównaniu do pomiarów z Asia jest/ma suche powietrze & 0.85 \\\hline
+4. & Prawie żaden pomiarów z Asia w porównaniu do pomiarów z America jest/ma dobra widoczność & 0.62 \\\hline
+5. & Trochę pomiarów z Asia w porównaniu do pomiarów z Europe jest/ma umiarkowana temperaturę & 0.95 \\\hline
+6. & Trochę pomiarów z Europe w porównaniu do pomiarów z America jest/ma bardzo zimna temperaturę & 0.95 \\\hline
+7. & Trochę pomiarów z America w porównaniu do pomiarów z Europe jest/ma gwałtowny  wiatr & 0.97 \\\hline
+8. & Około połowy pomiarów z America w porównaniu do pomiarów z Europe jest/ma wysokie UV & 0.75 \\\hline
+9. & Około połowy pomiarów z Europe w porównaniu do pomiarów z America jest/ma wysokie UV & 0.75 \\\hline
+10. & Wiele pomiarów z Europe w porównaniu do pomiarów z Africa jest/ma umiarkowana temperaturę & 0.85 \\\hline
+11. & Wiele pomiarów z Europe w porównaniu do pomiarów z Africa jest/ma słaba widoczność & 0.24 \\\hline
+12. & Prawie wszystkie pomiarów z Europe w porównaniu do pomiarów z Africa jest/ma zimna temperaturę & 0.99 \\\hline
+\end{tabular}
+\caption{Wyniki dwupodmiotowych podsumowań lingwistycznych w pierwszej formie z miarą \textit{degree of truth}.}
+\end{center}
+\end{table}
+
+\subsection{Dwupodmiotowe podsumowania w drugiej formie}
+W tej sekcji zostały przedstawione wyniki dla dwupodmiotowych podsumowań lingwistycznych w drugiej formie.
+
+\begin{table}[H]
+\begin{center}
+\normalsize % lub \Large, \normalsize, itp.
+\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} \\ \hline
+1. & Prawie żaden pomiarów z Asia w porównaniu do pomiarów z Africa, które są/mają niezdrowe zanieczyszczenie CO2 jest/ma poranna godzinę & 0.96 \\\hline  
+2. & Trochę pomiarów z Asia w porównaniu do pomiarów z Europe, które są/mają niezdrowe zanieczyszczenie CO2 jest/ma południowa godzinę & 0.83 \\\hline 
+3. & Około połowy pomiarów z Africa w porównaniu do pomiarów z Europe, które są/mają wysokie ciśnienie jest/ma poranna godzinę & 0.43 \\\hline
+4. & Około połowy pomiarów z Africa w porównaniu do pomiarów z Europe, które są/mają wysokie ciśnienie jest/ma popołudniowa godzinę & 0.34 \\\hline
+5. & Wiele pomiarów z Asia w porównaniu do pomiarów z America, które są/mają niezdrowe zanieczysczenie NO2 jest/ma niezdrowe zanieczyszczenie CO2 & 0.82 \\\hline
+6. & Wiele pomiarów z Asia w porównaniu do pomiarów z America, które są/mają umiarkowany wiatr jest/ma zimna temperaturę & 0.66 \\\hline 
+\end{tabular}
+\caption{Wyniki dwupodmiotowych podsumowań lingwistycznych w drugiej formie z miarą \textit{degree of truth}.}
+\end{center}
+\end{table}
+
+\subsection{Dwupodmiotowe podsumowania w trzeciej formie}
+W tej sekcji zostały przedstawione wyniki dla dwupodmiotowych podsumowań lingwistycznych w trzeciej formie.
+
+\begin{table}[H]
+\begin{center}
+\normalsize % lub \Large, \normalsize, itp.
+\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} \\ \hline
+1. & Prawie żaden pomiarów z Africa, które są/mają niezdrowe zanieczyszczenie NO2, w porównaniu do pomiarów z America jest/ma niebezpieczne zanieczyszczenie CO2 & 0.61 \\\hline
+2. & Trochę pomiarów z Africa, które są/mają słaby wiatr, w porównaniu do pomiarów z Europe jest/ma niskie UV & 1.0 \\\hline
+3. & Trochę pomiarów z America, które są/mają słaby wiatr, w porównaniu do pomiarów z Europe jest/ma niskie UV & 0.76 \\\hline
+4. & Około połowy pomiarów z Asia, które są/mają wilgotne powietrze, w porównaniu do pomiarów z Africa jest/ma wysokie UV & 0.96 \\\hline
+5. & Wiele pomiarów z Asia, które są/mają wilgotne powietrze, w porównaniu do pomiarów z Europe jest/ma niskie UV & 0.51 \\\hline
+6. & Prawie wszystkie pomiarów z Asia, które są/mają wilgotne powietrze, w porównaniu do pomiarów z Europe jest/ma bardzo dobra jakość powietrza & 0.91 \\\hline
+\end{tabular}
+\caption{Wyniki dwupodmiotowych podsumowań lingwistycznych w trzeciej formie z miarą \textit{degree of truth}.}
+\end{center}
+\end{table}
+
+\subsection{Dwupodmiotowe podsumowania w czwartej formie}
+W tej sekcji zostały przedstawione wyniki dla dwupodmiotowych podsumowań lingwistycznych w czwartej formie.
+
+\begin{table}[H]
+\begin{center}
+\normalsize % lub \Large, \normalsize, itp.
+\begin{tabular}{|c|p{10cm}|c|} % p{10cm} = zawijanie tekstu, szerokość dostosuj
+\hline
+\textbf{Lp.} & \textbf{Podsumowanie} & \textbf{\(T_1\)} \\ \hline
+1. & Więcej pomiarów z Asia niż pomiarów z Africa jest/ma ciepła temperaturę & 0.67 \\\hline
+2. & Więcej pomiarów z Asia niż pomiarów z Africa jest/ma bardzo silny wiatr & 0.49 \\\hline
+3. & Więcej pomiarów z America niż pomiarów z Europe jest/ma bardzo zła jakość powietrza & 0.59 \\\hline
+4. & Więcej pomiarów z Europe niż pomiarów z Africa jest/ma normalne ciśnienie & 0.55 \\\hline
+5. & Więcej pomiarów z America niż pomiarów z Europe jest/ma niskie UV & 0.75 \\\hline
+6. & Więcej pomiarów z America niż pomiarów z Europe jest/ma niezdrowe zanieczyszczenie CO2 & 0.58 \\\hline 
+\end{tabular}
+\caption{Wyniki dwupodmiotowych podsumowań lingwistycznych w czwartej formie z miarą \textit{degree of truth}.}
+\end{center}
+\end{table}
+
+
 Wyniki kolejnych eksperymentów wg punktów 2.-4. opisu projektu 2. Uzasadnienie i
 metoda podziału zbioru danych na rozłączne podmioty. Listy podsumowań
 wielopodmiotowych i tabele/rankingi podsumowań dla danych atrybutów obowiązkowe i
@@ -755,6 +831,29 @@ na WIKAMP KSR.}
 
 
 \section{Dyskusja, wnioski}
+
+\subsection{Jednopodmiotowe podsumowania lingwistyczne}
+Etap generowania jednopodmiotowych podsumowań lingwistycznych był podzielony na trzy etapy. W pierwszym z nich były generowane podsumowania pierwszego typu z jednym sumaryzatorem. W tym doświaczeniu wygenerowano podsumowania dla każdego możliwego zbioru rozmytego danej zmiennej lingwistycznej z wszystkimi kwantyfikatorami. Natomiast uwaga była poświęcona tylko tym podsumowaniom, które uzyskały wysoką jakość. Na początku warto zauważyć, że znacznie więcej pojawiało się podsumowań z kwantyfikatorem \textit{"prawie żaden"} lub \textit{"trochę"} w porównaniu do kwantyfikatów opisanych poprzez \textit{"wiele"}, \textit{"prawie wszystkie"}. Taka sytuacja pozwala dostrzec jakie cechy pojawiają się w bazie rzadko, np. \textit{"zimna temperatura"}, \textit{"niezdrowe zanieczyszczenie NO2"}, z czego ta druga cecha prowadzi do ciekawych wniosków, że powietrze w badanych regionach jest rzadko zanieczyszczone tlenkiem NO2. Pozwala to także zauważyć jakie cechy pojawiają się często, np. \textit{"normalne ciśnienie"}, \textit{"normalne zanieczyszczenie NO2"}. W przeprowadzonych doświadczeniach warto zwrócić uwagę na dwa podsumowania, \textit{"Prawie żaden pomiarów jest/ma suche powietrze"} oraz \textit{"Trochę pomiarów jest/ma suche powietrze"} i na ich miary \(T_1\), odpowiednio (0,05) i (0.30), przy poprawnym skonstruowaniu modelu funkcji kwantyfikatorów te wartości po zsumowaniu powinny wynosić (1.00). Każde podsumowanie posiada 12 miar oceniających jakość, przy czym miara \(T_1\) została uznana za najistotniejszą, jako ta, która ma największe znaczenie dla wiarygodności otrzymanego podsumowania. I tak w zdaniu \textit{"Prawie żaden pomiarów jest/ma zimną temperaturę"} \(T_1\) = (0.54), co oznacza, że podsumowanie jest zgodne z danymi w 54\%. Zgodnie z tabelą nr. 2 wspomniane wcześniej podsumowanie dla miary \(T_2\) = (0.88), czyli sumaryzator \textit{"zimna temperatura"} jest bardzo nieprecyzyjny. \(T_3\) = (0.12), czyli niewielka część danych spełnia warunki zawarte w podsumowaniu, co jest zgodne z przyjętym kwantyfikatorem \textit{"prawie żaden"}. \(T_4\) = (0.00), taka wartość z powodu tylko jednego sumaryzatora. \(T_5\) = 1.0, czyli w podsumowaniu występuje dokładnie jeden sumaryzator. \(T_6\) = 0.8, wykorzystany kwantyfikator \textit{"prawie żaden"} jest precyzyjny. \(T_7\) = 0.6, oznacza umiarkowaną liczebność obiektów w kwantyfikatorze wykorzystanym w tym podsumowaniu. \(T_8\) = (0.94) oznacza, że sumaryzator słabo odpowiada danym zawartym w bazie danych. Miary \(T_9\), \(T_{10}\) i \(T_{11}\) są równe (0.00), ponieważ podsumowanie nie zawiera kwalifikatora. Ostateczna miara jakości podsumowania (\(T\)) wynosi (0{.}61), co sugeruje umiarkowanie dobrą jakość wygenerowanego podsumownania. \\
+W drugim doświadczeniu tworzono podsumowania z wykorzystaniem dwóch sumaryzatorów. Podobnie jak w przypadku pierwszego doświadczenia, jednak w tym przypadku dużo większa część podsumowań lingwistycznych była oznaczona przez kwantyfikator \textit{"prawie żaden"} lub \textit{"trochę"}. Jest to związane z tym, że dużo ciężej stworzyć takie podsumowanie, które odpowiada jednocześnie dwóm cechom. Na wszystkie możliwe kombinacje podsumowań lingwistycznych z dwoma sumaryzatorami tylko 6 posiadało kwantyfikator \textit{"prawie wszystkie"} lub \textit{"wiele"}. Warte wspomnienia jest tutaj m.in. zdanie \textit{"Prawie wszystkie pomiarów jest/ma normalne zanieczyszczenie CO2 i normalne ciśnienie powietrza"}, które niesie bardzo konkretną informację o dobrych warunkach atmosferycznych. Warte uwagi jest zdanie \textit{"Prawie żaden pomiarów jest/ma wieczorną godzinę i jest/ma dobrą widoczność"}, które jest bardzo logicznym zdaniem, ponieważ zwykle w wieczornych godzinach, kiedy jest ciemno, to widoczność jest ograniczona. Miary jakości dla zdania \textit{„Około połowy pomiarów jest/ma normalne ciśnienie i jest/ma umiarkowany wiatr”} przedstawione w tabeli nr. 4 niosą ze sobą następujące informacje. \(T_1\) = (0.94) czyli to podsumowanie jest bardzo zgodne z tym, co reprezentują dane w bazie danych. Następnie \(T_2\) = (0.01) sugeruje że obydwa sumaryzatory \textit{"normalne ciśnienie powietrza"} oraz \textit{"umiarkowany wiatr"} są bardzo precyzyjnie określone. \(T_3\) = (0.99) miara która oznacza, że znaczna część danych spełnia warunki podsumowania. \(T_4\) =  (0.00). \(T_5\) = (0.5) - dwa sumaryzatory w jednym podsumowaniu. \(T_6\) = (0.6), wykorzystywany kwantyfikator \textit{"około połowy"} jest mniej precyzyjny w porównaniu do kwantyfikatora opisanego w poprzednim doświadczeniu (\textit{"prawie żaden"} miał \(T_6\) = (0.80)). \(T_7\) = (0.62) oznacza umiarkowaną liczebność obiektów w kwantyfikatorze wykorzystanym w tym podsumowaniu. \(T_8\) = (0.29), wykorzystane sumaryzatory dobrze odpowiadają danym zawartym w bazie danych. Miary \(T_9\), \(T_{10}\) i \(T_{11}\) są równe (0.00), ponieważ podsumowanie nie zawiera kwalifikatora. Ostateczna miara jakości podsumowania (\(T\)) wynosi (0{.}49), i jest nieco gorsza niż ta w przypadku przykładu podsumownia lingwistycznego z jednym sumaryzatorem. \\
+W kolejnym doświadczeniu badano jednopodmiotowe podsumowania lingwistyczne drugiego typu, czyli takie, które składają się z kwalifikatora i sumaryzatora. Podobnie jak w poprzednim doświadczeniu wygenerowano podsumowania lingwistyczne dla każdej możliwej kombinacji kwalifikatora z sumaryzatorem. Natomiast liczebności uzyskanych podsumowań dla kolejnych kwantyfikatorów nie różnią się tak drastycznie od siebie. Dla przykładu dla kwantyfikatora \textit{"wiele"} udało się uzyskać aż 116 podsumowań. Jest to oczywiście związane z tym, że podsumownia w drugiego typu nie skupiają się na informacjach ogólnych, tylko na tych obiektach z bazy danych, które spełniają dany kwalifikator. W zdaniu \textit{"Wiele pomiarów będący/mający ekstremalne UV jest/ma południowa godzinę"} rozpatrywane są tylko te obiekty, które w pierwszej kolejności spełniają wymóg kwalifikatora, czyli \textit{"silny wiatr"}. Miary jakości dla zdania \textit{„Prawie wszystkie pomiarów będący/mający gorąca temperaturę jest/ma normalne zanieczysczenie NO2”} przestawione w tabeli nr.6 mają następujące znaczenie. \(T_1\) = (0.86), czyli 86\% danych spełnia założenia kwalifikatora \textit{"gorąca temperatura"} i sumaryzatora \textit{"normalne zanieczysczenie NO2"}. \(T_2\) = (0.02), czyli sumaryzator jest precyzyjnie określony, \(T_3\) = (0.99), czyli prawie wszystkie wiersze z bazy danych odpowiadających w pewnym stopniu kwalifikatorowi \textit{"gorąca temperatura"} jest objętych tym podsumowaniem.\(T_4\) = (0.00), taka wartość z powodu tylko jednego sumaryzatora. \(T_5\) = (1.00), jeden sumaryzator. \(T_6\) = (0.80), co oznacza, że kwantyfikator \textit{"prawie wszystkie"} jest precyzyjny. \(T_7\) = (0.65) oznacza umiarkowaną liczebność obiektów w kwantyfikatorze wykorzystanym w tym podsumowaniu. \(T_8\) = (0.05), wykorzystany sumaryzator bardzo dobrze odpowiada danym zawartym w bazie danych. \(T_9\) = (0.82) oznacza, że kwalifikator jest nieprecyzjny, im wyższa wartość tym gorzej. \(T_{10}\) = (0.94), co oznacza, że wiele obiektów jest objęte kwalifikatorem \textit{"gorąca temperatura"}. \(T_{11}\) = (1.00), czyli w podsumowaniu został wykorzystany jeden kwalifikator. \(T\) = (0.70), czyli wartość miary optymalnej jest dobra w porównaniu z tym, co zostało opisane w przypadku podsumowań pierwszego typu z jednym i dwoma sumaryzatorami. 
+
+\subsection{Wielopodmiotowe podsumowania lingwistyczne}
+Wielopodmiotowe podsumowania lingwistyczne były generowane w czterech różnych formach. Pierwsza z nich dotyczyła podsumowania, w którym występują dwa podmioty i jeden sumaryzator. Przeprowadzone doświadczenie doprowadziło do ciekawych rezultatów, mianowicie w przeciwieństwie do jednopodmiotowych podsumowań lingwistycznych, liczba podsumowań wygenerowanych z miarą \(T_1\)> 0.01 dla kwantyfikatórów \textit{"prawie żaden"} oraz \textit{"trochę} nie jest dominująca. W tym przypadku uzyskano najwięcej podsumowań dla kwantyfikatora \textit{"około połowy"}. Podział bazy danych na cztery podzbiory pozwolił na uzyskanie dużo bardziej szczegółowych informacji dotyczących pomiarów. Np. podsumowanie \textit{"Prawie wszystkie pomiarów z Europe w porównaniu do pomiarów z Africa jest/ma zimna temperaturę"} \(T_1 = 0.99\) potwierdza bardzo intuicyjne skojarzenie na temat temperatur, jakie występują  w Europie i Afryce. Natomiast podsumowanie \textit{"Prawie żaden pomiarów z America w porównaniu do pomiarów z Asia jest/ma suche powietrze"} nie jest od razu oczywiste, że klimat amerykański jest suchszy od azjatyckiego. \\
+Podsumowania wielopodmiotowe w drugiej oraz trzeciej formie pozwalają na jeszcze większe uszczegółowienie informacji, jakie niosą ze sobą te podsumowania. Występuje tutaj kwalifikator, który dotyczy pierwszego albo drugiego podmiotu. Dzięki temu możliwe jest nie tylko porównanie dwóch różnych grup, ale również uwzględnienie określonej cechy charakteryzującej jedną z nich, co znacząco zwiększa wartość informacyjną takich podsumowań. W drugiej formie kwalifikator odnosi się do drugiego podmiotu. Przykładowo, podsumowanie: \textit{"Trochę pomiarów z Asia w porównaniu do pomiarów z Europe, które są/mają niezdrowe zanieczyszczenie CO2, jest/ma południową godzinę”} \(T_1 = 0.83\)
+wskazuje, że tylko niewielka część pomiarów z Azji, w porównaniu do tych z Europy spełniających określony warunek, ma daną cechę. Wartość stopnia prawdziwości na poziomie 0.83 świadczy o dość wysokiej zgodności tej informacji z danymi źródłowymi. Z kolei w trzeciej formie kwalifikator odnosi się do pierwszego podmiotu. Taka struktura pozwala określić, jaka część pierwszego podmiotu (z uwzględnieniem jego właściwości) różni się od drugiego. Przykład: \textit{"Prawie wszystkie pomiarów z Asia, które są/mają wilgotne powietrze, w porównaniu do pomiarów z Europe, jest/ma bardzo dobrą jakość powietrza”}. Miara \(T_1 = 0.91\) pokazuje, że większość pomiarów z Azji, w warunkach wilgotnego powietrza, ma lepszą jakość powietrza niż Europa i to z dużą zgodnością z obiektami z bazy danych. \\
+Ostatnia - czwarta forma określa czy dany podmiot na więcej elementów spełniających warunki danego sumaryzatora. W przypadku tego typu podsumowań należy zwrócić uwagę na liczebności danych podzbiorów, ponieważ duża dysproporcja może doprowadzić do tego, ze dany podmiot nie będzie miał więcej obiektów dla żadnego sumaryzatora. Na podstawie przeprowadzonych doświadczeń otrzymano dla przykładu: \textit{"Więcej pomiarów z Asia niż pomiarów z Africa jest/ma ciepła temperaturę"} z miarą \(T_1 = 0.67\), która oznacza, że rzeczywiście pomiary dokonane w Azji przeważają liczebnością w aspekcie ciepłej temperatury w stosunku do Afryki. Natomiast w przypadku tego podsumowania: \textit{"Więcej pomiarów z Asia niż pomiarów z Africa jest/ma bardzo silny wiatr"} miara \(T_1 = 0.49\) oznacza, że Azja niekoniecznie ma przewagę w liczebności pomiarów posiadających silny wiatr.
+
+\subsection{Wnioski}
+\begin{itemize}
+    \item Miara \(T_1\) przekazuje najistotniejsze informacje na temat dokonanych podsumowań. 
+    \item Podczas generowania jednopodmiotowych podsumowań lingwistycznych dużo częściej pojawią sie te z kwantyfikatorem \textit{"prawie żaden"} lub \textit{"trochę"}.
+    \item Znacznie trudniej wygenerować wysokiej jakości podsumowania spełniające dwie lub więcej cech.
+    \item Wartości stopnia przynależności dla kolejnych kwantyfikatorów powinny przecinać się w połowie.
+    \item Podsumowania jednopodmiotowe drugiego typu niosą za sobą dużo bardziej szczegółowe informacje.
+    \item Generowanie wielopodmiotowych podsumowań lingwistycznych pozwala na uzyskanie dużo bardziej szczegółowych informacji.
+    \item Podsumowania wielopodmiotowe, w przeciwieństwie do jednopodmiotowych, dają możliwość znalezienia zależności, pomiędzy niektórymi podmiotami w badanym zbiorze danych. 
+\end{itemize}
+
 Dokładne interpretacje uzyskanych wyników w zależności od parametrów klasyfikacji
 opisanych w punktach 3.-4 opisu Projektu 2. 
 Omówić i wyjaśnić napotkane problemy (jeśli były). Każdy wniosek/problem powinien mieć poparcie

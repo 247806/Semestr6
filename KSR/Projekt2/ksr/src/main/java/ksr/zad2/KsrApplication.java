@@ -29,8 +29,8 @@ public class KsrApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Hello World!");
-		this.singleSubjectSummary();
-//		this.twoSubjectSummary();
+//		this.singleSubjectSummary();
+		this.twoSubjectSummary();
 	}
 
 
@@ -275,31 +275,31 @@ public class KsrApplication implements CommandLineRunner {
 //			}
 
             for (int i = 0; i < terms.size(); i++) {
-                for (int j = 0; j < terms.size(); j++) {
-                    if (i == j) continue; // Pomijamy te same zmienne lingwistyczne
+				List<LinguisticTerm> qualifiers = terms.get(i);
+				List<List<LinguisticTerm>> temp = new ArrayList<>();
+				temp.addAll(terms);
+				temp.remove(i);
+				for (List<LinguisticTerm> term : temp) {
+					for (LinguisticTerm qualifier : qualifiers) {
+						for (LinguisticTerm summarizer : term) {
 
-                    List<LinguisticTerm> qualifiers = terms.get(i);
-                    List<LinguisticTerm> summarizers = terms.get(j);
+							List<LinguisticTerm> summarizerList = new ArrayList<>();
+							summarizerList.add(summarizer);
 
-                    for (LinguisticTerm qualifier : qualifiers) {
-                        for (LinguisticTerm summarizer : summarizers) {
-
-                            List<LinguisticTerm> summarizerList = new ArrayList<>();
-                            summarizerList.add(summarizer);
-
-                            SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
-                                    quantifier,
-                                    summarizerList,
-                                    qualifier
-                            );
-                            singleSubjectSummary.summarization();
-                            if (singleSubjectSummary.getT1() > 0.01) {
+							SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+									quantifier,
+									summarizerList,
+									qualifier
+							);
+							System.out.println(singleSubjectSummary.summarization());
+//							singleSubjectSummary.summarization();
+							if (singleSubjectSummary.getT1() > 0.01) {
 								singleSubjectSummary.print();
 								amount+=1;
 							}
-                        }
-                    }
-                }
+						}
+					}
+				}
             }
 //			System.out.println("TEMPERATURES:");
 //			for (LinguisticTerm temperatureTerm : pressureTerms) {
@@ -474,10 +474,10 @@ public class KsrApplication implements CommandLineRunner {
 		List<String> airTerms = List.of("bardzo dobra", "dobra", "umiarkowana", "zla", "bardzo zla");
 
 
-//		for (Quantifier quantifier : quantifierTerms) {
-//			System.out.println("Quantifier: " + quantifier.getName());
-//			System.out.println("--------------------------------------------------");
-//
+		for (Quantifier quantifier : quantifierTerms) {
+			System.out.println("Quantifier: " + quantifier.getName());
+			System.out.println("--------------------------------------------------");
+			int amount = 0;
 //			System.out.println("TEMPERATURA");
 //			for (String temp : warmTerms) {
 //				for (int i = 0; i < continents.size(); i++) {
@@ -495,6 +495,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//	                    	amount+=1;
+//						}
 //
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
@@ -509,6 +512,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -531,7 +537,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermTime(temp, continentA);
@@ -545,6 +553,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -567,7 +578,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermWind(temp, continentA);
@@ -581,6 +594,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -603,7 +619,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
@@ -617,6 +635,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -639,7 +660,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermHumidity(temp, continentA);
@@ -653,6 +676,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -675,7 +701,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermVisibility(temp, continentA);
@@ -689,6 +717,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -711,7 +742,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermUv(temp, continentA);
@@ -725,6 +758,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -747,7 +783,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
@@ -761,6 +799,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -783,7 +824,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermNitrogen(temp, continentA);
@@ -797,6 +840,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
@@ -819,7 +865,9 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
-//
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //						continentA = continents.get(j);
 //						continentB = continents.get(i);
 //						linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
@@ -833,11 +881,14 @@ public class KsrApplication implements CommandLineRunner {
 //						);
 //
 //						doubleSubjectSummary.firstForm();
+//						if (doubleSubjectSummary.getT1() > 0.01) {
+//							amount+=1;
+//						}
 //					}
 //				}
 //			}
-//
-//		}
+//			System.out.println("Amount: " + amount + " for quantifier: " + quantifier.getName());
+		}
 
 //		for (Quantifier quantifier : quantifierTerms) {
 //			System.out.println("Quantifier: " + quantifier.getName());
@@ -861,32 +912,43 @@ public class KsrApplication implements CommandLineRunner {
 //								qualifier
 //						);
 //
-//						doubleSubjectSummary.thirdForm();
+//						doubleSubjectSummary.secondForm();
 //					}
 //				}
 //			}
 //		}
 
-		for (String temp: carbonTerms) {
-			System.out.println("Temperature: " + temp);
-			for (int i = 0; i < continents.size(); i++) {
-				for (int j = i + 1; j < continents.size(); j++) {
-					String continentA = continents.get(i);
-					String continentB = continents.get(j);
-					LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
-					LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
-					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-							continentA,
-							continentB,
-							linguisticTerm1,
-							linguisticTerm2
-					);
+//		for (String temp: carbonTerms) {
+//			System.out.println("Temperature: " + temp);
+//			for (int i = 0; i < continents.size(); i++) {
+//				for (int j = i + 1; j < continents.size(); j++) {
+//					String continentA = continents.get(i);
+//					String continentB = continents.get(j);
+//					LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
+//					LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
+//					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//							continentA,
+//							continentB,
+//							linguisticTerm1,
+//							linguisticTerm2
+//					);
+//
+//					doubleSubjectSummary.fourthForm();
+//				}
+//			}
+//
+//		}
 
-					doubleSubjectSummary.fourthForm();
-				}
-			}
+		LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon("niezdrowe", "Europe");
+		LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon("niezdrowe", "Asia");
+		DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+				"Asia",
+				"Europe",
+				linguisticTerm2,
+				linguisticTerm1
+		);
 
-		}
+		doubleSubjectSummary.fourthForm();
 
 	}
 

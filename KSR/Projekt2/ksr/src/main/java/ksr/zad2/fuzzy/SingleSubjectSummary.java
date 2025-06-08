@@ -67,7 +67,7 @@ public class SingleSubjectSummary {
         System.out.println(t9);
         System.out.println(t10);
         System.out.println(t11);
-        System.out.println(optimalSummary(List.of(0.30, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.00, 0.00, 0.00),
+        System.out.println(optimalSummary(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07),
                 List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
     }
 
