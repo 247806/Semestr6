@@ -121,7 +121,6 @@ public class KsrApplication implements CommandLineRunner {
 			timeTerms.add(timeTerm);
 		}
 
-
 		// Wiatr
 		LinguisticVariable windVariable = WindValues.windVariable;
 		windVariable.addTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
@@ -138,7 +137,6 @@ public class KsrApplication implements CommandLineRunner {
 			windTerms.add(windTerm);
 		}
 
-
 		// Cisnienie
 		LinguisticVariable pressureVariable = PressureValues.pressureVariable;
 		pressureVariable.addTerm(PressureValues.niskie.getName(), PressureValues.niskie.getFuzzySet());
@@ -152,7 +150,6 @@ public class KsrApplication implements CommandLineRunner {
 			pressureTerm.setData(pressure);
 			pressureTerms.add(pressureTerm);
 		}
-
 
 		// Widoczność
 		LinguisticVariable visibilityVariable = VisibilityValues.visibilityVariable;
@@ -168,7 +165,6 @@ public class KsrApplication implements CommandLineRunner {
 			visibilityTerm.setData(visibility);
 			visibilityTerms.add(visibilityTerm);
 		}
-
 
 		// Indeks UV
 		LinguisticVariable uvVariable = UvValues.uvIndexVariable;
@@ -186,7 +182,6 @@ public class KsrApplication implements CommandLineRunner {
 			uvTerms.add(uvTerm);
 		}
 
-
 		// Jakość powietrza CO2
 		LinguisticVariable carbonVariable = CoValues.coQualityVariable;
 		carbonVariable.addTerm(CoValues.normalne.getName(), CoValues.normalne.getFuzzySet());
@@ -202,7 +197,6 @@ public class KsrApplication implements CommandLineRunner {
 			carbonTerms.add(carbonTerm);
 		}
 
-
 		// Jakość powietrza NO2
 		LinguisticVariable nitrogenVariable = NoValues.no2QualityVariable;
 		nitrogenVariable.addTerm(NoValues.normalne.getName(), NoValues.normalne.getFuzzySet());
@@ -216,7 +210,6 @@ public class KsrApplication implements CommandLineRunner {
 			nitrogenTerm.setData(nitrogen);
 			nitrogenTerms.add(nitrogenTerm);
 		}
-
 
 		// Jakość powietrza
 		LinguisticVariable qualityVariable = AirValues.airQuality;
@@ -239,14 +232,79 @@ public class KsrApplication implements CommandLineRunner {
 //			System.out.println(measurements.get(i).getTimezone());
 //		}
 		System.out.println("Measurements count: " + measurements.size());
+		List<List<LinguisticTerm>> terms = new ArrayList<>();
+		terms.add(temperaturesTerms);
+		terms.add(timeTerms);
+		terms.add(windTerms);
+		terms.add(airTerms);
+		terms.add(humidityTerms);
+		terms.add(visibilityTerms);
+		terms.add(uvTerms);
+		terms.add(carbonTerms);
+		terms.add(nitrogenTerms);
+		terms.add(pressureTerms);
 
 		for (Quantifier quantifier : quantifierTerms) {
 			System.out.println(quantifier.getName());
 			System.out.println("--------------------------------------------------");
+			int amount = 0;
+//			for (int i = 0; i < terms.size(); i++) {
+//				for (int j = i + 1; j < terms.size(); j++) {
+//					List<LinguisticTerm> list1 = terms.get(i);
+//					List<LinguisticTerm> list2 = terms.get(j);
+//
+//					for (LinguisticTerm term1 : list1) {
+//						for (LinguisticTerm term2 : list2) {
+//							List<LinguisticTerm> summarizers = new ArrayList<>();
+//							summarizers.add(term1);
+//							summarizers.add(term2);
+//
+//							// Tutaj tworzysz i oceniasz podsumowanie
+//							SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+//									quantifier,
+//									summarizers
+//							);
+//							System.out.println(singleSubjectSummary.summarization());
+//							if (singleSubjectSummary.getT1() > 0.01) {
+//								singleSubjectSummary.print();
+//								amount+=1;
+//							}
+//						}
+//					}
+//				}
+//			}
+
+            for (int i = 0; i < terms.size(); i++) {
+                for (int j = 0; j < terms.size(); j++) {
+                    if (i == j) continue; // Pomijamy te same zmienne lingwistyczne
+
+                    List<LinguisticTerm> qualifiers = terms.get(i);
+                    List<LinguisticTerm> summarizers = terms.get(j);
+
+                    for (LinguisticTerm qualifier : qualifiers) {
+                        for (LinguisticTerm summarizer : summarizers) {
+
+                            List<LinguisticTerm> summarizerList = new ArrayList<>();
+                            summarizerList.add(summarizer);
+
+                            SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+                                    quantifier,
+                                    summarizerList,
+                                    qualifier
+                            );
+                            singleSubjectSummary.summarization();
+                            if (singleSubjectSummary.getT1() > 0.01) {
+								singleSubjectSummary.print();
+								amount+=1;
+							}
+                        }
+                    }
+                }
+            }
 //			System.out.println("TEMPERATURES:");
-//			for (LinguisticTerm temperatureTerm : carbonTerms) {
-//				for (LinguisticTerm dateTerm : visibilityTerms) {
-//					SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(quantifier, List.of(temperatureTerm), dateTerm);
+//			for (LinguisticTerm temperatureTerm : pressureTerms) {
+//				for (LinguisticTerm dateTerm : windTerms) {
+//					SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(quantifier, List.of(temperatureTerm, dateTerm));
 //					System.out.println(singleSubjectSummary.summarization());
 //					if (singleSubjectSummary.getT1() > 0.01) {
 //						singleSubjectSummary.print();
@@ -256,92 +314,124 @@ public class KsrApplication implements CommandLineRunner {
 //				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
 //				System.out.println(summary.summarization());
 //			}
+//            int amount = 0;
+            System.out.println(quantifier.getName() + " " + amount);
+			System.out.println("--------------------------------------------------");
+		}
 
-//			System.out.println("TEMPERATURES:");
-//			for (LinguisticTerm tempTerm : temperaturesTerms) {
+//		System.out.println("TEMPERATURES:");
+//		for (LinguisticTerm tempTerm : temperaturesTerms) {
+//			for (Quantifier quantifier : quantifierTerms) {
 //				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(tempTerm));
 //				System.out.println(summary.summarization());
 //				if (summary.getT1() > 0.01) {
 //					summary.print();
+////					amount += 1;
 //				}
 //			}
+//		}
 //
-//			System.out.println("HUMIDITIES:");
+//		System.out.println("HUMIDITIES:");
 //			for (LinguisticTerm humidityTerm : humidityTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(humidityTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(humidityTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //
 //			System.out.println("TIMES:");
 //			for (LinguisticTerm timeTerm : timeTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(timeTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(timeTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
-//
 //			}
 //			System.out.println("WINDS:");
 //			for (LinguisticTerm windTerm : windTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(windTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(windTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //			System.out.println("PRESSURES:");
 //			for (LinguisticTerm pressureTerm : pressureTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(pressureTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(pressureTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //			System.out.println("VISIBILITIES:");
 //			for (LinguisticTerm visibilityTerm : visibilityTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(visibilityTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(visibilityTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //			System.out.println("UVS:");
 //			for (LinguisticTerm uvTerm : uvTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(uvTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(uvTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //			System.out.println("CARBONS:");
 //			for (LinguisticTerm carbonTerm : carbonTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(carbonTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(carbonTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.05) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
 //			System.out.println("NITROGENS:");
 //			for (LinguisticTerm nitrogenTerm : nitrogenTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(nitrogenTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(nitrogenTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.01) {
+//						summary.print();
+//	//                    amount+=1;
+//					}
 //				}
 //			}
 //			System.out.println("QUALITIES:");
 //			for (LinguisticTerm airTerm : airTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(airTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() > 0.01) {
-//					summary.print();
+//				for (Quantifier quantifier : quantifierTerms) {
+//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(airTerm));
+//					System.out.println(summary.summarization());
+//					if (summary.getT1() > 0.05) {
+//						summary.print();
+////						amount += 1;
+//					}
 //				}
 //			}
-			System.out.println("--------------------------------------------------");
-		}
+
 	}
 
 	public void twoSubjectSummary() {
