@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[a4paper, top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{graphicx}
+ \usepackage{float}
+ \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+
+\begin{document}
+
+
+\section{Kwantyfikatory lingwistyczne}
+    \begin{itemize}
+    \item[-] prawie żaden
+        \begin{equation}
+            \mu_{\text{prawie\_żaden}}(x) =
+        \begin{cases}
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}0}{0,06} \right)^2 \right), & x \in (0, 0.2) \\
+        0, & \text{w przeciwnym razie}
+        \end{cases}
+        \end{equation}
+    \item[-] trochę
+        \begin{equation}
+            \mu_{\text{trochę}}(x) =
+            \begin{cases}
+            \frac{x - 0.10}{0.15}, & x \in (0.10, 0.25) \\
+            1, & x \in [0.25, 0.30] \\
+            \frac{0.45 - x}{0.15}, & x \in (0.30, 0.45)\\
+            0, & \text{w przeciwnym razie} \\
+            \end{cases}
+        \end{equation}
+    \item[-] około połowa
+        \begin{equation}
+        \mu_{\text{około połowa}}(x) =
+        \begin{cases}
+        \exp\left( -\frac{1}{2} \left( \frac{x - 0{,}5}{0,06} \right)^2 \right), & x \in (0.35, 0.75) \\
+        0, & \text{w przeciwnym razie}
+\end{cases}
+        \end{equation}
+    \item[-] wiele
+        \begin{equation}
+             \mu_{\text{trochę}}(x) =
+            \begin{cases}
+            \frac{x - 0.60}{0.15}, & x \in (0.60, 0.75) \\
+            1, & x \in [0.75, 0.80] \\
+            \frac{0.95 - x}{0.15}, & x \in (0.80, 0.95)\\
+            0, & \text{w przeciwnym razie} \\
+            \end{cases}
+        \end{equation}
+    \item[-] prawie wszystkie
+        \begin{equation}
+            \mu_{\text{prawie wszystkie}}(x) =
+            \begin{cases}
+            \exp\left( -\frac{1}{2} \left( \frac{x - 1{,}0}{0,06} \right)^2 \right), &  x \in (0.8, 1.0) \\
+            0, & \text{w przeciwnym razie}
+            \end{cases}
+        \end{equation}
+\end{itemize}
+\end{document}

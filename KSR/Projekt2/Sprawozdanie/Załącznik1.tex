@@ -12,109 +12,19 @@
 
 
 \begin{document}
+\section{Opisy atrybutów bazy danych}
+\begin{enumerate}
+    \item last\_updated - data przeprowadzenia pomiarów, z tego atrybutu zostanie wykorzystana godzina w celu określenia pory dnia, zakres [0 - 24]. 
+    \item temperature\_celsius - temperatura wyrażona w stopniach Celsjusza w zakresie [-25, 50].
+    \item wind\_kph - prędkość wiatru wyrażona w kilometrach na godzinę w zakresie [3, 81]. 
+    \item pressure\_mb - ciśnienie powietrza wyrażone w milibarach w zakresie [964 - 1052]. 
+    \item humidity - wilgotność w zakresie [2 - 100\%].
+    \item visibility\_km - widoczność wyrażona w kilometrach w zakresie [0, 24].
+    \item uv\_index - wartość promieniowania słonecznego UV w zakresie [0, 16].
+    \item air\_quality\_Carbon\_Monoxide - pomiar jakości powietrza ze względu na stężenie tlenku węgla, wyrażony w ppm(liczba cząstek CO2 w milionie cząstek powietrza), w zakresie [0 - 3000].
+    \item air\_quality\_Nitrogen\_dioxide - pomiar jakości powietrza ze względu na stężenie dwutlenku azotu, wyrażony w ppm(liczba cząstek NO2 w milionie cząstek powietrza) w zakresie [0 - 261].
+    \item air\_quality\_gb-defra-index - skala określająca poziomy zanieczyszczenia w powietrzu w zakresie [1 - 10].
 
-
-\section{Podsumowania lingwistyczne pierwszego typu}
-    \begin{table}[h!]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-    \hline
-    \textbf{Nr} & \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)} \\ \hline
-    1 & 0.54 & 0.88 & 0.12 & 0.00 & 1.00 & 0.80 & 0.60 & 0.93 & 0.00 & 0.00 & 0.00 & 0.59 \\
-    \hline
-    2 & 0.43 & 0.24 & 0.76 & 0.00 & 1.00 & 0.60 & 0.62 & 0.42 & 0.00 & 0.00 & 0.00 & 0.49 \\
-    \hline
-    3 & 0.92 & 0.63 & 0.37 & 0.00 & 1.00 & 0.65 & 0.43 & 0.76 & 0.00 & 0.00 & 0.00 & 0.66 \\
-    \hline
-    4 & 0.66 & 0.89 & 0.11 & 0.00 & 1.00 & 0.80 & 0.60 & 0.96 & 0.00 & 0.00 & 0.00 & 0.63 \\
-    \hline
-    5 & 0.05 & 0.69 & 0.31 & 0.00 & 1.00 & 0.80 & 0.60 & 0.86 & 0.00 & 0.00 & 0.00 & 0.31 \\
-    \hline
-    6 & 0.30 & 0.69 & 0.31 & 0.00 & 1.00 & 0.65 & 0.43 & 0.86 & 0.00 & 0.00 & 0.00 & 0.37 \\
-    \hline
-    7 &  0.66 & 0.81 & 0.18 & 0.00 & 1.00 & 0.80 & 0.60 & 0.95 & 0.00 & 0.00 & 0.00 & 0.63 \\
-    \hline
-    8 & 0.37 & 0.18 & 0.81 & 0.00 & 1.00 & 0.60 & 0.62 & 0.58 & 0.00 & 0.00 & 0.00 & 0.49 \\
-    \hline
-    9 & 0.70 & 0.00 & 0.99 & 0.00 & 1.00 & 0.80 & 0.65 & 0.05 & 0.00 & 0.00 & 0.00 & 0.56 \\
-    \hline
-    10 & 0.73 & 0.83 & 0.17 & 0.00 & 1.00 & 0.80 & 0.60 & 0.95 & 0.00 & 0.00 & 0.00 & 0.66 \\
-    \hline
-    11 & 0.68 & 0.04 & 0.96 & 0.00 & 1.00 & 0.80 & 0.65 & 0.05 & 0.00 & 0.00 & 0.00 & 0.55 \\
-    \hline
-    12 & 0.99 & 0.99 & 0.01 & 0.00 & 1.00 & 0.80 & 0.60 & 0.99 & 0.00 & 0.00 & 0.00 & 0.74 \\
-    \hline
-    13 & 0.28 & 0.84 & 0.16 & 0.00 & 1.00 & 0.65 & 0.43 & 0.86 & 0.00 & 0.00 & 0.00 & 0.48 \\
-    \hline
-    14 & 0.74 & 0.16 & 0.84 & 0.00 & 1.00 & 0.60 & 0.62 & 0.55 & 0.00 & 0.00 & 0.00 & 0.60 \\
-    \hline
-    15 & 0.77 & 0.91 & 0.09 & 0.00 & 1.00 & 0.80 & 0.60 & 0.96 & 0.00 & 0.00 & 0.00 & 0.67 \\
-    \hline
-    \end{tabular}
-    \caption{Miary jakości dla podsumowania lingwistycznego pierwszego typu}
-    \end{table}
-
-    \section{Podsumowania lingwistyczne pierwszego typu z dwoma sumaryzatorami}
-    \begin{table}[h!]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-    \hline
-    \textbf{Nr} & \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)}\\
-    \hline
-    1 & 0.43 & 0.46 & 0.32 & 0.03 & 0.50 & 0.65 & 0.43 & 0.63 & 0.00 & 0.00 & 0.00 & 0.34 \\
-    \hline
-    2 & 0.32 & 0.59 & 0.17 & 0.00 & 0.50 & 0.80 & 0.60 & 0.67 & 0.00 & 0.00 & 0.00 & 0.32 \\
-    \hline
-    3 & 0.99 & 0.86 & 0.02 & 0.01 & 0.50 & 0.80 & 0.60 & 0.90 & 0.00 & 0.00 & 0.00 & 0.55 \\
-    \hline
-    4 & 0.94 & 0.01 & 0.99 & 0.00 & 0.50 & 0.60 & 0.62 & 0.29 & 0.00 & 0.00 & 0.00 & 0.49 \\
-    \hline
-    5 & 0.90 & 0.39 & 0.38 & 0.00 & 0.50 & 0.65 & 0.43 & 0.52 & 0.00 & 0.00 & 0.00 & 0.47 \\
-    \hline
-    6 & 0.45 & 0.13 & 0.76 & 0.00 & 0.50 & 0.60 & 0.62 & 0.26 & 0.00 & 0.00 & 0.00 & 0.34 \\
-    \hline
-    7 & 0.28 & 0.01 & 0.98 & 0.00 & 0.50 & 0.65 & 0.43 & 0.05 & 0.00 & 0.00 & 0.00 & 0.27 \\
-    \hline
-    8 & 0.31 & 0.03 & 0.95 & 0.00 & 0.50 & 0.65 & 0.43 & 0.05 & 0.00 & 0.00 & 0.00 & 0.28 \\
-    \hline
-    9 & 0.26 & 0.02 & 0.96 & 0.00 & 0.50 & 0.80 & 0.65 & 0.05 & 0.00 & 0.00 & 0.00 & 0.29 \\
-    \hline
-    10 & 0.31 & 0.01 & 0.98 & 0.00 & 0.50 & 0.80 & 0.65 & 0.05 & 0.00 & 0.00 & 0.00 & 0.30 \\
-    \hline
-    \end{tabular}
-    \caption{Miary jakości dla podsumowania lingwistycznego pierwszego typu z dwoma sumaryzatorami}
-    \end{table}
-
-    \section{Podsumowania lingwistyczne drugiego typu z jednym sumaryzatorem}
     
-    \begin{table}[h!]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-    \hline
-    \textbf{Nr} & \textbf{\(T_1\)} &\textbf{\(T_2\)} & \textbf{\(T_3\)} & \textbf{\(T_4\)} & \textbf{\(T_5\)} & \textbf{\(T_6\)} & \textbf{\(T_7\)} & \textbf{\(T_8\)} & \textbf{\(T_9\)} & \textbf{\(T_{10}\)} & \textbf{\(T_{11}\)} & \textbf{\(T\)}\\
-    \hline
-    1 & 1.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.80 & 0.60 & 1.00 & 0.89 & 0.95 & 1.00 & 0.81 \\
-    \hline
-    2 & 0.69 & 0.94 & 0.05 & 0.00 & 1.00 & 0.80 & 0.60 & 0.94 & 0.24 & 0.42 & 1.00 & 0.63 \\
-    \hline
-    3 & 0.84 & 0.82 & 0.23 & 0.05 & 1.00 & 0.65 & 0.43 & 0.82 & 0.95 & 0.96 & 1.00 & 0.74 \\
-    \hline
-    4 & 0.47 & 0.56 & 0.52 & 0.08 & 1.00 & 0.65 & 0.43 & 0.78 & 0.83 & 0.95 & 1.00 & 0.62 \\
-    \hline
-    5 & 0.99 & 0.19 & 0.80 & 0.01 & 1.00 & 0.60 & 0.62 & 0.58 & 0.38 & 0.60 & 1.00 & 0.70 \\
-    \hline
-    6 & 0.72 & 0.01 & 0.99 & 0.00 & 1.00 & 0.60 & 0.62 & 0.47 & 0.00 & 0.05 & 1.00 & 0.55 \\
-    \hline
-    7 & 0.20 & 0.38 & 0.99 & 0.37 & 1.00 & 0.65 & 0.43 & 0.60 & 0.95 & 0.96 & 1.00 & 0.57 \\
-    \hline
-    8 & 0.42 & 0.32 & 0.82 & 0.14 & 1.00 & 0.65 & 0.43 & 0.50 & 0.69 & 0.72 & 1.00 & 0.56 \\
-    \hline
-    9 & 0.86 & 0.02 & 0.98 & 0.00 & 1.00 & 0.80 & 0.65 & 0.05 & 0.82 & 0.94 & 1.00 & 0.70 \\
-    \hline
-    10 & 0.70 & 0.04 & 0.96 & 0.00 & 1.00 & 0.80 & 0.65 & 0.05 & 0.16 & 0.55 & 1.00 & 0.58 \\
-    \hline
-    \end{tabular}
-    \caption{Miary jakości dla podsumowania lingwistycznego drugiego typu}
-    \end{table}
-
+\end{enumerate}
 \end{document}
