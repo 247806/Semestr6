@@ -53,6 +53,8 @@ signal_rs_1 = None
 signal_rs_2 = None
 signal_type_1 = None
 signal_type_2 = None
+signal_complex = None
+time_complex = None
 
 
 def generate_signal():
@@ -537,6 +539,11 @@ def save_signal():
 
     ioModule.save_signal(signal, time)
 
+def save_signal_complex():
+    global signal_complex, time_complex
+
+    ioModule.save_signal_complex(signal_complex, time_complex)
+
 def load_signal(type):
     global time_1, signal_1, signal_2, time_2, signal_3, time_3
 
@@ -568,6 +575,16 @@ def load_signal(type):
         plot_histogram(histogram, signal, int(bins_var.get()))
     else:
         display_data_in_popup(time, signal, start_time, sampling_rate, num_samples, max_amplitude)
+
+def load_signal_complex():
+    global signal_complex, time_complex
+
+
+    time_temp, signal_temp, start_time, sampling_rate, max_amplitude, num_samples = ioModule.load_signal_complex()
+
+
+    plot_w1(time_temp, signal_temp, signal_frame_4)
+    plot_w2(time_temp, signal_temp, signal_frame_5)
 
 def display_data_in_popup(time_data, signal_data, start_time, sampling_rate, num_samples, max_amplitude):
     popup = tk.Toplevel(root)
@@ -726,7 +743,7 @@ def generate_filters():
         time_1 = time_conv
 
 def transform():
-    global signal_1, time_1, signal_2, time_2
+    global signal_1, time_1, signal_2, time_2, signal_complex, time_complex
 
     if sig_dropdown.get() == "Sygnał 1":
         temp_signal = signal_1
@@ -760,13 +777,15 @@ def transform():
     if transform_dropdown.get() not in ["DFT", "FFT"]:
         plot_transform(temp_time, result, plot_frame_3)
     else:
+        signal_complex = result
+        time_complex = temp_time
         plot_w1(temp_time, result, signal_frame_4)
         plot_w2(temp_time, result, signal_frame_5)
 
 def signal_gen():
     global signal_1, time_1, signal_2, time_2
-    t1 = int(time_start_entry.get())
-    d = int(time_end_entry.get())
+    t1 = float(time_start_entry.get())
+    d = float(time_end_entry.get())
 
     times = np.arange(t1, t1 + d, 1 / 16)
     if gen_dropdown.get() == "S1":
@@ -939,6 +958,8 @@ ttk.Button(tab_operations, text="Pomiar odległości", command=lambda: open_new_
 ttk.Button(tab_save, text="Zapisz sygnał", command=lambda: save_signal()).grid(row=1, column=0, padx=100, pady=50)
 ttk.Button(tab_save, text="Wczytaj sygnał", command=lambda: load_signal(0)).grid(row=1, column=1, padx=5, pady=5)
 ttk.Button(tab_save, text="Wyświetl dane", command=lambda: load_signal(1)).grid(row=2, column=0, padx=5, pady=5)
+ttk.Button(tab_save, text="Zapisz sygnał zespolony", command=lambda: save_signal_complex()).grid(row=3, column=0, padx=100, pady=50)
+ttk.Button(tab_save, text="Wczytaj sygnał zespolony", command=lambda: load_signal_complex()).grid(row=3, column=1, padx=5, pady=5)
 
 # --- PRÓBKOWANIE I KWANTYZACJA ---
 ttk.Label(tab_sampAndQuant, text="Częstotliwość próbkowania").grid(row=1, column=0, padx=50, pady=50)
@@ -1005,7 +1026,7 @@ ttk.Button(tab_similarity, text="Porównaj", command=lambda: similarityCheck()).
 ttk.Label(tab_transform, text="Transformacja:").grid(row=0, column=0, padx=5, pady=5)
 transform_type = tk.StringVar(value="DFT")
 transform_dropdown = ttk.Combobox(tab_transform, textvariable=transform_type,
-                               values=["DFT", "FFT", "DCT", "Walsh", "FastWaslh"],
+                               values=["DFT", "FFT", "DCT", "Walsh", "FastWalsh"],
                                state="readonly", width=50)
 transform_dropdown.grid(row=0, column=1, padx=5, pady=5)
 transform_dropdown.bind("<<ComboboxSelected>>")

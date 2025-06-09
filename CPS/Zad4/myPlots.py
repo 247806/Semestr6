@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def plot_w1(freqs, X, plot):
+    for widget in plot.winfo_children():
+        widget.destroy()
     real = [z.real for z in X]
     imag = [z.imag for z in X]
 
@@ -10,15 +12,15 @@ def plot_w1(freqs, X, plot):
     fig, axs = plt.subplots(2, 1, figsize=(10, 6))
 
     # Wykres części rzeczywistej
-    axs[0].stem(freqs, real, basefmt=" ")
-    axs[0].set_title("W1 – Część rzeczywista amplitudy 0–10 Hz")
+    axs[0].plot(freqs, real, '-o')
+    axs[0].set_title("W1 – Część rzeczywista amplitudy")
     axs[0].set_xlabel("Częstotliwość [Hz]")
     axs[0].set_ylabel("Re")
     axs[0].grid(True)
 
     # Wykres części urojonej
-    axs[1].stem(freqs, imag, basefmt=" ")
-    axs[1].set_title("W1 – Część urojona amplitudy 0–10 Hz")
+    axs[1].plot(freqs, imag, '-o')
+    axs[1].set_title("W1 – Część urojona amplitudy")
     axs[1].set_xlabel("Częstotliwość [Hz]")
     axs[1].set_ylabel("Im")
     axs[1].grid(True)
@@ -30,6 +32,8 @@ def plot_w1(freqs, X, plot):
     canvas.get_tk_widget().pack(expand=True, fill='both', padx=5, pady=5)
 
 def plot_w2(freqs, X, plot):
+    for widget in plot.winfo_children():
+        widget.destroy()
     magnitudes = [abs(z) for z in X]
     phases = [cmath.phase(z) for z in X]
 
@@ -37,14 +41,14 @@ def plot_w2(freqs, X, plot):
     fig, axs = plt.subplots(2, 1, figsize=(10, 6))
 
     # Wykres modułu
-    axs[0].stem(freqs, magnitudes, basefmt=" ")
+    axs[0].plot(freqs, magnitudes, '-o')
     axs[0].set_title("W2 – Moduł (amplituda)")
     axs[0].set_xlabel("Częstotliwość [Hz]")
     axs[0].set_ylabel("|X(f)|")
     axs[0].grid(True)
 
     # Wykres fazy
-    axs[1].stem(freqs, phases, basefmt=" ")
+    axs[1].plot(freqs, phases, '-o')
     axs[1].set_title("W2 – Argument (faza)")
     axs[1].set_xlabel("Częstotliwość [Hz]")
     axs[1].set_ylabel("∠X(f) [rad]")
@@ -65,7 +69,7 @@ def plot_transform(time, signal, plot):
 
     fig, ax = plt.subplots()
 
-    ax.plot(time, signal, 'o-')
+    ax.plot(time, signal, '-o')
     ax.set_xlabel("Czas [s]")
     ax.set_ylabel("Amplituda")
     ax.grid()
