@@ -13,7 +13,7 @@ public class CoValues {
     );
 
     public static LinguisticTerm wysokie = new LinguisticTerm(
-            "normalne", new TrapezoidalFunction(200, 500, 800, 1100)
+            "wysokie", new TrapezoidalFunction(200, 500, 800, 1100)
     );
 
     // niezdrowe: rośnie 200-400, 1 na [400, 800], opada 800-1000
