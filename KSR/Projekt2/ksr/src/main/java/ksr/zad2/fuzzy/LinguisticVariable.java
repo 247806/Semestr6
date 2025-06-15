@@ -22,5 +22,9 @@ public class LinguisticVariable {
         terms.put(term, function);
     }
 
+    public void clearTerms() {
+        this.terms.clear(); // zakładając, że terms to np. Map<String, FuzzySet>
+    }
+
 
 }

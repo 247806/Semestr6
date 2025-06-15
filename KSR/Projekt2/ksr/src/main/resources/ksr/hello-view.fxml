@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckListView?>
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ksr.zad2.HelloController">
+
+    <children>
+
+        <!-- Środkowy HBox: dwa VBoxy obok siebie -->
+        <HBox alignment="CENTER" spacing="100.0">
+            <children>
+                <VBox alignment="TOP_CENTER" spacing="20.0">
+                    <children>
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Parametry:" />
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz kwantyfikator:" />
+                                <ComboBox fx:id="quantificator" prefWidth="150.0" promptText="Kwantyfikator" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz podmiot 1:" />
+                                <ComboBox fx:id="sub1" prefWidth="150.0" promptText="Podmiot" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz podmiot 2:" />
+                                <ComboBox fx:id="sub2" prefWidth="150.0" promptText="Podmiot" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz atrybut:" />
+                                <ComboBox fx:id="data1" prefWidth="150.0" promptText="Atrybut" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz sumaryzator:" />
+                                <ComboBox fx:id="sumariser1" prefWidth="150.0" promptText="Sumaryzator" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz atrybut:" />
+                                <ComboBox fx:id="data2" prefWidth="150.0" promptText="Atrybut" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz sumaryzator:" />
+                                <ComboBox fx:id="sumariser2" prefWidth="150.0" promptText="Sumaryzator" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz atrybut:" />
+                                <ComboBox fx:id="data3" prefWidth="150.0" promptText="Atrybut" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz sumaryzator:" />
+                                <ComboBox fx:id="sumariser3" prefWidth="150.0" promptText="Sumaryzator" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz atrybut:" />
+                                <ComboBox fx:id="data4" prefWidth="150.0" promptText="Atrybut" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz sumaryzator:" />
+                                <ComboBox fx:id="sumariser4" prefWidth="150.0" promptText="Sumaryzator" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label text="Wybierz atrybut:" />
+                                <ComboBox fx:id="data5" prefWidth="150.0" promptText="Atrybut" />
+                            </children>
+                            <children>
+                                <Label text="Wybierz kwalifikator:" />
+                                <ComboBox fx:id="qualificator" prefWidth="150.0" promptText="Kwalifikator" />
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+
+        <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Usuń cechy:" />
+        <CheckListView fx:id="checkListView" prefHeight="500.0" prefWidth="200.0" />
+
+
+        <Label fx:id="error" text="" style="-fx-text-fill: red;"/>
+        <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 0 0 20 0;">
+            <children>
+                <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />
+            </children>
+        </HBox>
+
+    </children>
+</VBox>
