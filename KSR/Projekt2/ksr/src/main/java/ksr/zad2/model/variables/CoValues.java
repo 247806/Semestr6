@@ -23,6 +23,6 @@ public class CoValues {
 
     // niebezpieczne: rośnie 800-1000, 1 na [1000, 2220]
     public static LinguisticTerm niebezpieczne = new LinguisticTerm(
-            "niebezpieczne", new TrapezoidalFunction(1700, 2000, 3000, 3000)
+            "niebezpieczne", new TrapezoidalFunction(1700, 2000, 3000, 3000.1)
     );
 }

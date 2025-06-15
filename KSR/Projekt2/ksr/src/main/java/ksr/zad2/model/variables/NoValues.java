@@ -19,6 +19,6 @@ public class NoValues {
 
     // niebezpieczne: rośnie 200-250, 1 na [250, 428]
     public static LinguisticTerm niebezpieczne = new LinguisticTerm(
-            "niebezpieczne", new TrapezoidalFunction(160, 210, 261, 261)
+            "niebezpieczne", new TrapezoidalFunction(160, 210, 261, 261.1)
     );
 }

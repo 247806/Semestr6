@@ -24,6 +24,6 @@ public class UvValues {
     );
 
     public static LinguisticTerm ekstremalne = new LinguisticTerm(
-            "ekstremalne", new TrapezoidalFunction(10, 11, 16, 16)
+            "ekstremalne", new TrapezoidalFunction(10, 11, 16, 16.1)
     );
 }

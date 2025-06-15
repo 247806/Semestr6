@@ -141,7 +141,8 @@ public class DoubleSubjectSummary {
         double b = subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()) /
                 subject1Summarizer.getData().size();
         double reichenbach = 1 - a + a * b;
-
+        System.out.println("Cardinality of " + subject1 + ": " + subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()));
+        System.out.println("Cardinality of " + subject2 + ": " + subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()));
         double result = 1 - m * reichenbach;
 
         StringBuilder summary = new StringBuilder();
@@ -149,9 +150,9 @@ public class DoubleSubjectSummary {
                 .append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        if (result > 0.01) {
+//        if (result > 0.01) {
             System.out.println(summary.toString());
-        }
+//        }
     }
 
 }

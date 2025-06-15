@@ -22,6 +22,6 @@ public class VisibilityValues {
     );
 
     public static LinguisticTerm bardzoDobra = new LinguisticTerm(
-            "bardzo dobra", new TrapezoidalFunction(18, 22, 24, 24)
+            "bardzo dobra", new TrapezoidalFunction(18, 22, 24, 24.1)
     );
 }

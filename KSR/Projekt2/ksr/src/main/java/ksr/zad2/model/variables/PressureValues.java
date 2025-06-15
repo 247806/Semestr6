@@ -8,7 +8,7 @@ public class PressureValues {
     public static LinguisticVariable pressureVariable = new LinguisticVariable("Ciśnienie", 947.0, 1052.0);
 
     public static LinguisticTerm niskie = new LinguisticTerm(
-            "niskie", new TrapezoidalFunction(964, 964, 970, 1000)
+            "niskie", new TrapezoidalFunction(963.9, 964, 970, 1000)
     );
 
     public static LinguisticTerm normalne = new LinguisticTerm(

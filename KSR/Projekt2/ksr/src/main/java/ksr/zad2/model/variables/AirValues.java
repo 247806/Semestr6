@@ -24,6 +24,6 @@ public class AirValues {
     );
 
     public static LinguisticTerm bardzoZla = new LinguisticTerm(
-            "bardzo zła", new TrapezoidalFunction(8, 9, 10, 10)
+            "bardzo zła", new TrapezoidalFunction(8, 9, 10, 10.1)
     );
 }

@@ -17,6 +17,6 @@ public class HumidityValues {
     );
 
     public static LinguisticTerm wilgotne = new LinguisticTerm(
-            "wilgotne", new TrapezoidalFunction(50, 80, 100, 100)
+            "wilgotne", new TrapezoidalFunction(50, 80, 100, 100.1)
     );
 }

@@ -25,7 +25,7 @@ public class WindValues {
     );
 
     public static LinguisticTerm gwaltowny = new LinguisticTerm(
-            "gwałtowny", new TrapezoidalFunction(60, 75, 81, 81)
+            "gwałtowny", new TrapezoidalFunction(60, 75, 81, 81.1)
     );
 
 }

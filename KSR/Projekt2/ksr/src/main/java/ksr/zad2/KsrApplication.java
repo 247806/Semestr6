@@ -29,8 +29,8 @@ public class KsrApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Hello World!");
-		this.singleSubjectSummary();
-//		this.twoSubjectSummary();
+//		this.singleSubjectSummary();
+		this.twoSubjectSummary();
 	}
 
 
@@ -918,14 +918,14 @@ public class KsrApplication implements CommandLineRunner {
 //			}
 //		}
 
-		for (String temp: carbonTerms) {
+		for (String temp: pressureTerms) {
 			System.out.println("Temperature: " + temp);
 			for (int i = 0; i < continents.size(); i++) {
 				for (int j = i + 1; j < continents.size(); j++) {
 					String continentA = continents.get(i);
 					String continentB = continents.get(j);
-					LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
-					LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
+					LinguisticTerm linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
+					LinguisticTerm linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
 					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
 							continentA,
 							continentB,
