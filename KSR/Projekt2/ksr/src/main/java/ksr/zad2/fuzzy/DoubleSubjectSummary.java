@@ -20,6 +20,7 @@ public class DoubleSubjectSummary {
     private double t2;
     private double t3;
     private double t4;
+    private String summary;
 
     public DoubleSubjectSummary(Quantifier quantifier, String subject1, String subject2, LinguisticTerm subject1Summarizer, LinguisticTerm subject2Summarizer) {
         this.quantifier = quantifier;
@@ -70,7 +71,7 @@ public class DoubleSubjectSummary {
         if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
-
+        this.summary = summary.toString();
     }
 
     public void secondForm() {
@@ -102,7 +103,7 @@ public class DoubleSubjectSummary {
         if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
-
+        this.summary = summary.toString();
     }
 
     public void thirdForm() {
@@ -135,12 +136,18 @@ public class DoubleSubjectSummary {
         if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
+        this.summary = summary.toString();
     }
 
     public void fourthForm() {
         double m = (double) subject1Summarizer.getData().size() / (subject1Summarizer.getData().size() + subject2Summarizer.getData().size());
         double b = subject1Summarizer.getData().stream().mapToDouble(v -> subject1Summarizer.getFuzzySet().membership(v)).average().orElse(0.0);
         double a = subject2Summarizer.getData().stream().mapToDouble(v -> subject2Summarizer.getFuzzySet().membership(v)).average().orElse(0.0);
+
+        System.out.println("Subject1: " + subject1 + " - " + subject1Summarizer.getName());
+        System.out.println("Subject2: " + subject2 + " - " + subject2Summarizer.getName());
+        System.out.println("Subject1 size: " + subject1Summarizer.getData().size());
+        System.out.println("Subject2 size: " + subject2Summarizer.getData().size());
 
         double inc = Math.min(1, 1 - a + b);
 
@@ -154,6 +161,7 @@ public class DoubleSubjectSummary {
 //        if (result > 0.01) {
             System.out.println(summary.toString());
 //        }
+        this.summary = summary.toString();
     }
 
 }

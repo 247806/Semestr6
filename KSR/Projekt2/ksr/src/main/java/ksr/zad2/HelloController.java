@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import ksr.zad2.fuzzy.DoubleSubjectSummary;
 import ksr.zad2.fuzzy.LinguisticTerm;
 import ksr.zad2.fuzzy.Quantifier;
 import ksr.zad2.fuzzy.SingleSubjectSummary;
@@ -32,6 +33,7 @@ public class HelloController {
     @FXML private Button generateTwoSubjectSummaryButton;
     @FXML private TextArea summaryOutputArea;
     private List<SingleSubjectSummary> singleSubjectSummaries = new ArrayList<>();
+    private List<DoubleSubjectSummary> doubleSubjectSummaries = new ArrayList<>();
 
 
     private final QuantifierValues quantifierValues = new QuantifierValues();
@@ -433,6 +435,7 @@ public class HelloController {
         String subject2 = sub2.getValue();
         List<LinguisticTerm> summarizer = getSelectedSummarizers();
         List<LinguisticTerm> qualifier = getSelectedQualifiers();
+
         List<String> selectedLinguisticVariableNames = summarizersTreeView.getRoot().getChildren().stream()
                 .map(node -> (CheckBoxTreeItem<String>) node)
                 .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
@@ -455,12 +458,102 @@ public class HelloController {
         }
 
         if (quantifier == null) {
-            
-        }
+            LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+            LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
 
-        // Generowanie przykładowego podsumowania dwupodmiotowego
-        String summary = String.format("%s %s jest bardziej %s niż %s.", quantifier, subject1, summarizer, subject2);
-        summaryOutputArea.setText(summary);
+            System.out.println(summarizer1.getName() + " - " + summarizer2.getName());
+            System.out.println(selectedLinguisticVariableNames.getFirst());
+
+            summarizer1.setData(setDataByContinent(subject1, selectedLinguisticVariableNames.getFirst()));
+            System.out.println("Pierwszy " + summarizer1.getData().size());
+            summarizer2.setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
+
+            System.out.println(summarizer1.getData().size() + " - " + summarizer2.getData().size());
+
+            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+                    subject1,
+                    subject2,
+                    summarizer1,
+                    summarizer2
+            );
+
+            doubleSubjectSummary.fourthForm();
+            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
+            doubleSubjectSummaries.add(doubleSubjectSummary);
+        } else if (qualifier.size() == 1) {
+            LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+            LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+//            qualifier.getFirst().setData(setDataByContinent(subject1, selectedLinguisticVariableNamesQualifier.getFirst()));
+
+            summarizer1.setData(setDataByContinent(subject1, selectedLinguisticVariableNames.getFirst()));
+            summarizer2.setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
+
+//            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+//                    quantifier,
+//                    subject1,
+//                    subject2,
+//                    summarizer1,
+//                    summarizer2,
+//                    qualifier.getFirst()
+//            );
+//            doubleSubjectSummary.thirdForm();
+//            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
+//            doubleSubjectSummaries.add(doubleSubjectSummary);
+
+            qualifier.getFirst().setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
+            DoubleSubjectSummary doubleSubjectSummary2 = new DoubleSubjectSummary(
+                    quantifier,
+                    subject1,
+                    subject2,
+                    summarizer1,
+                    summarizer2,
+                    qualifier.getFirst()
+            );
+            doubleSubjectSummary2.secondForm();
+            summaryOutputArea.setText(doubleSubjectSummary2.getSummary());
+            doubleSubjectSummaries.add(doubleSubjectSummary2);
+
+        } else {
+            LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+            LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+
+            summarizer1.setData(setDataByContinent(subject1, selectedLinguisticVariableNames.getFirst()));
+            summarizer2.setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
+
+            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+                    quantifier,
+                    subject1,
+                    subject2,
+                    summarizer1,
+                    summarizer2
+            );
+
+            doubleSubjectSummary.firstForm();
+            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
+            doubleSubjectSummaries.add(doubleSubjectSummary);
+
+        }
+    }
+
+    private List<Double> setDataByContinent(String continent, String name) {
+        System.out.println("Continent: " + continent + ", Variable: " + name);
+        List<Measurements> measurements = KsrApplication.measurementsRepository.findByContinent(continent);
+        return measurements.stream()
+                .map(measurement -> switch (name) {
+                    case "Jakość powietrza" -> measurement.getAir_quality_gb_defra_index();
+                    case "Ciśnienie" -> measurement.getPressure_mb();
+                    case "Wilgotność powietrza" -> measurement.getHumidity();
+                    case "Stopień widoczności" -> measurement.getVisibility_km();
+                    case "Temperatura" -> measurement.getTemperature_celsius();
+                    case "Wiatr" -> measurement.getWind_kph();
+                    case "Zanieczyszczenie NO2" -> measurement.getAir_quality_Nitrogen_Dioxide();
+                    case "Pora dnia" ->
+                            (double) measurement.getLast_updated().getHour() + measurement.getLast_updated().getMinute() / 60.0;
+                    case "Promieniowanie UV" -> measurement.getUv_index();
+                    case "Zanieczyszczenie CO" -> measurement.getAir_quality_Carbon_Monoxide();
+                    default -> null;
+                })
+                .toList();
     }
 
     private List<LinguisticTerm> getSelectedSummarizers() {
