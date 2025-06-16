@@ -52,6 +52,10 @@
             <!-- Lista wszystkich wygenerowanych podsumowań -->
             <Label style="-fx-font-weight: bold;" text="Wygenerowane podsumowania" />
             <ListView fx:id="summaryListView" prefWidth="600.0" prefHeight="150.0" />
+            <HBox spacing="10">
+                <ComboBox fx:id="measureComboBox" />
+                <Button fx:id="sortButton" text="Sortuj" onAction="#onSortButtonClick"/>
+            </HBox>
         </VBox>
     </center>
 

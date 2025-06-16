@@ -12,6 +12,7 @@ public class SingleSubjectSummary {
     //TODO A MOZE BYC LISTA KWALIFIKATORÓW?
     private LinguisticTerm qualifier;
     private double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+    private double[] measures = new double[12]; // T1, T2, ..., T11
     private double optimal;
     private String summaryText;
     private List<Double> weights;
@@ -46,18 +47,30 @@ public class SingleSubjectSummary {
 
     public void processQualityMeasurements() {
         this.t1 = degreeOfTruth();
+        this.measures[0] = t1; // T1
         this.t2 = degreeOfImprecision();
+        this.measures[1] = t2; // T2
         this.t3 = degreeOfCovering();
+        this.measures[2] = t3; // T3
         this.t4 = degreeOfAppropriateness();
+        this.measures[3] = t4; // T4
         this.t5 = lengthOfSummary();
+        this.measures[4] = t5; // T5
         this.t6 = degreeOfQuantifierImprecision();
+        this.measures[5] = t6; // T6
         this.t7 = degreeOfQuantifierCardinality();
+        this.measures[6] = t7; // T7
         this.t8 = degreeOfSummarizerImprecision();
+        this.measures[7] = t8; // T8
         this.t9 = degreeOfQualifierImprecision();
+        this.measures[8] = t9; // T9
         this.t10 = degreeOfQualifierCardinality();
+        this.measures[9] = t10; // T10
         this.t11 = T11();
+        this.measures[10] = t11; // T11
         this.optimal = optimalSummary(weights,
                 List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11));
+        this.measures[11] = optimal; // T12
     }
 
     public String print() {
@@ -74,6 +87,13 @@ public class SingleSubjectSummary {
                 "T10: " + t10 + "\n" +
                 "T11: " + t11 + "\n" +
                 "Optymalna wartość: " + optimal;
+    }
+
+    public double getMeasureValue(int index) {
+        if (index >= 0 && index < measures.length) {
+            return measures[index]; // np. tablica double[] measures
+        }
+        return 0.0;
     }
 
     public double degreeOfTruth() {

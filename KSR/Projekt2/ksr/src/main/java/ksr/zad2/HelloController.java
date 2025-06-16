@@ -35,7 +35,8 @@ public class HelloController {
     @FXML private Button generateTwoSubjectSummaryButton;
     @FXML private TextArea summaryOutputArea;
     private final ObservableList<String> summaryItems = FXCollections.observableArrayList();
-
+    @FXML private ComboBox<String> measureComboBox;
+    @FXML private Button sortButton;
     @FXML
     private ListView<String> summaryListView;
     List<Object> allSummaries = new ArrayList<>();
@@ -75,12 +76,17 @@ public class HelloController {
             if (index >= 0 && index < allSummaries.size()) {
                 Object selected = allSummaries.get(index);
                 if (selected instanceof SingleSubjectSummary s) {
-                    summaryOutputArea.setText(s.print());
+                    StringBuilder summaryOutput = new StringBuilder();
+                    summaryOutput.append(s.getSummaryText()).append("\n").append(s.print());
+                    summaryOutputArea.setText(summaryOutput.toString());
                 } else if (selected instanceof DoubleSubjectSummary d) {
                     summaryOutputArea.setText(d.getSummary());
                 }
             }
         });
+
+        measureComboBox.setItems(FXCollections.observableArrayList("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T"));
+        measureComboBox.getSelectionModel().selectFirst();
 
     }
 
@@ -396,7 +402,9 @@ public class HelloController {
                     qualifier.getFirst()
             );
             singleSubjectSummary.setWeights(weights);
-            summaryOutputArea.setText(singleSubjectSummary.summarization());
+            StringBuilder summaryText = new StringBuilder();
+            summaryText.append(singleSubjectSummary.summarization()).append("\n").append(singleSubjectSummary.print());
+            summaryOutputArea.setText(summaryText.toString());
             allSummaries.add(singleSubjectSummary);
             singleSubjectSummary.print();
             summaryListView.getItems().add(singleSubjectSummary.getSummaryText());
@@ -416,7 +424,9 @@ public class HelloController {
                     summarizer
             );
             singleSubjectSummary.setWeights(weights);
-            summaryOutputArea.setText(singleSubjectSummary.summarization());
+            StringBuilder summaryText = new StringBuilder();
+            summaryText.append(singleSubjectSummary.summarization()).append("\n").append(singleSubjectSummary.print());
+            summaryOutputArea.setText(summaryText.toString());
             allSummaries.add(singleSubjectSummary);
             singleSubjectSummary.print();
             summaryListView.getItems().add(singleSubjectSummary.getSummaryText());
@@ -530,22 +540,22 @@ public class HelloController {
         } else if (qualifier.size() == 1) {
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
-//            qualifier.getFirst().setData(setDataByContinent(subject1, selectedLinguisticVariableNamesQualifier.getFirst()));
+            qualifier.getFirst().setData(setDataByContinent(subject1, selectedLinguisticVariableNamesQualifier.getFirst()));
 
             summarizer1.setData(setDataByContinent(subject1, selectedLinguisticVariableNames.getFirst()));
             summarizer2.setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
 
-//            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//                    quantifier,
-//                    subject1,
-//                    subject2,
-//                    summarizer1,
-//                    summarizer2,
-//                    qualifier.getFirst()
-//            );
-//            doubleSubjectSummary.thirdForm();
-//            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
-//            doubleSubjectSummaries.add(doubleSubjectSummary);
+            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+                    quantifier,
+                    subject1,
+                    subject2,
+                    summarizer1,
+                    summarizer2,
+                    qualifier.getFirst()
+            );
+            doubleSubjectSummary.thirdForm();
+            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
+            allSummaries.add(doubleSubjectSummary);
 
             qualifier.getFirst().setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
             DoubleSubjectSummary doubleSubjectSummary2 = new DoubleSubjectSummary(
@@ -790,4 +800,39 @@ public class HelloController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void onSortButtonClick() {
+        String selectedMeasure = measureComboBox.getValue(); // np. "T3"
+        int measureIndex = Integer.parseInt(selectedMeasure.substring(1)) - 1; // 0-based index
+
+        // Sortujemy: pojedyncze najpierw, wg wybranej miary; potem dwupodmiotowe
+        allSummaries.sort((a, b) -> {
+            boolean aIsSingle = a instanceof SingleSubjectSummary;
+            boolean bIsSingle = b instanceof SingleSubjectSummary;
+
+            if (aIsSingle && bIsSingle) {
+                double valA = ((SingleSubjectSummary) a).getMeasureValue(measureIndex);
+                double valB = ((SingleSubjectSummary) b).getMeasureValue(measureIndex);
+                return Double.compare(valB, valA); // sortowanie malejąco
+            } else if (aIsSingle) {
+                return -1; // a przed b
+            } else if (bIsSingle) {
+                return 1; // b przed a
+            } else {
+                return 0; // oba są DoubleSubjectSummary
+            }
+        });
+
+        // Odświeżenie listy widocznej w GUI
+        summaryItems.clear();
+        for (Object summary : allSummaries) {
+            if (summary instanceof SingleSubjectSummary s) {
+                summaryItems.add(s.getSummaryText()); // lub s.getSummaryText()
+            } else if (summary instanceof DoubleSubjectSummary d) {
+                summaryItems.add(d.getSummary());
+            }
+        }
+    }
+
 }
