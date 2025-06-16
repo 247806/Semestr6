@@ -33,9 +33,9 @@ public class KsrApplication implements CommandLineRunner {
 	}
 
 
-	public static void singleSubjectSummary(String data1, String data2, String data3, String data4, String data5, String sumariser1, String sumariser2, String sumariser3, String sumariser4, String qualificator, String quantificator) {
-		List <LinguisticTerm> sumariser = new ArrayList<>();
-		System.out.println(sumariser);
+	public static void singleSubjectSummary(String data1, String data2, String data3, String data4, String data5, String sumariser1, String sumariser2, String sumariser3, String sumariser4, String qualificator, String quantificator, List<Double> weight) {
+		List<LinguisticTerm> sumariser = new ArrayList<>();
+		List<LinguisticTerm> qualifier = new ArrayList<>();
 
 		List<Measurements> allMeasurements = measurementsRepository.findAll();
 		List<Double> temperatures = new ArrayList<>();
@@ -121,7 +121,7 @@ public class KsrApplication implements CommandLineRunner {
 			} else if (sumariser1.equals(HumidityValues.umiarkowane.getName()) || sumariser2.equals(HumidityValues.umiarkowane.getName()) || sumariser3.equals(HumidityValues.umiarkowane.getName()) || sumariser4.equals(HumidityValues.umiarkowane.getName())) {
 				humidity.addTerm(HumidityValues.umiarkowane.getName(), HumidityValues.umiarkowane.getFuzzySet());
 			} else if (sumariser1.equals(HumidityValues.wilgotne.getName()) || sumariser2.equals(HumidityValues.wilgotne.getName()) || sumariser3.equals(HumidityValues.wilgotne.getName()) || sumariser4.equals(HumidityValues.wilgotne.getName())) {
-			humidity.addTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+				humidity.addTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
 			}
 //			List<LinguisticTerm> humidityTerms = new ArrayList<>();
 			for (Map.Entry<String, FuzzySet> entry : humidity.getTerms().entrySet()) {
@@ -529,6 +529,282 @@ public class KsrApplication implements CommandLineRunner {
 			qualityVariable.clearTerms(); // Opcjonalne czyszczenie po zakończeniu
 		}
 
+		if (!data5.equals("Brak") && !qualificator.equals("Brak")) {
+			if (data5.equals(TempValues.tempVariable.getName())) {
+				LinguisticVariable tempVariable = TempValues.tempVariable;
+				if (qualificator.equals(TempValues.bardzoZimna.getName())) {
+					tempVariable.addTerm(TempValues.bardzoZimna.getName(), TempValues.bardzoZimna.getFuzzySet());
+				} else if (qualificator.equals(TempValues.zimna.getName())) {
+					tempVariable.addTerm(TempValues.zimna.getName(), TempValues.zimna.getFuzzySet());
+				} else if (qualificator.equals(TempValues.umiarkowana.getName())) {
+					tempVariable.addTerm(TempValues.umiarkowana.getName(), TempValues.umiarkowana.getFuzzySet());
+				} else if (qualificator.equals(TempValues.ciepla.getName())) {
+					tempVariable.addTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+				} else if (qualificator.equals(TempValues.goraca.getName())) {
+					tempVariable.addTerm(TempValues.goraca.getName(), TempValues.goraca.getFuzzySet());
+				}
+				//List<LinguisticTerm> temperaturesTerms = new ArrayList<>();
+				for (Map.Entry<String, FuzzySet> entry : tempVariable.getTerms().entrySet()) {
+					LinguisticTerm temperatureTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					temperatureTerm.setData(temperatures);
+					qualifier.add(temperatureTerm);
+				}
+				tempVariable.clearTerms();
+			}
+
+
+		// Wilgotność
+			if (data5.equals(HumidityValues.humidityVariable.getName())) {
+				LinguisticVariable humidity = HumidityValues.humidityVariable;
+
+				if (qualificator.equals(HumidityValues.suche.getName())) {
+					humidity.addTerm(HumidityValues.suche.getName(), HumidityValues.suche.getFuzzySet());
+				} else if (qualificator.equals(HumidityValues.umiarkowane.getName())) {
+					humidity.addTerm(HumidityValues.umiarkowane.getName(), HumidityValues.umiarkowane.getFuzzySet());
+				} else if (qualificator.equals(HumidityValues.wilgotne.getName())) {
+					humidity.addTerm(HumidityValues.wilgotne.getName(), HumidityValues.wilgotne.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : humidity.getTerms().entrySet()) {
+					LinguisticTerm humidityTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					humidityTerm.setData(humidities);
+					qualifier.add(humidityTerm);
+				}
+
+				humidity.clearTerms();
+			}
+
+
+			if (data5.equals(TimeValues.timeVariable.getName())) {
+				LinguisticVariable timeVariable = TimeValues.timeVariable;
+
+				if (qualificator.equals(TimeValues.nocna.getName())) {
+					timeVariable.addTerm(TimeValues.nocna.getName(), TimeValues.nocna.getFuzzySet());
+				} else if (qualificator.equals(TimeValues.poranna.getName())) {
+					timeVariable.addTerm(TimeValues.poranna.getName(), TimeValues.poranna.getFuzzySet());
+				} else if (qualificator.equals(TimeValues.poludniowa.getName())) {
+					timeVariable.addTerm(TimeValues.poludniowa.getName(), TimeValues.poludniowa.getFuzzySet());
+				} else if (qualificator.equals(TimeValues.popoludniowa.getName())) {
+					timeVariable.addTerm(TimeValues.popoludniowa.getName(), TimeValues.popoludniowa.getFuzzySet());
+				} else if (qualificator.equals(TimeValues.wieczorna.getName())) {
+					timeVariable.addTerm(TimeValues.wieczorna.getName(), TimeValues.wieczorna.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : timeVariable.getTerms().entrySet()) {
+					LinguisticTerm timeTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					timeTerm.setData(hours);
+					qualifier.add(timeTerm);
+				}
+
+				timeVariable.clearTerms(); // opcjonalnie, jeśli potrzebne
+			}
+
+
+		// Wiatr
+			if (data5.equals(WindValues.windVariable.getName())) {
+				LinguisticVariable windVariable = WindValues.windVariable;
+
+				if (qualificator.equals(WindValues.slaby.getName())) {
+					windVariable.addTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
+				} else if (qualificator.equals(WindValues.umiarkowany.getName())) {
+					windVariable.addTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
+				} else if (qualificator.equals(WindValues.silny.getName())) {
+					windVariable.addTerm(WindValues.silny.getName(), WindValues.silny.getFuzzySet());
+				} else if (qualificator.equals(WindValues.bardzoSilny.getName())) {
+					windVariable.addTerm(WindValues.bardzoSilny.getName(), WindValues.bardzoSilny.getFuzzySet());
+				} else if (qualificator.equals(WindValues.gwaltowny.getName())) {
+					windVariable.addTerm(WindValues.gwaltowny.getName(), WindValues.gwaltowny.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : windVariable.getTerms().entrySet()) {
+					LinguisticTerm windTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					windTerm.setData(wind);
+					qualifier.add(windTerm);
+				}
+
+				windVariable.clearTerms(); // opcjonalne
+			}
+
+
+
+		// Cisnienie
+			if (data5.equals(PressureValues.pressureVariable.getName())) {
+				LinguisticVariable pressureVariable = PressureValues.pressureVariable;
+
+				if (qualificator.equals(PressureValues.niskie.getName())) {
+					pressureVariable.addTerm(PressureValues.niskie.getName(), PressureValues.niskie.getFuzzySet());
+				} else if (qualificator.equals(PressureValues.normalne.getName())) {
+					pressureVariable.addTerm(PressureValues.normalne.getName(), PressureValues.normalne.getFuzzySet());
+				} else if (qualificator.equals(PressureValues.wysokie.getName())) {
+					pressureVariable.addTerm(PressureValues.wysokie.getName(), PressureValues.wysokie.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : pressureVariable.getTerms().entrySet()) {
+					LinguisticTerm pressureTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					pressureTerm.setData(pressure);
+					qualifier.add(pressureTerm);
+				}
+
+				pressureVariable.clearTerms(); // opcjonalne czyszczenie
+			}
+
+
+
+		// Widoczność
+			if (data5.equals(VisibilityValues.visibilityVariable.getName())) {
+				LinguisticVariable visibilityVariable = VisibilityValues.visibilityVariable;
+
+				if (qualificator.equals(VisibilityValues.slaba.getName())) {
+					visibilityVariable.addTerm(VisibilityValues.slaba.getName(), VisibilityValues.slaba.getFuzzySet());
+				} else if (qualificator.equals(VisibilityValues.umiarkowana.getName())) {
+					visibilityVariable.addTerm(VisibilityValues.umiarkowana.getName(), VisibilityValues.umiarkowana.getFuzzySet());
+				} else if (qualificator.equals(VisibilityValues.dobra.getName())) {
+					visibilityVariable.addTerm(VisibilityValues.dobra.getName(), VisibilityValues.dobra.getFuzzySet());
+				} else if (qualificator.equals(VisibilityValues.bardzoDobra.getName())) {
+					visibilityVariable.addTerm(VisibilityValues.bardzoDobra.getName(), VisibilityValues.bardzoDobra.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : visibilityVariable.getTerms().entrySet()) {
+					LinguisticTerm visibilityTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					visibilityTerm.setData(visibility);
+					qualifier.add(visibilityTerm);
+				}
+
+				visibilityVariable.clearTerms(); // opcjonalne czyszczenie
+			}
+
+
+
+		// Indeks UV
+		if (data1.equals(UvValues.uvIndexVariable.getName()) ||
+				data2.equals(UvValues.uvIndexVariable.getName()) ||
+				data3.equals(UvValues.uvIndexVariable.getName()) ||
+				data4.equals(UvValues.uvIndexVariable.getName())) {
+
+			LinguisticVariable uvVariable = UvValues.uvIndexVariable;
+
+			if (sumariser1.equals(UvValues.niskie.getName()) ||
+					sumariser2.equals(UvValues.niskie.getName()) ||
+					sumariser3.equals(UvValues.niskie.getName()) ||
+					sumariser4.equals(UvValues.niskie.getName())) {
+
+				uvVariable.addTerm(UvValues.niskie.getName(), UvValues.niskie.getFuzzySet());
+
+			} else if (sumariser1.equals(UvValues.umiarkowane.getName()) ||
+					sumariser2.equals(UvValues.umiarkowane.getName()) ||
+					sumariser3.equals(UvValues.umiarkowane.getName()) ||
+					sumariser4.equals(UvValues.umiarkowane.getName())) {
+
+				uvVariable.addTerm(UvValues.umiarkowane.getName(), UvValues.umiarkowane.getFuzzySet());
+
+			} else if (sumariser1.equals(UvValues.wysokie.getName()) ||
+					sumariser2.equals(UvValues.wysokie.getName()) ||
+					sumariser3.equals(UvValues.wysokie.getName()) ||
+					sumariser4.equals(UvValues.wysokie.getName())) {
+
+				uvVariable.addTerm(UvValues.wysokie.getName(), UvValues.wysokie.getFuzzySet());
+
+			} else if (sumariser1.equals(UvValues.bardzoWysokie.getName()) ||
+					sumariser2.equals(UvValues.bardzoWysokie.getName()) ||
+					sumariser3.equals(UvValues.bardzoWysokie.getName()) ||
+					sumariser4.equals(UvValues.bardzoWysokie.getName())) {
+
+				uvVariable.addTerm(UvValues.bardzoWysokie.getName(), UvValues.bardzoWysokie.getFuzzySet());
+
+			} else if (sumariser1.equals(UvValues.ekstremalne.getName()) ||
+					sumariser2.equals(UvValues.ekstremalne.getName()) ||
+					sumariser3.equals(UvValues.ekstremalne.getName()) ||
+					sumariser4.equals(UvValues.ekstremalne.getName())) {
+
+				uvVariable.addTerm(UvValues.ekstremalne.getName(), UvValues.ekstremalne.getFuzzySet());
+			}
+
+			//List<LinguisticTerm> uvTerms = new ArrayList<>();
+			for (Map.Entry<String, FuzzySet> entry : uvVariable.getTerms().entrySet()) {
+				LinguisticTerm uvTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+				uvTerm.setData(uv);
+				sumariser.add(uvTerm);
+			}
+
+			uvVariable.clearTerms(); // Opcjonalne czyszczenie po użyciu
+		}
+
+
+		// Jakość powietrza CO2
+			if (data5.equals(UvValues.uvIndexVariable.getName())) {
+				LinguisticVariable uvVariable = UvValues.uvIndexVariable;
+
+				if (qualificator.equals(UvValues.niskie.getName())) {
+					uvVariable.addTerm(UvValues.niskie.getName(), UvValues.niskie.getFuzzySet());
+				} else if (qualificator.equals(UvValues.umiarkowane.getName())) {
+					uvVariable.addTerm(UvValues.umiarkowane.getName(), UvValues.umiarkowane.getFuzzySet());
+				} else if (qualificator.equals(UvValues.wysokie.getName())) {
+					uvVariable.addTerm(UvValues.wysokie.getName(), UvValues.wysokie.getFuzzySet());
+				} else if (qualificator.equals(UvValues.bardzoWysokie.getName())) {
+					uvVariable.addTerm(UvValues.bardzoWysokie.getName(), UvValues.bardzoWysokie.getFuzzySet());
+				} else if (qualificator.equals(UvValues.ekstremalne.getName())) {
+					uvVariable.addTerm(UvValues.ekstremalne.getName(), UvValues.ekstremalne.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : uvVariable.getTerms().entrySet()) {
+					LinguisticTerm uvTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					uvTerm.setData(uv);
+					qualifier.add(uvTerm);
+				}
+
+				uvVariable.clearTerms(); // Opcjonalne czyszczenie po użyciu
+			}
+
+
+
+		// Jakość powietrza NO2
+			if (data5.equals(NoValues.no2QualityVariable.getName())) {
+				LinguisticVariable nitrogenVariable = NoValues.no2QualityVariable;
+
+				if (qualificator.equals(NoValues.normalne.getName())) {
+					nitrogenVariable.addTerm(NoValues.normalne.getName(), NoValues.normalne.getFuzzySet());
+				} else if (qualificator.equals(NoValues.niezdrowe.getName())) {
+					nitrogenVariable.addTerm(NoValues.niezdrowe.getName(), NoValues.niezdrowe.getFuzzySet());
+				} else if (qualificator.equals(NoValues.niebezpieczne.getName())) {
+					nitrogenVariable.addTerm(NoValues.niebezpieczne.getName(), NoValues.niebezpieczne.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : nitrogenVariable.getTerms().entrySet()) {
+					LinguisticTerm nitrogenTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					nitrogenTerm.setData(nitrogen);
+					qualifier.add(nitrogenTerm);
+				}
+
+				nitrogenVariable.clearTerms(); // Opcjonalne czyszczenie po użyciu
+			}
+
+
+
+		// Jakość powietrza
+			if (data5.equals(AirValues.airQuality.getName())) {
+				LinguisticVariable qualityVariable = AirValues.airQuality;
+
+				if (qualificator.equals(AirValues.bardzoDobra.getName())) {
+					qualityVariable.addTerm(AirValues.bardzoDobra.getName(), AirValues.bardzoDobra.getFuzzySet());
+				} else if (qualificator.equals(AirValues.dobra.getName())) {
+					qualityVariable.addTerm(AirValues.dobra.getName(), AirValues.dobra.getFuzzySet());
+				} else if (qualificator.equals(AirValues.umiarkowana.getName())) {
+					qualityVariable.addTerm(AirValues.umiarkowana.getName(), AirValues.umiarkowana.getFuzzySet());
+				} else if (qualificator.equals(AirValues.zla.getName())) {
+					qualityVariable.addTerm(AirValues.zla.getName(), AirValues.zla.getFuzzySet());
+				} else if (qualificator.equals(AirValues.bardzoZla.getName())) {
+					qualityVariable.addTerm(AirValues.bardzoZla.getName(), AirValues.bardzoZla.getFuzzySet());
+				}
+
+				for (Map.Entry<String, FuzzySet> entry : qualityVariable.getTerms().entrySet()) {
+					LinguisticTerm airTerm = new LinguisticTerm(entry.getKey(), entry.getValue());
+					airTerm.setData(quality);
+					qualifier.add(airTerm);
+				}
+
+				qualityVariable.clearTerms();
+			}
+	}
 
 		List<LinguisticTerm> summarizers = new ArrayList<>();
 		System.out.println(sumariser.size());
@@ -547,222 +823,51 @@ public class KsrApplication implements CommandLineRunner {
 			summarizers.add(sumariser.get(2));
 			summarizers.add(sumariser.get(3));
 		}
+
 		// Tutaj tworzysz i oceniasz podsumowanie
-		SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
-				quantifierTerms.getFirst(),
-				summarizers
-		);
-		System.out.println(singleSubjectSummary.summarization());
-		if (singleSubjectSummary.getT1() > 0.01) {
-			singleSubjectSummary.print();
-			//amount+=1;
+		if (data5.equals("Brak") && qualificator.equals("Brak")) {
+			SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+					quantifierTerms.getFirst(),
+					summarizers
+			);
+
+			System.out.println(singleSubjectSummary.summarization());
+			singleSubjectSummary.print(weight);
+
+		} else {
+			LinguisticTerm qual = qualifier.getFirst();
+			SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+					quantifierTerms.getFirst(),
+					summarizers,
+					qual
+			);
+
+			System.out.println(singleSubjectSummary.summarization());
+			singleSubjectSummary.print(weight);
 		}
-
-//		for (Quantifier quantifier : quantifierTerms) {
-//			System.out.println(quantifier.getName());
-//			System.out.println("--------------------------------------------------");
-//			int amount = 0;
-//			for (int i = 0; i < terms.size(); i++) {
-//				for (int j = i + 1; j < terms.size(); j++) {
-//					List<LinguisticTerm> list1 = terms.get(i);
-//					List<LinguisticTerm> list2 = terms.get(j);
-//
-//					for (LinguisticTerm term1 : list1) {
-//						for (LinguisticTerm term2 : list2) {
-//							List<LinguisticTerm> summarizers = new ArrayList<>();
-//							summarizers.add(term1);
-//							summarizers.add(term2);
-//
-//							// Tutaj tworzysz i oceniasz podsumowanie
-//							SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
-//									quantifier,
-//									summarizers
-//							);
-//							System.out.println(singleSubjectSummary.summarization());
-//							if (singleSubjectSummary.getT1() > 0.01) {
-//								singleSubjectSummary.print();
-//								amount+=1;
-//							}
-//						}
-//					}
-//				}
-//			}
-
-//            for (int i = 0; i < terms.size(); i++) {
-//				List<LinguisticTerm> qualifiers = terms.get(i);
-//				List<List<LinguisticTerm>> temp = new ArrayList<>();
-//				temp.addAll(terms);
-//				temp.remove(i);
-//				for (List<LinguisticTerm> term : temp) {
-//					for (LinguisticTerm qualifier : qualifiers) {
-//						for (LinguisticTerm summarizer : term) {
-//
-//							List<LinguisticTerm> summarizerList = new ArrayList<>();
-//							summarizerList.add(summarizer);
-//
-//							SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
-//									quantifier,
-//									summarizerList,
-//									qualifier
-//							);
-//							System.out.println(singleSubjectSummary.summarization());
-////							singleSubjectSummary.summarization();
-//							if (singleSubjectSummary.getT1() > 0.01) {
-//								singleSubjectSummary.print();
-//								amount+=1;
-//							}
-//						}
-//					}
-//				}
-//            }
-//			System.out.println("TEMPERATURES:");
-//			for (LinguisticTerm temperatureTerm : pressureTerms) {
-//				for (LinguisticTerm dateTerm : windTerms) {
-//					SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(quantifier, List.of(temperatureTerm, dateTerm));
-//					System.out.println(singleSubjectSummary.summarization());
-//					if (singleSubjectSummary.getT1() > 0.01) {
-//						singleSubjectSummary.print();
-//					}
-//
-//				}
-//				Summary summary = new Summary(quantifier, List.of(temperatureTerm));
-//				System.out.println(summary.summarization());
-//			}
-//            int amount = 0;
-//            System.out.println(quantifier.getName() + " " + amount);
-//			System.out.println("--------------------------------------------------");
-//		}
-
-//		System.out.println("TEMPERATURES:");
-//		for (LinguisticTerm tempTerm : temperaturesTerms) {
-//			for (Quantifier quantifier : quantifierTerms) {
-//				SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(tempTerm));
-//				System.out.println(summary.summarization());
-//				if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//					summary.print();
-////					amount += 1;
-//				}
-//			}
-//		}
-//
-//		System.out.println("HUMIDITIES:");
-//			for (LinguisticTerm humidityTerm : humidityTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(humidityTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//
-//			System.out.println("TIMES:");
-//			for (LinguisticTerm timeTerm : timeTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(timeTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("WINDS:");
-//			for (LinguisticTerm windTerm : windTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(windTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("PRESSURES:");
-//			for (LinguisticTerm pressureTerm : pressureTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(pressureTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("VISIBILITIES:");
-//			for (LinguisticTerm visibilityTerm : visibilityTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(visibilityTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("UVS:");
-//			for (LinguisticTerm uvTerm : uvTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(uvTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("CARBONS:");
-//			for (LinguisticTerm carbonTerm : carbonTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(carbonTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
-//			System.out.println("NITROGENS:");
-//			for (LinguisticTerm nitrogenTerm : nitrogenTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(nitrogenTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-//	//                    amount+=1;
-//					}
-//				}
-//			}
-//			System.out.println("QUALITIES:");
-//			for (LinguisticTerm airTerm : airTerms) {
-//				for (Quantifier quantifier : quantifierTerms) {
-//					SingleSubjectSummary summary = new SingleSubjectSummary(quantifier, List.of(airTerm));
-//					System.out.println(summary.summarization());
-//					if (summary.getT1() < 0.20 && summary.getT1() > 0.01) {
-//						summary.print();
-////						amount += 1;
-//					}
-//				}
-//			}
 
 	}
 
-	public static void twoSubjectSummary() {
+	public static void twoSubjectSummary(String data1, String data2, String data3, String data4, String data5, String sumariser1, String sumariser2, String sumariser3, String sumariser4, String qualificator, String quantificator, String cont1, String cont2) {
 		// Kwalifikatory
 		LinguisticVariable quatifiers = QuantifierValues.linguisticVariableQ;
-		quatifiers.addTerm(QuantifierValues.Q1.getName(), QuantifierValues.Q1.getFuzzySet());
-		quatifiers.addTerm(QuantifierValues.Q2.getName(), QuantifierValues.Q2.getFuzzySet());
-		quatifiers.addTerm(QuantifierValues.Q3.getName(), QuantifierValues.Q3.getFuzzySet());
-		quatifiers.addTerm(QuantifierValues.Q4.getName(), QuantifierValues.Q4.getFuzzySet());
-		quatifiers.addTerm(QuantifierValues.Q5.getName(), QuantifierValues.Q5.getFuzzySet());
 		List<Quantifier> quantifierTerms = new ArrayList<>();
-		quantifierTerms.add(QuantifierValues.Q1);
-		quantifierTerms.add(QuantifierValues.Q2);
-		quantifierTerms.add(QuantifierValues.Q3);
-		quantifierTerms.add(QuantifierValues.Q4);
-		quantifierTerms.add(QuantifierValues.Q5);
-
+		if (quantificator.equals(QuantifierValues.Q1.getName())) {
+			quatifiers.addTerm(QuantifierValues.Q1.getName(), QuantifierValues.Q1.getFuzzySet());
+			quantifierTerms.add(QuantifierValues.Q1);
+		} else if (quantificator.equals(QuantifierValues.Q2.getName())) {
+			quatifiers.addTerm(QuantifierValues.Q2.getName(), QuantifierValues.Q2.getFuzzySet());
+			quantifierTerms.add(QuantifierValues.Q2);
+		} else if (quantificator.equals(QuantifierValues.Q3.getName())) {
+			quatifiers.addTerm(QuantifierValues.Q3.getName(), QuantifierValues.Q3.getFuzzySet());
+			quantifierTerms.add(QuantifierValues.Q3);
+		} else if (quantificator.equals(QuantifierValues.Q4.getName())) {
+			quatifiers.addTerm(QuantifierValues.Q4.getName(), QuantifierValues.Q4.getFuzzySet());
+			quantifierTerms.add(QuantifierValues.Q4);
+		} else if (quantificator.equals(QuantifierValues.Q5.getName())) {
+			quatifiers.addTerm(QuantifierValues.Q5.getName(), QuantifierValues.Q5.getFuzzySet());
+			quantifierTerms.add(QuantifierValues.Q5);
+		}
 
 		List<Measurements> europeMeasurements = measurementsRepository.findByContinent("Europe");
 		List<Measurements> asiaMeasurements = measurementsRepository.findByContinent("Asia");
@@ -787,494 +892,127 @@ public class KsrApplication implements CommandLineRunner {
 		List<String> nitrogenTerms = List.of("normalne", "niezdrowe", "niebezpieczne");
 		List<String> airTerms = List.of("bardzo dobra", "dobra", "umiarkowana", "zla", "bardzo zla");
 
-
-		for (Quantifier quantifier : quantifierTerms) {
-			System.out.println("Quantifier: " + quantifier.getName());
-			System.out.println("--------------------------------------------------");
-			int amount = 0;
-//			System.out.println("TEMPERATURA");
-//			for (String temp : warmTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermTemp(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermTemp(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//	                    	amount+=1;
-//						}
-//
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermTemp(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermTemp(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("PORA DNIA");
-//			for (String temp : dayTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermTime(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermTime(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermTime(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermTime(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("WIATR");
-//			for (String temp : windTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermWind(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermWind(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermWind(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermWind(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("CISNIENIE");
-//			for (String temp : pressureTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("WILGOTNOSC");
-//			for (String temp : humidityTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermHumidity(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermHumidity(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermHumidity(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermHumidity(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("WIDOCZNOSC");
-//			for (String temp : visibilityTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermVisibility(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermVisibility(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermVisibility(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermVisibility(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("UV");
-//			for (String temp : uvTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermUv(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermUv(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermUv(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermUv(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("CARBON");
-//			for (String temp : carbonTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermCarbon(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermCarbon(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("NITROGEN");
-//			for (String temp : nitrogenTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermNitrogen(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermNitrogen(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermNitrogen(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermNitrogen(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//
-//			System.out.println("AIR");
-//			for (String temp : airTerms) {
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//						continentA = continents.get(j);
-//						continentB = continents.get(i);
-//						linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
-//						linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
-//						doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2
-//						);
-//
-//						doubleSubjectSummary.firstForm();
-//						if (doubleSubjectSummary.getT1() > 0.01) {
-//							amount+=1;
-//						}
-//					}
-//				}
-//			}
-//			System.out.println("Amount: " + amount + " for quantifier: " + quantifier.getName());
+		String continentA = cont1;
+		String continentB = cont2;
+		LinguisticTerm linguisticTerm1 = null;
+		LinguisticTerm linguisticTerm2 = null;
+		if (data1.equals(AirValues.airQuality.getName())) {
+			linguisticTerm1 = getLinguisticTermAirQuality(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermAirQuality(sumariser1, continentB);
+		} else if (data1.equals(CoValues.coQualityVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermCarbon(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermCarbon(sumariser1, continentB);
+		} else if (data1.equals(HumidityValues.humidityVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermHumidity(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermHumidity(sumariser1, continentB);
+		} else if (data1.equals(NoValues.no2QualityVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermNitrogen(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermNitrogen(sumariser1, continentB);
+		} else if (data1.equals(PressureValues.pressureVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermPressure(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermPressure(sumariser1, continentB);
+		} else if (data1.equals(TempValues.tempVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermTemp(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermTemp(sumariser1, continentB);
+		} else if (data1.equals(WindValues.windVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermWind(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermWind(sumariser1, continentB);
+		} else if (data1.equals(UvValues.uvIndexVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermUv(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermUv(sumariser1, continentB);
+		} else if (data1.equals(VisibilityValues.visibilityVariable.getName())) {
+			linguisticTerm1 = getLinguisticTermVisibility(sumariser1, continentA);
+			linguisticTerm2 = getLinguisticTermVisibility(sumariser1, continentB);
 		}
 
-//		for (Quantifier quantifier : quantifierTerms) {
-//			System.out.println("Quantifier: " + quantifier.getName());
-//			System.out.println("--------------------------------------------------");
-//			for (String temp : airTerms) {
-//				System.out.println("Nitrogen: " + temp);
-//				for (int i = 0; i < continents.size(); i++) {
-//					for (int j = i + 1; j < continents.size(); j++) {
-//						String continentA = continents.get(i);
-//						String continentB = continents.get(j);
-//						qualifier.setData(measurementsRepository.findByContinent(continentB).stream()
-//								.map(Measurements::getHumidity).toList());
-//						LinguisticTerm linguisticTerm1 = getLinguisticTermAirQuality(temp, continentA);
-//						LinguisticTerm linguisticTerm2 = getLinguisticTermAirQuality(temp, continentB);
-//						DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//								quantifier,
-//								continentA,
-//								continentB,
-//								linguisticTerm1,
-//								linguisticTerm2,
-//								qualifier
-//						);
-//
-//						doubleSubjectSummary.secondForm();
-//					}
-//				}
-//			}
-//		}
+		LinguisticTerm linguisticTerm3 = null;
+		LinguisticTerm linguisticTerm4 = null;
 
-		for (String temp: pressureTerms) {
-			System.out.println("Temperature: " + temp);
-			for (int i = 0; i < continents.size(); i++) {
-				for (int j = i + 1; j < continents.size(); j++) {
-					String continentA = continents.get(i);
-					String continentB = continents.get(j);
-					LinguisticTerm linguisticTerm1 = getLinguisticTermPressure(temp, continentA);
-					LinguisticTerm linguisticTerm2 = getLinguisticTermPressure(temp, continentB);
-					DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-							continentA,
-							continentB,
-							linguisticTerm1,
-							linguisticTerm2
-					);
-
-					doubleSubjectSummary.fourthForm();
-				}
+		if (!data5.equals("Brak")) {
+			if (data5.equals(AirValues.airQuality.getName())) {
+				linguisticTerm3 = getLinguisticTermAirQuality(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermAirQuality(qualificator, continentB);
+			} else if (data5.equals(CoValues.coQualityVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermCarbon(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermCarbon(qualificator, continentB);
+			} else if (data5.equals(HumidityValues.humidityVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermHumidity(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermHumidity(qualificator, continentB);
+			} else if (data5.equals(NoValues.no2QualityVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermNitrogen(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermNitrogen(qualificator, continentB);
+			} else if (data5.equals(PressureValues.pressureVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermPressure(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermPressure(qualificator, continentB);
+			} else if (data5.equals(TempValues.tempVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermTemp(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermTemp(qualificator, continentB);
+			} else if (data5.equals(WindValues.windVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermWind(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermWind(qualificator, continentB);
+			} else if (data5.equals(UvValues.uvIndexVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermUv(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermUv(qualificator, continentB);
+			} else if (data5.equals(VisibilityValues.visibilityVariable.getName())) {
+				linguisticTerm3 = getLinguisticTermVisibility(qualificator, continentA);
+				linguisticTerm4 = getLinguisticTermVisibility(qualificator, continentB);
 			}
-
 		}
 
-//		LinguisticTerm linguisticTerm1 = getLinguisticTermCarbon("niezdrowe", "Europe");
-//		LinguisticTerm linguisticTerm2 = getLinguisticTermCarbon("niezdrowe", "Asia");
-//		DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
-//				"Asia",
-//				"Europe",
-//				linguisticTerm2,
-//				linguisticTerm1
-//		);
-//
-//		doubleSubjectSummary.fourthForm();
+		if (data5.equals("Brak") && qualificator.equals("Brak") && quantificator.equals("Brak")) {
+			DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+					continentA,
+					continentB,
+					linguisticTerm1,
+					linguisticTerm2
+			);
 
+			doubleSubjectSummary.fourthForm();
+		} else if (!data5.equals("Brak") && !qualificator.equals("Brak") && !quantificator.equals("Brak")) {
+			DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+					quantifierTerms.getFirst(),
+					continentA,
+					continentB,
+					linguisticTerm1,
+					linguisticTerm2,
+					linguisticTerm3
+			);
+
+			doubleSubjectSummary.secondForm();
+
+			DoubleSubjectSummary doubleSubjectSummary2 = new DoubleSubjectSummary(
+					quantifierTerms.getFirst(),
+					continentA,
+					continentB,
+					linguisticTerm1,
+					linguisticTerm2,
+					linguisticTerm4
+			);
+			doubleSubjectSummary2.thirdForm();
+
+		} else {
+
+			DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
+					quantifierTerms.getFirst(),
+					continentA,
+					continentB,
+					linguisticTerm1,
+					linguisticTerm2
+			);
+
+			doubleSubjectSummary.firstForm();
+			}
 	}
 
-	public LinguisticTerm getLinguisticTermTemp(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermTemp(String term, String continent) {
         LinguisticTerm linguisticTerm;
 
 		switch (term) {
             case "bardzo zimna" -> linguisticTerm = new LinguisticTerm(TempValues.bardzoZimna.getName(), TempValues.bardzoZimna.getFuzzySet());
             case "zimna" -> linguisticTerm = new LinguisticTerm(TempValues.zimna.getName(), TempValues.zimna.getFuzzySet());
             case "umiarkowana" -> linguisticTerm = new LinguisticTerm(TempValues.umiarkowana.getName(), TempValues.umiarkowana.getFuzzySet());
-            case "ciepla" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
-            case "goraca" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+            case "ciepła" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
+            case "gorąca" -> linguisticTerm = new LinguisticTerm(TempValues.ciepla.getName(), TempValues.ciepla.getFuzzySet());
             default -> throw new IllegalArgumentException("Unknown term: " + term);
         }
 
@@ -1292,15 +1030,15 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermWind(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermWind(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
-			case "slaby" -> linguisticTerm = new LinguisticTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
+			case "słaby" -> linguisticTerm = new LinguisticTerm(WindValues.slaby.getName(), WindValues.slaby.getFuzzySet());
 			case "umiarkowany" -> linguisticTerm = new LinguisticTerm(WindValues.umiarkowany.getName(), WindValues.umiarkowany.getFuzzySet());
 			case "silny" -> linguisticTerm = new LinguisticTerm(WindValues.silny.getName(), WindValues.silny.getFuzzySet());
 			case "bardzo silny" -> linguisticTerm = new LinguisticTerm(WindValues.bardzoSilny.getName(), WindValues.bardzoSilny.getFuzzySet());
-			case "gwaltowny" -> linguisticTerm = new LinguisticTerm(WindValues.gwaltowny.getName(), WindValues.gwaltowny.getFuzzySet());
+			case "gwałtowny" -> linguisticTerm = new LinguisticTerm(WindValues.gwaltowny.getName(), WindValues.gwaltowny.getFuzzySet());
 			default -> throw new IllegalArgumentException("Unknown term: " + term);
 		}
 
@@ -1318,7 +1056,7 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermHumidity(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermHumidity(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
@@ -1366,11 +1104,11 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermVisibility(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermVisibility(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
-			case "slaba" -> linguisticTerm = new LinguisticTerm(VisibilityValues.slaba.getName(), VisibilityValues.slaba.getFuzzySet());
+			case "słaba" -> linguisticTerm = new LinguisticTerm(VisibilityValues.slaba.getName(), VisibilityValues.slaba.getFuzzySet());
 			case "umiarkowana" -> linguisticTerm = new LinguisticTerm(VisibilityValues.umiarkowana.getName(), VisibilityValues.umiarkowana.getFuzzySet());
 			case "dobra" -> linguisticTerm = new LinguisticTerm(VisibilityValues.dobra.getName(), VisibilityValues.dobra.getFuzzySet());
 			case "bardzo dobra" -> linguisticTerm = new LinguisticTerm(VisibilityValues.bardzoDobra.getName(), VisibilityValues.bardzoDobra.getFuzzySet());
@@ -1391,7 +1129,7 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermUv(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermUv(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
@@ -1417,7 +1155,7 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermCarbon(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermCarbon(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
@@ -1442,7 +1180,7 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermNitrogen(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermNitrogen(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
@@ -1466,15 +1204,15 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermAirQuality(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermAirQuality(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
 			case "bardzo dobra" -> linguisticTerm = new LinguisticTerm(AirValues.bardzoDobra.getName(), AirValues.bardzoDobra.getFuzzySet());
 			case "dobra" -> linguisticTerm = new LinguisticTerm(AirValues.dobra.getName(), AirValues.dobra.getFuzzySet());
 			case "umiarkowana" -> linguisticTerm = new LinguisticTerm(AirValues.umiarkowana.getName(), AirValues.umiarkowana.getFuzzySet());
-			case "zla" -> linguisticTerm = new LinguisticTerm(AirValues.zla.getName(), AirValues.zla.getFuzzySet());
-			case "bardzo zla" -> linguisticTerm = new LinguisticTerm(AirValues.bardzoZla.getName(), AirValues.bardzoZla.getFuzzySet());
+			case "zła" -> linguisticTerm = new LinguisticTerm(AirValues.zla.getName(), AirValues.zla.getFuzzySet());
+			case "bardzo zła" -> linguisticTerm = new LinguisticTerm(AirValues.bardzoZla.getName(), AirValues.bardzoZla.getFuzzySet());
 			default -> throw new IllegalArgumentException("Unknown term: " + term);
 		}
 
@@ -1492,7 +1230,7 @@ public class KsrApplication implements CommandLineRunner {
 		return linguisticTerm;
 	}
 
-	public LinguisticTerm getLinguisticTermTime(String term, String continent) {
+	public static LinguisticTerm getLinguisticTermTime(String term, String continent) {
 		LinguisticTerm linguisticTerm;
 
 		switch (term) {
@@ -1500,9 +1238,9 @@ public class KsrApplication implements CommandLineRunner {
 					linguisticTerm = new LinguisticTerm(TimeValues.nocna.getName(), TimeValues.nocna.getFuzzySet());
 			case "poranna" ->
 					linguisticTerm = new LinguisticTerm(TimeValues.poranna.getName(), TimeValues.poranna.getFuzzySet());
-			case "poludniowa" ->
+			case "południowa" ->
 					linguisticTerm = new LinguisticTerm(TimeValues.poludniowa.getName(), TimeValues.poludniowa.getFuzzySet());
-			case "popoludniowa" ->
+			case "popołudniowa" ->
 					linguisticTerm = new LinguisticTerm(TimeValues.popoludniowa.getName(), TimeValues.popoludniowa.getFuzzySet());
 			case "wieczorna" ->
 					linguisticTerm = new LinguisticTerm(TimeValues.wieczorna.getName(), TimeValues.wieczorna.getFuzzySet());
