@@ -109,6 +109,9 @@
                 <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />
                 <Button onAction="#onAdminButtonClick" prefWidth="94.0" text="Panel admin" />
             </HBox>
+            <HBox spacing="10.0" alignment="CENTER">
+                <Button fx:id="saveButton" text="Zapisz do pliku" onAction="#handleSave"/>
+            </HBox>
         </VBox>
     </right>
 

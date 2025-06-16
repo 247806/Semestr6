@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ksr.zad2.fuzzy.DoubleSubjectSummary;
@@ -18,9 +19,13 @@ import ksr.zad2.model.Measurements;
 import ksr.zad2.model.variables.*;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class HelloController {
@@ -42,6 +47,69 @@ public class HelloController {
 
 
     private final QuantifierValues quantifierValues = new QuantifierValues();
+
+    @FXML
+    private void handleSave() {
+        // Dialog do wyboru zakresu
+        TextInputDialog fromDialog = new TextInputDialog("0");
+        fromDialog.setTitle("Zakres zapisu");
+        fromDialog.setHeaderText("Podaj indeks początkowy (0 - " + (summaryListView.getItems().size() - 1) + ")");
+        fromDialog.setContentText("Od:");
+
+        Optional<String> fromResult = fromDialog.showAndWait();
+        if (fromResult.isEmpty()) return;
+
+        int fromIndex;
+        try {
+            fromIndex = Integer.parseInt(fromResult.get());
+        } catch (NumberFormatException e) {
+            summaryOutputArea.setText("Niepoprawna wartość początkowa!");
+            return;
+        }
+
+        TextInputDialog toDialog = new TextInputDialog(String.valueOf(summaryListView.getItems().size() - 1));
+        toDialog.setTitle("Zakres zapisu");
+        toDialog.setHeaderText("Podaj indeks końcowy (0 - " + (summaryListView.getItems().size() - 1) + ")");
+        toDialog.setContentText("Do:");
+
+        Optional<String> toResult = toDialog.showAndWait();
+        if (toResult.isEmpty()) return;
+
+        int toIndex;
+        try {
+            toIndex = Integer.parseInt(toResult.get());
+        } catch (NumberFormatException e) {
+            summaryOutputArea.setText("Niepoprawna wartość końcowa!");
+            return;
+        }
+
+        if (fromIndex < 0 || toIndex >= summaryListView.getItems().size() || fromIndex > toIndex) {
+            summaryOutputArea.setText("Niepoprawny zakres!");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Zapisz plik");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Pliki tekstowe", "*.txt"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                for (int i = fromIndex; i <= toIndex; i++) {
+                    writer.write(summaryListView.getItems().get(i)); // zakładamy, że "fxml" to Twoja zmienna
+                    writer.newLine();
+                    if (allSummaries.get(i) instanceof SingleSubjectSummary s) {
+                        writer.write(s.print());
+                        writer.newLine();
+                    }
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @FXML
     private void initialize() {
@@ -420,7 +488,7 @@ public class HelloController {
             allSummaries.add(singleSubjectSummary);
             singleSubjectSummary.print();
             summaryListView.getItems().add(singleSubjectSummary.getSummaryText());
-
+            System.out.println(summaryListView.getItems());
         }
     }
 
@@ -579,6 +647,7 @@ public class HelloController {
             summaryOutputArea.setText(doubleSubjectSummary.getSummary());
             allSummaries.add(doubleSubjectSummary);
             summaryListView.getItems().add(doubleSubjectSummary.getSummary());
+
         }
     }
 
