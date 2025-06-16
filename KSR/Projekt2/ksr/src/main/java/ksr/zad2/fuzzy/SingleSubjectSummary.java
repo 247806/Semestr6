@@ -55,7 +55,7 @@ public class SingleSubjectSummary {
         this.t11 = T11();
     }
 
-    public void print() {
+    public void print(List<Double> weight) {
         System.out.println(t1);
         System.out.println(t2);
         System.out.println(t3);
@@ -67,7 +67,7 @@ public class SingleSubjectSummary {
         System.out.println(t9);
         System.out.println(t10);
         System.out.println(t11);
-        System.out.println(optimalSummary(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07),
+        System.out.println(optimalSummary(weight,
                 List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
     }
 

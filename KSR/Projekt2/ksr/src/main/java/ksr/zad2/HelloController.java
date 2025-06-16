@@ -57,28 +57,73 @@ public class HelloController {
     @FXML
     public ComboBox<String> sub2;
 
+    @FXML
+    public TextField t1;
+
+    @FXML
+    public TextField t2;
+
+    @FXML
+    public TextField t3;
+
+    @FXML
+    public TextField t4;
+
+    @FXML
+    public TextField t5;
+
+    @FXML
+    public TextField t6;
+
+    @FXML
+    public TextField t7;
+
+    @FXML
+    public TextField t8;
+
+    @FXML
+    public TextField t9;
+
+    @FXML
+    public TextField t10;
+
+    @FXML
+    public TextField t11;
+
     private QuantifierValues quantifierValues = new QuantifierValues();
 
     @FXML
     private void initialize() {
-        quantificator.getItems().addAll(quantifierValues.Q1.getName(), quantifierValues.Q2.getName(), quantifierValues.Q3.getName(), quantifierValues.Q4.getName(), quantifierValues.Q5.getName());
+        quantificator.getItems().addAll(quantifierValues.Q1.getName(), quantifierValues.Q2.getName(), quantifierValues.Q3.getName(), quantifierValues.Q4.getName(), quantifierValues.Q5.getName(), "Brak");
 
-        sub1.getItems().addAll("Ameryka", "Azja", "Europa", "Afryka", "Brak");
+        sub1.getItems().addAll("America", "Asia", "Europe", "Africa", "Brak");
         sub1.setValue("Brak");
         sub2.setValue("Brak");
+        
+        t1.setText("0.30");
+        t2.setText("0.07");
+        t3.setText("0.07");
+        t4.setText("0.07");
+        t5.setText("0.07");
+        t6.setText("0.07");
+        t7.setText("0.07");
+        t8.setText("0.07");
+        t9.setText("0.07");
+        t10.setText("0.07");
+        t11.setText("0.07");
 
         sub1.setOnAction(event -> {
             String selected = sub1.getValue();
             sub2.getItems().clear();
 
-            if (selected.equals("Ameryka")) {
-                sub2.getItems().addAll("Azja", "Europa", "Afryka");
-            } else if (selected.equals("Azja")) {
-                sub2.getItems().addAll("Ameryka", "Europa", "Afryka");
-            } else if (selected.equals("Europa")) {
-                sub2.getItems().addAll("Azja", "Ameryka", "Afryka");
-            } else if (selected.equals("Afryka")) {
-                sub2.getItems().addAll("Azja", "Europa", "Ameryka");
+            if (selected.equals("America")) {
+                sub2.getItems().addAll("Asia", "Europe", "Africa");
+            } else if (selected.equals("Asia")) {
+                sub2.getItems().addAll("America", "Europe", "Africa");
+            } else if (selected.equals("Europe")) {
+                sub2.getItems().addAll("Asia", "America", "Africa");
+            } else if (selected.equals("Africa")) {
+                sub2.getItems().addAll("Asia", "Europe", "America");
             } else if (selected.equals("Brak")) {
                 sub2.getItems().addAll("Brak");
                 sub2.setValue("Brak");
@@ -269,12 +314,26 @@ public class HelloController {
 
     @FXML
     protected void onHelloButtonClick() throws IOException {
-        System.out.println(sub1.getValue());
-        System.out.println(sub2.getValue());
+        List<Double> weight = new ArrayList<>();
+        weight.add(Double.parseDouble(t1.getText()));
+        weight.add(Double.parseDouble(t2.getText()));
+        weight.add(Double.parseDouble(t3.getText()));
+        weight.add(Double.parseDouble(t4.getText()));
+        weight.add(Double.parseDouble(t5.getText()));
+        weight.add(Double.parseDouble(t6.getText()));
+        weight.add(Double.parseDouble(t7.getText()));
+        weight.add(Double.parseDouble(t8.getText()));
+        weight.add(Double.parseDouble(t9.getText()));
+        weight.add(Double.parseDouble(t10.getText()));
+        weight.add(Double.parseDouble(t11.getText()));
+
+
+
+
         if (sub1.getValue().equals("Brak") && sub2.getValue().equals("Brak")) {
-            KsrApplication.singleSubjectSummary(data1.getValue(), data2.getValue(), data3.getValue(), data4.getValue(), data5.getValue(), sumariser1.getValue(), sumariser2.getValue(), sumariser3.getValue(), sumariser4.getValue(), qualificator.getValue(), quantificator.getValue());
+            KsrApplication.singleSubjectSummary(data1.getValue(), data2.getValue(), data3.getValue(), data4.getValue(), data5.getValue(), sumariser1.getValue(), sumariser2.getValue(), sumariser3.getValue(), sumariser4.getValue(), qualificator.getValue(), quantificator.getValue(), weight);
         } else {
-            KsrApplication.twoSubjectSummary();
+            KsrApplication.twoSubjectSummary(data1.getValue(), data2.getValue(), data3.getValue(), data4.getValue(), data5.getValue(), sumariser1.getValue(), sumariser2.getValue(), sumariser3.getValue(), sumariser4.getValue(), qualificator.getValue(), quantificator.getValue(), sub1.getValue(), sub2.getValue());
         }
 
     }
