@@ -40,6 +40,11 @@
                 <ComboBox fx:id="sub2" promptText="Podmiot" prefWidth="100.0" />
             </HBox>
 
+            <HBox spacing="10.0" alignment="CENTER">
+                <Label text="Typ podsumowania dwupodmiotowego" />
+                <ComboBox fx:id="twoSubjectSelector" promptText="Typ" prefWidth="120.0" />
+            </HBox>
+
             <!-- Przycisk generowania -->
             <HBox spacing="10.0" alignment="CENTER">
                 <Button fx:id="generateSingleSummaryButton" text="Generuj podsumowanie pierwszego typu" onAction="#onGenerateSingleSummary" />
@@ -110,12 +115,13 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER">
-                <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />
+<!--                <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />-->
+                <Button fx:id="saveButton" text="Zapisz do pliku" onAction="#handleSave"/>
                 <Button onAction="#onAdminButtonClick" prefWidth="94.0" text="Panel admin" />
             </HBox>
-            <HBox spacing="10.0" alignment="CENTER">
-                <Button fx:id="saveButton" text="Zapisz do pliku" onAction="#handleSave"/>
-            </HBox>
+<!--            <HBox spacing="10.0" alignment="CENTER">-->
+<!--                -->
+<!--            </HBox>-->
         </VBox>
     </right>
 

@@ -7,7 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -19,6 +25,7 @@ import ksr.zad2.model.Measurements;
 import ksr.zad2.model.variables.*;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -31,6 +38,7 @@ import java.util.Optional;
 public class HelloController {
 
     @FXML public ComboBox<Quantifier> quantificator;
+    @FXML public ComboBox<String> twoSubjectSelector;
     @FXML public ComboBox<String> sub1;
     @FXML public ComboBox<String> sub2;
     @FXML public TextField t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
@@ -51,65 +59,75 @@ public class HelloController {
 
     @FXML
     private void handleSave() {
-        // Dialog do wyboru zakresu
-        TextInputDialog fromDialog = new TextInputDialog("0");
-        fromDialog.setTitle("Zakres zapisu");
-        fromDialog.setHeaderText("Podaj indeks początkowy (0 - " + (summaryListView.getItems().size() - 1) + ")");
-        fromDialog.setContentText("Od:");
+        Dialog<List<Integer>> dialog = new Dialog<>();
+        dialog.setTitle("Zapis podsumowań");
+        dialog.setHeaderText("Wybierz podsumowania do zapisania:");
 
-        Optional<String> fromResult = fromDialog.showAndWait();
-        if (fromResult.isEmpty()) return;
+        ButtonType saveButtonType = new ButtonType("Zapisz", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        int fromIndex;
-        try {
-            fromIndex = Integer.parseInt(fromResult.get());
-        } catch (NumberFormatException e) {
-            summaryOutputArea.setText("Niepoprawna wartość początkowa!");
-            return;
+        VBox vbox = new VBox(5);
+        List<CheckBox> checkBoxes = new ArrayList<>();
+
+        for (int i = 0; i < summaryListView.getItems().size(); i++) {
+            String summaryText = summaryListView.getItems().get(i);
+            CheckBox checkBox = new CheckBox(i + ": " + summaryText);
+            checkBoxes.add(checkBox);
+            vbox.getChildren().add(checkBox);
         }
 
-        TextInputDialog toDialog = new TextInputDialog(String.valueOf(summaryListView.getItems().size() - 1));
-        toDialog.setTitle("Zakres zapisu");
-        toDialog.setHeaderText("Podaj indeks końcowy (0 - " + (summaryListView.getItems().size() - 1) + ")");
-        toDialog.setContentText("Do:");
+        ScrollPane scrollPane = new ScrollPane(vbox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(300);
+        dialog.getDialogPane().setContent(scrollPane);
 
-        Optional<String> toResult = toDialog.showAndWait();
-        if (toResult.isEmpty()) return;
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                List<Integer> selectedIndices = new ArrayList<>();
+                for (int i = 0; i < checkBoxes.size(); i++) {
+                    if (checkBoxes.get(i).isSelected()) {
+                        selectedIndices.add(i);
+                    }
+                }
+                return selectedIndices;
+            }
+            return null;
+        });
 
-        int toIndex;
-        try {
-            toIndex = Integer.parseInt(toResult.get());
-        } catch (NumberFormatException e) {
-            summaryOutputArea.setText("Niepoprawna wartość końcowa!");
-            return;
-        }
+        Optional<List<Integer>> result = dialog.showAndWait();
 
-        if (fromIndex < 0 || toIndex >= summaryListView.getItems().size() || fromIndex > toIndex) {
-            summaryOutputArea.setText("Niepoprawny zakres!");
-            return;
-        }
+        result.ifPresent(selectedIndices -> {
+            if (selectedIndices.isEmpty()) {
+                summaryOutputArea.setText("Nie wybrano żadnych podsumowań do zapisu.");
+                return;
+            }
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Zapisz plik");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Pliki tekstowe", "*.txt"));
-        File file = fileChooser.showSaveDialog(null);
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Zapisz plik");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Pliki tekstowe", "*.txt"));
+            File file = fileChooser.showSaveDialog(null);
 
-        if (file != null) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                for (int i = fromIndex; i <= toIndex; i++) {
-                    writer.write(summaryListView.getItems().get(i)); // zakładamy, że "fxml" to Twoja zmienna
-                    writer.newLine();
-                    if (allSummaries.get(i) instanceof SingleSubjectSummary s) {
-                        writer.write(s.print());
+            if (file != null) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    for (int i : selectedIndices) {
+                        writer.write(summaryListView.getItems().get(i));
+                        writer.newLine();
+                        if (allSummaries.get(i) instanceof SingleSubjectSummary s) {
+                            writer.write(s.print());
+                            writer.newLine();
+                        } else if (allSummaries.get(i) instanceof DoubleSubjectSummary d) {
+                            writer.write(d.getSummary());
+                            writer.newLine();
+                        }
                         writer.newLine();
                     }
-                    writer.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
+        });
     }
+
 
 
     @FXML
@@ -156,6 +174,8 @@ public class HelloController {
         measureComboBox.setItems(FXCollections.observableArrayList("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T"));
         measureComboBox.getSelectionModel().selectFirst();
 
+        List<String> subjects = List.of("Pierwszy", "Drugi", "Trzeci", "Czwarty");
+        twoSubjectSelector.getItems().addAll(subjects);
     }
 
     private void initializeQuantifiers() {
@@ -576,12 +596,12 @@ public class HelloController {
                 .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
                 .toList();
 
-        if (subject1 == null || subject2 == null || summarizer == null) {
-            summaryOutputArea.setText("Proszę uzupełnić wszystkie pola i wybrać sumaryzator.");
+        if (subject1 == null || subject2 == null || summarizer.isEmpty()) {
+            summaryOutputArea.setText("Proszę uzupełnić wszystkie pola, wybrać sumaryzator, lub podmioty.");
             return;
         }
 
-        if (quantifier == null) {
+        if (twoSubjectSelector.getValue().equals("Czwarty")) {
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
 
@@ -605,7 +625,13 @@ public class HelloController {
             summaryOutputArea.setText(doubleSubjectSummary.getSummary());
             allSummaries.add(doubleSubjectSummary);
             summaryListView.getItems().add(doubleSubjectSummary.getSummary());
-        } else if (qualifier.size() == 1) {
+        } else if (twoSubjectSelector.getValue().equals("Trzeci")) {
+
+            if (qualifier.isEmpty() || quantifier == null) {
+                summaryOutputArea.setText("Proszę wybrać kwalifikator lub kwantyfikator.");
+                return;
+            }
+
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             qualifier.getFirst().setData(setDataByContinent(subject1, selectedLinguisticVariableNamesQualifier.getFirst()));
@@ -624,9 +650,22 @@ public class HelloController {
             doubleSubjectSummary.thirdForm();
             summaryOutputArea.setText(doubleSubjectSummary.getSummary());
             allSummaries.add(doubleSubjectSummary);
+            summaryListView.getItems().add(doubleSubjectSummary.getSummary());
+        } else if (twoSubjectSelector.getValue().equals("Drugi")) {
 
-            qualifier.getFirst().setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
-            DoubleSubjectSummary doubleSubjectSummary2 = new DoubleSubjectSummary(
+            if (qualifier.isEmpty() || quantifier == null) {
+                summaryOutputArea.setText("Proszę wybrać kwalifikator lub kwantyfikator.");
+                return;
+            }
+
+            LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+            LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
+            qualifier.getFirst().setData(setDataByContinent(subject1, selectedLinguisticVariableNamesQualifier.getFirst()));
+
+            summarizer1.setData(setDataByContinent(subject1, selectedLinguisticVariableNames.getFirst()));
+            summarizer2.setData(setDataByContinent(subject2, selectedLinguisticVariableNames.getFirst()));
+
+            DoubleSubjectSummary doubleSubjectSummary = new DoubleSubjectSummary(
                     quantifier,
                     subject1,
                     subject2,
@@ -634,11 +673,17 @@ public class HelloController {
                     summarizer2,
                     qualifier.getFirst()
             );
-            doubleSubjectSummary2.secondForm();
-            summaryOutputArea.setText(doubleSubjectSummary2.getSummary());
-            allSummaries.add(doubleSubjectSummary2);
-            summaryListView.getItems().add(doubleSubjectSummary2.getSummary());
-        } else {
+            doubleSubjectSummary.secondForm();
+            summaryOutputArea.setText(doubleSubjectSummary.getSummary());
+            allSummaries.add(doubleSubjectSummary);
+            summaryListView.getItems().add(doubleSubjectSummary.getSummary());
+        } else if (twoSubjectSelector.getValue().equals("Pierwszy")) {
+
+            if (quantifier == null) {
+                summaryOutputArea.setText("Proszę wybrać kwantyfikator");
+                return;
+            }
+
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
 
@@ -840,20 +885,20 @@ public class HelloController {
     }
 
 
-    @FXML
-    protected void onHelloButtonClick() {
-        summarizersTreeView.getRoot().getChildren().stream()
-                .map(child -> (CheckBoxTreeItem<String>) child)
-                .filter(CheckBoxTreeItem::isSelected)
-                .forEach(selectedItem ->
-                        System.out.println("Wybrany sumaryzator: " + selectedItem.getValue()));
-
-        qualifiersTreeView.getRoot().getChildren().stream()
-                .map(child -> (CheckBoxTreeItem<String>) child)
-                .filter(CheckBoxTreeItem::isSelected)
-                .forEach(selectedItem ->
-                        System.out.println("Wybrany kwalifikator: " + selectedItem.getValue()));
-    }
+//    @FXML
+//    protected void onHelloButtonClick() {
+//        summarizersTreeView.getRoot().getChildren().stream()
+//                .map(child -> (CheckBoxTreeItem<String>) child)
+//                .filter(CheckBoxTreeItem::isSelected)
+//                .forEach(selectedItem ->
+//                        System.out.println("Wybrany sumaryzator: " + selectedItem.getValue()));
+//
+//        qualifiersTreeView.getRoot().getChildren().stream()
+//                .map(child -> (CheckBoxTreeItem<String>) child)
+//                .filter(CheckBoxTreeItem::isSelected)
+//                .forEach(selectedItem ->
+//                        System.out.println("Wybrany kwalifikator: " + selectedItem.getValue()));
+//    }
 
     @FXML
     public void onAdminButtonClick(javafx.event.ActionEvent actionEvent) {

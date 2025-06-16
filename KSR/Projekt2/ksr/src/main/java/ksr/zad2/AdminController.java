@@ -3,6 +3,7 @@ package ksr.zad2;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,7 +24,7 @@ public class AdminController {
 
     @FXML
     private TreeView<String> linguisticTreeView;
-
+    @FXML private Label messageLabel;
     @FXML
     private ListView<String> summarizerListView;
 
@@ -78,7 +79,7 @@ public class AdminController {
             parametersBox.getChildren().add(createParameterField("c"));
             parametersBox.getChildren().add(createParameterField("d"));
         } else if ("Gaussowska".equals(selectedFunction)) {
-            parametersBox.getChildren().add(createParameterField("μ"));
+            parametersBox.getChildren().add(createParameterField("center"));
             parametersBox.getChildren().add(createParameterField("σ"));
         }
     }
@@ -154,20 +155,48 @@ public class AdminController {
         String selectedSummarizer = summarizerListView.getSelectionModel().getSelectedItem();
 
         if (selectedSummarizer == null || selectedFunction == null || newName.isEmpty()) {
-            System.out.println("Uzupełnij wszystkie pola.");
+            messageLabel.setText("Nazwa nie może być pusta.");
+            messageLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        // Pobierz wartości parametrów
+
         double[] params = parametersBox.getChildren().stream()
                 .filter(node -> node instanceof HBox)
-                .map(hbox -> ((HBox) hbox).getChildren().get(1)) // Pobranie TextField
+                .map(hbox -> ((HBox) hbox).getChildren().get(1))
                 .filter(node -> node instanceof TextField)
-                .mapToDouble(node -> Double.parseDouble(((TextField) node).getText()))
-                .toArray();
+                .mapToDouble(node -> {
+                    try {
+                        return Double.parseDouble(((TextField) node).getText());
+                    } catch (NumberFormatException e) {
+                        messageLabel.setText("Nieprawidłowa wartość parametru: " + ((TextField) node).getPromptText());
+                        throw new IllegalArgumentException("Nieprawidłowa wartość parametru.");
+                    }
+                }).toArray();
 
+        // Pobierz zmienną lingwistyczną
+        LinguisticVariable variable = getLinguisticVariableByName(lingusticVariable);
+        if (variable == null) {
+            System.out.println("Nie znaleziono zmiennej lingwistycznej.");
+            return;
+        }
+
+        // Sprawdź, czy parametry mieszczą się w zakresie
+        double min = variable.getMin();
+        double max = variable.getMax();
+
+        for (double param : params) {
+            if (param < min || param > max) {
+                System.out.println("Parametr " + param + " wykracza poza zakres [" + min + ", " + max + "].");
+                messageLabel.setText("Parametr " + param + " wykracza poza zakres [" + min + ", " + max + "].");
+                messageLabel.setStyle("-fx-text-fill: red;");
+                return;
+            }
+        }
         // Aktualizacja sumaryzatora w modelu
         updateSummarizer(selectedSummarizer, newName, selectedFunction, params, lingusticVariable);
+        messageLabel.setText("Zapisano sumaryzator.");
+        messageLabel.setStyle("-fx-text-fill: green;");
         System.out.println("Zapisano sumaryzator: " + newName + " z funkcją " + selectedFunction);
     }
 
