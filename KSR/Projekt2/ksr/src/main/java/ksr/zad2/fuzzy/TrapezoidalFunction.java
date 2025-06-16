@@ -1,8 +1,9 @@
 package ksr.zad2.fuzzy;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
-
+@Data
 public class TrapezoidalFunction extends FuzzySet {
     private final double a;
     private final double b;

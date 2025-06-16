@@ -1,8 +1,10 @@
 package ksr.zad2.fuzzy;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @AllArgsConstructor
+@Data
 public class TriangularFunction extends FuzzySet {
     private final double a;
     private final double b;

@@ -1,15 +1,21 @@
 package ksr.zad2;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 //import ksr.classifier.KNN;
+import javafx.stage.Stage;
 import ksr.zad2.model.variables.*;
 import ksr.zad2.repository.MeasurementsRepository;
 import org.controlsfx.control.CheckListView;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -277,5 +283,27 @@ public class HelloController {
             KsrApplication.twoSubjectSummary();
         }
 
+    }
+
+    @FXML
+    public void onAdminButtonClick(javafx.event.ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ksr/admin-view.fxml"));
+
+            // Pobierz kontrolery z kontekstu Springa
+            fxmlLoader.setControllerFactory(JavaFxApplication.getSpringContext()::getBean);
+
+            // Załaduj widok
+            Parent adminView = fxmlLoader.load();
+
+            // Pobierz bieżącą scenę i zmień ją na nową
+            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(adminView));
+            stage.setTitle("Panel Admina");
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

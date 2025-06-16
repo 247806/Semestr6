@@ -6,12 +6,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+
 public class JavaFxApplication extends Application {
 
-    private ConfigurableApplicationContext springContext;
+    @Getter
+    private static ConfigurableApplicationContext springContext;
+
 
     @Override
     public void init() {

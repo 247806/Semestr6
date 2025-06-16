@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ksr.zad2.AdminController"
+            prefWidth="900" prefHeight="600">
+
+    <!-- Lewy górny róg - przycisk powrotu -->
+    <top>
+        <HBox alignment="TOP_LEFT" spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="← Powrót" onAction="#onBackButtonClick"/>
+        </HBox>
+    </top>
+
+    <!-- Lewa strona - TreeView z 11 zmiennymi -->
+    <left>
+        <VBox spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Zmienna lingwistyczna" />
+            <TreeView fx:id="linguisticTreeView" prefWidth="200" onMouseClicked="#onTreeItemSelected"/>
+        </VBox>
+    </left>
+
+    <!-- Środkowa część - sumaryzatory -->
+    <center>
+        <VBox spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+
+            <!-- Min i Max -->
+            <HBox spacing="20">
+                <Label id="minimalValueLabel" fx:id="minValueLabel" text="Min:" />
+                <Label id="maximalValueLabel" fx:id="maxValueLabel" text="Max:" />
+            </HBox>
+
+            <!-- Sumaryzatory -->
+            <Label text="Sumaryzatory" />
+            <ListView fx:id="summarizerListView" prefHeight="150" onMouseClicked="#onSummarizerSelected" />
+
+            <!-- Szczegóły wybranego sumaryzatora -->
+            <Label text="Szczegóły sumaryzatora" />
+            <ListView fx:id="summarizerValuesListView" prefHeight="150" />
+        </VBox>
+    </center>
+
+
+    <!-- Dolna część - edycja sumaryzatora -->
+    <bottom>
+        <VBox spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Edytuj sumaryzator" />
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Nowa nazwa:"/>
+                <TextField fx:id="newNameField" promptText="Wprowadź nową nazwę"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Funkcja przynależności:"/>
+                <ComboBox fx:id="membershipComboBox" promptText="Wybierz funkcję">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Trójkątna"/>
+                            <String fx:value="Trapezowa"/>
+                            <String fx:value="Gaussowska"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <!-- Pola dynamiczne do konfiguracji parametrów -->
+            <VBox fx:id="parametersBox" spacing="10">
+                <!-- Pola na parametry funkcji (generowane dynamicznie w kontrolerze) -->
+            </VBox>
+            <Button text="Zapisz" onAction="#onSaveSummarizer"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

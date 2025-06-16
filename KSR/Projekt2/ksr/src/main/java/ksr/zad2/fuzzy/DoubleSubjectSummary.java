@@ -3,7 +3,10 @@ package ksr.zad2.fuzzy;
 import ksr.zad2.model.Measurements;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class DoubleSubjectSummary {
@@ -64,7 +67,7 @@ public class DoubleSubjectSummary {
                 .append(" [").append(result).append("]. ");
 
         this.t1 = result;
-        if (result > 0.01) {
+        if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
 
@@ -96,7 +99,7 @@ public class DoubleSubjectSummary {
                 .append(subject2).append(", które są/mają ").append(qualifier.getName()).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        if (result > 0.01) {
+        if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
 
@@ -129,21 +132,19 @@ public class DoubleSubjectSummary {
                 .append(", w porównaniu do pomiarów z ").append(subject2).append(" jest/ma ").append(subject1Summarizer.getName())
                 .append(" [").append(result).append("]. ");
 
-        if (result > 0.01) {
+        if (result > 0.01 & result < 0.20) {
             System.out.println(summary.toString());
         }
     }
 
     public void fourthForm() {
-        double m = subject1Summarizer.getData().size() / (double)(subject1Summarizer.getData().size() + subject2Summarizer.getData().size());
-        double a = subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()) /
-                subject2Summarizer.getData().size();
-        double b = subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()) /
-                subject1Summarizer.getData().size();
-        double reichenbach = 1 - a + a * b;
-        System.out.println("Cardinality of " + subject1 + ": " + subject1Summarizer.getFuzzySet().fuzzyCardinality(subject1Summarizer.getData()));
-        System.out.println("Cardinality of " + subject2 + ": " + subject2Summarizer.getFuzzySet().fuzzyCardinality(subject2Summarizer.getData()));
-        double result = 1 - m * reichenbach;
+        double m = (double) subject1Summarizer.getData().size() / (subject1Summarizer.getData().size() + subject2Summarizer.getData().size());
+        double b = subject1Summarizer.getData().stream().mapToDouble(v -> subject1Summarizer.getFuzzySet().membership(v)).average().orElse(0.0);
+        double a = subject2Summarizer.getData().stream().mapToDouble(v -> subject2Summarizer.getFuzzySet().membership(v)).average().orElse(0.0);
+
+        double inc = Math.min(1, 1 - a + b);
+
+        double result = 1 - m * inc;
 
         StringBuilder summary = new StringBuilder();
         summary.append("Więcej pomiarów z ").append(subject1).append(" niż pomiarów z ").append(subject2)

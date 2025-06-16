@@ -20,6 +20,7 @@ module ksr {
     requires spring.core;
     requires org.hibernate.orm.core;
     requires net.bytebuddy;
+    requires java.desktop;
 
     opens ksr.zad2 to spring.core, spring.beans, spring.context, javafx.fxml, org.hibernate.orm.core;
     opens ksr.zad2.model;
