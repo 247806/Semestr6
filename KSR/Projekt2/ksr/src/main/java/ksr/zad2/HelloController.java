@@ -1,5 +1,7 @@
 package ksr.zad2;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,8 +34,11 @@ public class HelloController {
     @FXML private Button generateSingleSummaryButton;
     @FXML private Button generateTwoSubjectSummaryButton;
     @FXML private TextArea summaryOutputArea;
-    private List<SingleSubjectSummary> singleSubjectSummaries = new ArrayList<>();
-    private List<DoubleSubjectSummary> doubleSubjectSummaries = new ArrayList<>();
+    private final ObservableList<String> summaryItems = FXCollections.observableArrayList();
+
+    @FXML
+    private ListView<String> summaryListView;
+    List<Object> allSummaries = new ArrayList<>();
 
 
     private final QuantifierValues quantifierValues = new QuantifierValues();
@@ -51,6 +56,31 @@ public class HelloController {
         initializeQuantifiers();
         initializeSubjects();
 
+        t1.setText("0.30");
+        t2.setText("0.07");
+        t3.setText("0.07");
+        t4.setText("0.07");
+        t5.setText("0.07");
+        t6.setText("0.07");
+        t7.setText("0.07");
+        t8.setText("0.07");
+        t9.setText("0.07");
+        t10.setText("0.07");
+        t11.setText("0.07");
+
+        summaryListView.setItems(summaryItems);
+
+        summaryListView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+            int index = newVal.intValue();
+            if (index >= 0 && index < allSummaries.size()) {
+                Object selected = allSummaries.get(index);
+                if (selected instanceof SingleSubjectSummary s) {
+                    summaryOutputArea.setText(s.print());
+                } else if (selected instanceof DoubleSubjectSummary d) {
+                    summaryOutputArea.setText(d.getSummary());
+                }
+            }
+        });
 
     }
 
@@ -317,6 +347,20 @@ public class HelloController {
                 .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
                 .toList();
 
+        List<Double> weights = List.of(
+                Double.parseDouble(t1.getText()),
+                Double.parseDouble(t2.getText()),
+                Double.parseDouble(t3.getText()),
+                Double.parseDouble(t4.getText()),
+                Double.parseDouble(t5.getText()),
+                Double.parseDouble(t6.getText()),
+                Double.parseDouble(t7.getText()),
+                Double.parseDouble(t8.getText()),
+                Double.parseDouble(t9.getText()),
+                Double.parseDouble(t10.getText()),
+                Double.parseDouble(t11.getText())
+        );
+
         if (quantifier == null || summarizer.isEmpty()) {
             summaryOutputArea.setText("Proszę uzupełnić wszystkie pola i wybrać sumaryzator.");
             return;
@@ -351,9 +395,11 @@ public class HelloController {
                     summarizer,
                     qualifier.getFirst()
             );
+            singleSubjectSummary.setWeights(weights);
             summaryOutputArea.setText(singleSubjectSummary.summarization());
-            singleSubjectSummaries.add(singleSubjectSummary);
-            singleSubjectSummary.print(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07));
+            allSummaries.add(singleSubjectSummary);
+            singleSubjectSummary.print();
+            summaryListView.getItems().add(singleSubjectSummary.getSummaryText());
         } else {
             for (int i = 0; i < selectedLinguisticVariableNames.size(); i++) {
                 String variableName = selectedLinguisticVariableNames.get(i);
@@ -369,14 +415,13 @@ public class HelloController {
                     quantifier,
                     summarizer
             );
+            singleSubjectSummary.setWeights(weights);
             summaryOutputArea.setText(singleSubjectSummary.summarization());
-            singleSubjectSummaries.add(singleSubjectSummary);
-            singleSubjectSummary.print(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07));
+            allSummaries.add(singleSubjectSummary);
+            singleSubjectSummary.print();
+            summaryListView.getItems().add(singleSubjectSummary.getSummaryText());
 
         }
-
-
-
     }
 
     private List<Double> addData(String name) {
@@ -480,7 +525,8 @@ public class HelloController {
 
             doubleSubjectSummary.fourthForm();
             summaryOutputArea.setText(doubleSubjectSummary.getSummary());
-            doubleSubjectSummaries.add(doubleSubjectSummary);
+            allSummaries.add(doubleSubjectSummary);
+            summaryListView.getItems().add(doubleSubjectSummary.getSummary());
         } else if (qualifier.size() == 1) {
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
@@ -512,8 +558,8 @@ public class HelloController {
             );
             doubleSubjectSummary2.secondForm();
             summaryOutputArea.setText(doubleSubjectSummary2.getSummary());
-            doubleSubjectSummaries.add(doubleSubjectSummary2);
-
+            allSummaries.add(doubleSubjectSummary2);
+            summaryListView.getItems().add(doubleSubjectSummary2.getSummary());
         } else {
             LinguisticTerm summarizer1 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
             LinguisticTerm summarizer2 = new LinguisticTerm(summarizer.getFirst().getName(), summarizer.getFirst().getFuzzySet());
@@ -531,8 +577,8 @@ public class HelloController {
 
             doubleSubjectSummary.firstForm();
             summaryOutputArea.setText(doubleSubjectSummary.getSummary());
-            doubleSubjectSummaries.add(doubleSubjectSummary);
-
+            allSummaries.add(doubleSubjectSummary);
+            summaryListView.getItems().add(doubleSubjectSummary.getSummary());
         }
     }
 

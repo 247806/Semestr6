@@ -23,16 +23,14 @@
         </VBox>
     </left>
 
-    <!-- Środkowa część - wagi i przyciski -->
+    <!-- Środek - podsumowania i przyciski -->
     <center>
         <VBox spacing="20.0" alignment="TOP_CENTER">
             <padding>
                 <Insets top="20" right="10" bottom="10" left="10"/>
             </padding>
 
-            <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Wagi:" />
-
-            <!-- ComboBox dla kwantyfikatorów -->
+            <!-- Górny pasek: wybór kwantyfikatora i podmiotów -->
             <HBox spacing="10.0" alignment="CENTER">
                 <Label text="Kwantyfikator:" />
                 <ComboBox fx:id="quantificator" promptText="Kwantyfikator" prefWidth="120.0" />
@@ -42,22 +40,77 @@
                 <ComboBox fx:id="sub2" promptText="Podmiot" prefWidth="100.0" />
             </HBox>
 
-            <VBox spacing="20.0" alignment="CENTER">
-                <HBox spacing="10.0" alignment="CENTER">
-                    <Button fx:id="generateSingleSummaryButton" text="Generuj podsumowanie pierwszego typu" onAction="#onGenerateSingleSummary" />
-                    <Button fx:id="generateTwoSubjectSummaryButton" text="Generuj podsumowanie dwupodmiotowe" onAction="#onGenerateTwoSubjectSummary" />
-                </HBox>
+            <!-- Przycisk generowania -->
+            <HBox spacing="10.0" alignment="CENTER">
+                <Button fx:id="generateSingleSummaryButton" text="Generuj podsumowanie pierwszego typu" onAction="#onGenerateSingleSummary" />
+                <Button fx:id="generateTwoSubjectSummaryButton" text="Generuj podsumowanie dwupodmiotowe" onAction="#onGenerateTwoSubjectSummary" />
+            </HBox>
 
-                <TextArea fx:id="summaryOutputArea" prefHeight="200.0" prefWidth="600.0" wrapText="true" editable="false" />
-            </VBox>
+            <!-- Pole z aktualnie wygenerowanym podsumowaniem -->
+            <TextArea fx:id="summaryOutputArea" prefHeight="200.0" prefWidth="600.0" wrapText="true" editable="false" />
 
+            <!-- Lista wszystkich wygenerowanych podsumowań -->
+            <Label style="-fx-font-weight: bold;" text="Wygenerowane podsumowania" />
+            <ListView fx:id="summaryListView" prefWidth="600.0" prefHeight="150.0" />
+        </VBox>
+    </center>
 
+    <!-- Prawa strona - wagi i inne przyciski -->
+    <right>
+        <VBox spacing="20.0" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="10"/>
+            </padding>
+
+            <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Wagi:" />
+
+            <GridPane hgap="10" vgap="10" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints halignment="RIGHT" />
+                    <ColumnConstraints halignment="LEFT" />
+                </columnConstraints>
+
+                <!-- 11 pól wag -->
+                <Label text="Waga 1:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <TextField fx:id="t1" text="1.0" prefWidth="60" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                <Label text="Waga 2:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <TextField fx:id="t2" text="1.0" prefWidth="60" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                <Label text="Waga 3:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                <TextField fx:id="t3" text="1.0" prefWidth="60" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+                <Label text="Waga 4:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                <TextField fx:id="t4" text="1.0" prefWidth="60" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+                <Label text="Waga 5:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                <TextField fx:id="t5" text="1.0" prefWidth="60" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+                <Label text="Waga 6:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                <TextField fx:id="t6" text="1.0" prefWidth="60" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+
+                <Label text="Waga 7:" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+                <TextField fx:id="t7" text="1.0" prefWidth="60" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+
+                <Label text="Waga 8:" GridPane.rowIndex="7" GridPane.columnIndex="0" />
+                <TextField fx:id="t8" text="1.0" prefWidth="60" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+
+                <Label text="Waga 9:" GridPane.rowIndex="8" GridPane.columnIndex="0" />
+                <TextField fx:id="t9" text="1.0" prefWidth="60" GridPane.rowIndex="8" GridPane.columnIndex="1" />
+
+                <Label text="Waga 10:" GridPane.rowIndex="9" GridPane.columnIndex="0" />
+                <TextField fx:id="t10" text="1.0" prefWidth="60" GridPane.rowIndex="9" GridPane.columnIndex="1" />
+
+                <Label text="Waga 11:" GridPane.rowIndex="10" GridPane.columnIndex="0" />
+                <TextField fx:id="t11" text="1.0" prefWidth="60" GridPane.rowIndex="10" GridPane.columnIndex="1" />
+            </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER">
                 <Button onAction="#onHelloButtonClick" prefWidth="120.0" text="Start" />
                 <Button onAction="#onAdminButtonClick" prefWidth="94.0" text="Panel admin" />
             </HBox>
         </VBox>
-    </center>
+    </right>
+
 
 </BorderPane>

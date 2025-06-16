@@ -14,6 +14,7 @@ public class SingleSubjectSummary {
     private double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
     private double optimal;
     private String summaryText;
+    private List<Double> weights;
 
     public SingleSubjectSummary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
         this.quantifier = quantifier;
@@ -55,22 +56,24 @@ public class SingleSubjectSummary {
         this.t9 = degreeOfQualifierImprecision();
         this.t10 = degreeOfQualifierCardinality();
         this.t11 = T11();
+        this.optimal = optimalSummary(weights,
+                List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11));
     }
 
-    public void print(List<Double> weight) {
-        System.out.println(t1);
-        System.out.println(t2);
-        System.out.println(t3);
-        System.out.println(t4);
-        System.out.println(t5);
-        System.out.println(t6);
-        System.out.println(t7);
-        System.out.println(t8);
-        System.out.println(t9);
-        System.out.println(t10);
-        System.out.println(t11);
-        System.out.println(optimalSummary(weight,
-                List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)));
+    public String print() {
+        return "\n" +
+                "T1: " + t1 + "\n" +
+                "T2: " + t2 + "\n" +
+                "T3: " + t3 + "\n" +
+                "T4: " + t4 + "\n" +
+                "T5: " + t5 + "\n" +
+                "T6: " + t6 + "\n" +
+                "T7: " + t7 + "\n" +
+                "T8: " + t8 + "\n" +
+                "T9: " + t9 + "\n" +
+                "T10: " + t10 + "\n" +
+                "T11: " + t11 + "\n" +
+                "Optymalna wartość: " + optimal;
     }
 
     public double degreeOfTruth() {

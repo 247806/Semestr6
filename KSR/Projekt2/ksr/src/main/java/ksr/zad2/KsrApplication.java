@@ -833,7 +833,7 @@ public class KsrApplication implements CommandLineRunner {
 			);
 
 			System.out.println(singleSubjectSummary.summarization());
-			singleSubjectSummary.print(weight);
+//			singleSubjectSummary.print(weight);
 
 		} else {
 			LinguisticTerm qual = qualifier.getFirst();
@@ -844,7 +844,7 @@ public class KsrApplication implements CommandLineRunner {
 			);
 
 			System.out.println(singleSubjectSummary.summarization());
-			singleSubjectSummary.print(weight);
+//			singleSubjectSummary.print(weight);
 		}
 
 	}
