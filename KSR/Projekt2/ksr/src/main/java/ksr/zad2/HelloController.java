@@ -309,7 +309,7 @@ public class HelloController {
                 .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
                 .toList();
 
-        List<String> selectedLinguisticVariableNamesQualifier = summarizersTreeView.getRoot().getChildren().stream()
+        List<String> selectedLinguisticVariableNamesQualifier = qualifiersTreeView.getRoot().getChildren().stream()
                 .map(node -> (CheckBoxTreeItem<String>) node)
                 .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
                         .map(childNode -> (CheckBoxTreeItem<String>) childNode)
@@ -334,7 +334,8 @@ public class HelloController {
 
         if (qualifier.size() == 1) {
             qualifier.getFirst().setData(addData(selectedLinguisticVariableNamesQualifier.getFirst()));
-
+            System.out.println("Qualifiers: " + qualifier.getFirst().getName() + " - " + qualifier.getFirst().getData().size());
+            System.out.println("Selected Variables: " + selectedLinguisticVariableNamesQualifier.getFirst());
             for (int i = 0; i < selectedLinguisticVariableNames.size(); i++) {
                 String variableName = selectedLinguisticVariableNames.get(i);
                 List<Double> data = addData(variableName);
@@ -444,7 +445,7 @@ public class HelloController {
                 .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
                 .toList();
 
-        List<String> selectedLinguisticVariableNamesQualifier = summarizersTreeView.getRoot().getChildren().stream()
+        List<String> selectedLinguisticVariableNamesQualifier = qualifiersTreeView.getRoot().getChildren().stream()
                 .map(node -> (CheckBoxTreeItem<String>) node)
                 .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
                         .map(childNode -> (CheckBoxTreeItem<String>) childNode)
