@@ -4,6 +4,7 @@ import ksr.zad2.fuzzy.*;
 import ksr.zad2.model.Measurements;
 import ksr.zad2.model.variables.*;
 import ksr.zad2.repository.MeasurementsRepository;
+import lombok.Data;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +17,7 @@ import java.util.Map;
 @SpringBootApplication
 public class KsrApplication implements CommandLineRunner {
 
-	private static MeasurementsRepository measurementsRepository;
+	public static MeasurementsRepository measurementsRepository;
 
 	public KsrApplication(MeasurementsRepository measurementsRepository) {
 		this.measurementsRepository = measurementsRepository;

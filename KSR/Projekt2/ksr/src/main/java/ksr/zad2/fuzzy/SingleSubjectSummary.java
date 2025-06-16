@@ -13,6 +13,7 @@ public class SingleSubjectSummary {
     private LinguisticTerm qualifier;
     private double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
     private double optimal;
+    private String summaryText;
 
     public SingleSubjectSummary(Quantifier quantifier, List<LinguisticTerm> summarizers) {
         this.quantifier = quantifier;
@@ -38,6 +39,7 @@ public class SingleSubjectSummary {
         }
 
         this.processQualityMeasurements();
+        this.summaryText = summaryText.toString();
         return summaryText.toString();
     }
 

@@ -9,14 +9,14 @@ public class HumidityValues {
     public static LinguisticVariable humidityVariable = new LinguisticVariable("Wilgotność powietrza", 2.0, 100.0);
 
     public static LinguisticTerm suche = new LinguisticTerm(
-            "suche", new TrapezoidalFunction(0, 0.01, 10, 50)
+            "suche powietrze", new TrapezoidalFunction(0, 0.01, 10, 50)
     );
 
     public static LinguisticTerm umiarkowane = new LinguisticTerm(
-            "umiarkowane", new TriangularFunction(10, 50, 80)
+            "umiarkowane powietrze", new TriangularFunction(10, 50, 80)
     );
 
     public static LinguisticTerm wilgotne = new LinguisticTerm(
-            "wilgotne", new TrapezoidalFunction(50, 80, 100, 100.1)
+            "wilgotne powietrze", new TrapezoidalFunction(50, 80, 100, 100.1)
     );
 }

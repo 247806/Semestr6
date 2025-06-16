@@ -8,22 +8,22 @@ public class TimeValues {
     public static LinguisticVariable timeVariable = new LinguisticVariable("Pora dnia", 0.0, 24.0);
 
     public static LinguisticTerm nocna = new LinguisticTerm(
-            "nocna", new TrapezoidalFunction(21, 24, 0, 4, 7)
+            "nocna godzina", new TrapezoidalFunction(21, 24, 0, 4, 7)
     );
 
     public static LinguisticTerm poranna = new LinguisticTerm(
-            "poranna", new TrapezoidalFunction(4, 7, 9, 12)
+            "poranna godzina", new TrapezoidalFunction(4, 7, 9, 12)
     );
 
     public static LinguisticTerm poludniowa = new LinguisticTerm(
-            "południowa", new TrapezoidalFunction(9, 12, 13, 16)
+            "południowa godzina", new TrapezoidalFunction(9, 12, 13, 16)
     );
 
     public static LinguisticTerm popoludniowa = new LinguisticTerm(
-            "popołudniowa", new TrapezoidalFunction(13, 16, 17, 20)
+            "popołudniowa godzina", new TrapezoidalFunction(13, 16, 17, 20)
     );
 
     public static LinguisticTerm wieczorna = new LinguisticTerm(
-            "wieczorna", new TrapezoidalFunction(17, 20, 21, 24)
+            "wieczorna godzina", new TrapezoidalFunction(17, 20, 21, 24)
     );
 }

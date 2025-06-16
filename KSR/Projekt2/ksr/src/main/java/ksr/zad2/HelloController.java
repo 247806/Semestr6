@@ -4,363 +4,648 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-//import ksr.classifier.KNN;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import ksr.zad2.fuzzy.LinguisticTerm;
+import ksr.zad2.fuzzy.Quantifier;
+import ksr.zad2.fuzzy.SingleSubjectSummary;
+import ksr.zad2.model.Measurements;
 import ksr.zad2.model.variables.*;
-import ksr.zad2.repository.MeasurementsRepository;
-import org.controlsfx.control.CheckListView;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class HelloController {
-    @FXML
-    public ComboBox<String> quantificator;
 
-    @FXML
-    public ComboBox<String> data1;
+    @FXML public ComboBox<Quantifier> quantificator;
+    @FXML public ComboBox<String> sub1;
+    @FXML public ComboBox<String> sub2;
+    @FXML public TextField t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+    @FXML private TreeView<String> summarizersTreeView;
+    @FXML private TreeView<String> qualifiersTreeView;
+    @FXML private Button generateSingleSummaryButton;
+    @FXML private Button generateTwoSubjectSummaryButton;
+    @FXML private TextArea summaryOutputArea;
+    private List<SingleSubjectSummary> singleSubjectSummaries = new ArrayList<>();
 
-    @FXML
-    public ComboBox<String> sumariser1;
 
-    @FXML
-    public ComboBox<String> data2;
-
-    @FXML
-    public ComboBox<String> sumariser2;
-
-    @FXML
-    public ComboBox<String> sumariser3;
-
-    @FXML
-    public ComboBox<String> data3;
-
-    @FXML
-    public ComboBox<String> sumariser4;
-
-    @FXML
-    public ComboBox<String> data5;
-
-    @FXML
-    public ComboBox<String> qualificator;
-
-    @FXML
-    public ComboBox<String> data4;
-
-    @FXML
-    public ComboBox<String> sub1;
-
-    @FXML
-    public ComboBox<String> sub2;
-
-    @FXML
-    public TextField t1;
-
-    @FXML
-    public TextField t2;
-
-    @FXML
-    public TextField t3;
-
-    @FXML
-    public TextField t4;
-
-    @FXML
-    public TextField t5;
-
-    @FXML
-    public TextField t6;
-
-    @FXML
-    public TextField t7;
-
-    @FXML
-    public TextField t8;
-
-    @FXML
-    public TextField t9;
-
-    @FXML
-    public TextField t10;
-
-    @FXML
-    public TextField t11;
-
-    private QuantifierValues quantifierValues = new QuantifierValues();
+    private final QuantifierValues quantifierValues = new QuantifierValues();
 
     @FXML
     private void initialize() {
-        quantificator.getItems().addAll(quantifierValues.Q1.getName(), quantifierValues.Q2.getName(), quantifierValues.Q3.getName(), quantifierValues.Q4.getName(), quantifierValues.Q5.getName(), "Brak");
+        summarizersTreeView.setRoot(createSummarizersTree());
+        summarizersTreeView.setShowRoot(false);
+        summarizersTreeView.setCellFactory(createTreeCell());
 
-        sub1.getItems().addAll("America", "Asia", "Europe", "Africa", "Brak");
-        sub1.setValue("Brak");
-        sub2.setValue("Brak");
-        
-        t1.setText("0.30");
-        t2.setText("0.07");
-        t3.setText("0.07");
-        t4.setText("0.07");
-        t5.setText("0.07");
-        t6.setText("0.07");
-        t7.setText("0.07");
-        t8.setText("0.07");
-        t9.setText("0.07");
-        t10.setText("0.07");
-        t11.setText("0.07");
+        qualifiersTreeView.setRoot(createQualifiersTree());
+        qualifiersTreeView.setShowRoot(false);
+        qualifiersTreeView.setCellFactory(createTreeCell());
 
-        sub1.setOnAction(event -> {
-            String selected = sub1.getValue();
-            sub2.getItems().clear();
+        initializeQuantifiers();
+        initializeSubjects();
 
-            if (selected.equals("America")) {
-                sub2.getItems().addAll("Asia", "Europe", "Africa");
-            } else if (selected.equals("Asia")) {
-                sub2.getItems().addAll("America", "Europe", "Africa");
-            } else if (selected.equals("Europe")) {
-                sub2.getItems().addAll("Asia", "America", "Africa");
-            } else if (selected.equals("Africa")) {
-                sub2.getItems().addAll("Asia", "Europe", "America");
-            } else if (selected.equals("Brak")) {
-                sub2.getItems().addAll("Brak");
-                sub2.setValue("Brak");
-            }
-        });
-
-
-        data1.getItems().addAll(AirValues.airQuality.getName(), CoValues.coQualityVariable.getName(),
-                HumidityValues.humidityVariable.getName(), NoValues.no2QualityVariable.getName(), PressureValues.pressureVariable.getName(),
-                TempValues.tempVariable.getName(), WindValues.windVariable.getName(), TimeValues.timeVariable.getName(),
-                UvValues.uvIndexVariable.getName(), VisibilityValues.visibilityVariable.getName());
-
-        data1.setOnAction(event -> {
-            String selected = data1.getValue();
-            sumariser1.getItems().clear();
-
-            if (AirValues.airQuality.getName().equals(selected)) {
-                sumariser1.getItems().addAll(AirValues.zla.getName(), AirValues.bardzoZla.getName(), AirValues.dobra.getName(), AirValues.bardzoDobra.getName(), AirValues.umiarkowana.getName());
-            } else if (CoValues.coQualityVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(CoValues.niebezpieczne.getName(), CoValues.niezdrowe.getName(), CoValues.normalne.getName(), CoValues.wysokie.getName());
-            } else if (HumidityValues.humidityVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(HumidityValues.umiarkowane.getName(), HumidityValues.wilgotne.getName(), HumidityValues.suche.getName());
-            } else if (NoValues.no2QualityVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(NoValues.niebezpieczne.getName(), NoValues.normalne.getName(), NoValues.niezdrowe.getName());
-            } else if (PressureValues.pressureVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(PressureValues.normalne.getName(), PressureValues.niskie.getName(), PressureValues.wysokie.getName());
-            } else if (TempValues.tempVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(TempValues.bardzoZimna.getName(), TempValues.zimna.getName(), TempValues.umiarkowana.getName(), TempValues.ciepla.getName(), TempValues.goraca.getName());
-            } else if (WindValues.windVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(WindValues.bardzoSilny.getName(), WindValues.silny.getName(), WindValues.gwaltowny.getName(), WindValues.slaby.getName(), WindValues.umiarkowany.getName());
-            } else if (TimeValues.timeVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(TimeValues.nocna.getName(), TimeValues.poludniowa.getName(), TimeValues.popoludniowa.getName(), TimeValues.poranna.getName(), TimeValues.wieczorna.getName());
-            } else if (UvValues.uvIndexVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(UvValues.wysokie.getName(), UvValues.umiarkowane.getName(), UvValues.ekstremalne.getName(), UvValues.bardzoWysokie.getName(), UvValues.niskie.getName());
-            } else if (VisibilityValues.visibilityVariable.getName().equals(selected)) {
-                sumariser1.getItems().addAll(VisibilityValues.bardzoDobra.getName(), VisibilityValues.dobra.getName(), VisibilityValues.umiarkowana.getName(), VisibilityValues.slaba.getName());
-            }
-        });
-
-        data2.getItems().addAll(AirValues.airQuality.getName(), CoValues.coQualityVariable.getName(),
-                HumidityValues.humidityVariable.getName(), NoValues.no2QualityVariable.getName(), PressureValues.pressureVariable.getName(),
-                TempValues.tempVariable.getName(), WindValues.windVariable.getName(), TimeValues.timeVariable.getName(),
-                UvValues.uvIndexVariable.getName(), VisibilityValues.visibilityVariable.getName(), "Brak");
-
-        data2.setValue("Brak");
-        sumariser2.setValue("Brak");
-
-        data2.setOnAction(event -> {
-            String selected = data2.getValue();
-            sumariser2.getItems().clear();
-
-            if (AirValues.airQuality.getName().equals(selected)) {
-                sumariser2.getItems().addAll(AirValues.zla.getName(), AirValues.bardzoZla.getName(), AirValues.dobra.getName(), AirValues.bardzoDobra.getName(), AirValues.umiarkowana.getName());
-            } else if (CoValues.coQualityVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(CoValues.niebezpieczne.getName(), CoValues.niezdrowe.getName(), CoValues.normalne.getName(), CoValues.wysokie.getName());
-            } else if (HumidityValues.humidityVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(HumidityValues.umiarkowane.getName(), HumidityValues.wilgotne.getName(), HumidityValues.suche.getName());
-            } else if (NoValues.no2QualityVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(NoValues.niebezpieczne.getName(), NoValues.normalne.getName(), NoValues.niezdrowe.getName());
-            } else if (PressureValues.pressureVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(PressureValues.normalne.getName(), PressureValues.niskie.getName(), PressureValues.wysokie.getName());
-            } else if (TempValues.tempVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(TempValues.bardzoZimna.getName(), TempValues.zimna.getName(), TempValues.umiarkowana.getName(), TempValues.ciepla.getName(), TempValues.goraca.getName());
-            } else if (WindValues.windVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(WindValues.bardzoSilny.getName(), WindValues.silny.getName(), WindValues.gwaltowny.getName(), WindValues.slaby.getName(), WindValues.umiarkowany.getName());
-            } else if (TimeValues.timeVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(TimeValues.nocna.getName(), TimeValues.poludniowa.getName(), TimeValues.popoludniowa.getName(), TimeValues.poranna.getName(), TimeValues.wieczorna.getName());
-            } else if (UvValues.uvIndexVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(UvValues.wysokie.getName(), UvValues.umiarkowane.getName(), UvValues.ekstremalne.getName(), UvValues.bardzoWysokie.getName(), UvValues.niskie.getName());
-            } else if (VisibilityValues.visibilityVariable.getName().equals(selected)) {
-                sumariser2.getItems().addAll(VisibilityValues.bardzoDobra.getName(), VisibilityValues.dobra.getName(), VisibilityValues.umiarkowana.getName(), VisibilityValues.slaba.getName());
-            } else if ("Brak".equals(selected)) {
-                sumariser2.getItems().addAll("Brak");
-                sumariser2.setValue("Brak");
-            }
-        });
-
-        data3.getItems().addAll(AirValues.airQuality.getName(), CoValues.coQualityVariable.getName(),
-                HumidityValues.humidityVariable.getName(), NoValues.no2QualityVariable.getName(), PressureValues.pressureVariable.getName(),
-                TempValues.tempVariable.getName(), WindValues.windVariable.getName(), TimeValues.timeVariable.getName(),
-                UvValues.uvIndexVariable.getName(), VisibilityValues.visibilityVariable.getName(), "Brak");
-        data3.setValue("Brak");
-        sumariser3.setValue("Brak");
-        data3.setOnAction(event -> {
-            String selected = data3.getValue();
-            sumariser3.getItems().clear();
-
-            if (AirValues.airQuality.getName().equals(selected)) {
-                sumariser3.getItems().addAll(AirValues.zla.getName(), AirValues.bardzoZla.getName(), AirValues.dobra.getName(), AirValues.bardzoDobra.getName(), AirValues.umiarkowana.getName());
-            } else if (CoValues.coQualityVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(CoValues.niebezpieczne.getName(), CoValues.niezdrowe.getName(), CoValues.normalne.getName(), CoValues.wysokie.getName());
-            } else if (HumidityValues.humidityVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(HumidityValues.umiarkowane.getName(), HumidityValues.wilgotne.getName(), HumidityValues.suche.getName());
-            } else if (NoValues.no2QualityVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(NoValues.niebezpieczne.getName(), NoValues.normalne.getName(), NoValues.niezdrowe.getName());
-            } else if (PressureValues.pressureVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(PressureValues.normalne.getName(), PressureValues.niskie.getName(), PressureValues.wysokie.getName());
-            } else if (TempValues.tempVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(TempValues.bardzoZimna.getName(), TempValues.zimna.getName(), TempValues.umiarkowana.getName(), TempValues.ciepla.getName(), TempValues.goraca.getName());
-            } else if (WindValues.windVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(WindValues.bardzoSilny.getName(), WindValues.silny.getName(), WindValues.gwaltowny.getName(), WindValues.slaby.getName(), WindValues.umiarkowany.getName());
-            } else if (TimeValues.timeVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(TimeValues.nocna.getName(), TimeValues.poludniowa.getName(), TimeValues.popoludniowa.getName(), TimeValues.poranna.getName(), TimeValues.wieczorna.getName());
-            } else if (UvValues.uvIndexVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(UvValues.wysokie.getName(), UvValues.umiarkowane.getName(), UvValues.ekstremalne.getName(), UvValues.bardzoWysokie.getName(), UvValues.niskie.getName());
-            } else if (VisibilityValues.visibilityVariable.getName().equals(selected)) {
-                sumariser3.getItems().addAll(VisibilityValues.bardzoDobra.getName(), VisibilityValues.dobra.getName(), VisibilityValues.umiarkowana.getName(), VisibilityValues.slaba.getName());
-            } else if ("Brak".equals(selected)) {
-                sumariser3.getItems().addAll("Brak");
-                sumariser3.setValue("Brak");
-            }
-        });
-
-        data4.getItems().addAll(AirValues.airQuality.getName(), CoValues.coQualityVariable.getName(),
-                HumidityValues.humidityVariable.getName(), NoValues.no2QualityVariable.getName(), PressureValues.pressureVariable.getName(),
-                TempValues.tempVariable.getName(), WindValues.windVariable.getName(), TimeValues.timeVariable.getName(),
-                UvValues.uvIndexVariable.getName(), VisibilityValues.visibilityVariable.getName(), "Brak");
-        data4.setValue("Brak");
-        sumariser4.setValue("Brak");
-        data4.setOnAction(event -> {
-            String selected = data4.getValue();
-            sumariser4.getItems().clear();
-
-            if (AirValues.airQuality.getName().equals(selected)) {
-                sumariser4.getItems().addAll(AirValues.zla.getName(), AirValues.bardzoZla.getName(), AirValues.dobra.getName(), AirValues.bardzoDobra.getName(), AirValues.umiarkowana.getName());
-            } else if (CoValues.coQualityVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(CoValues.niebezpieczne.getName(), CoValues.niezdrowe.getName(), CoValues.normalne.getName(), CoValues.wysokie.getName());
-            } else if (HumidityValues.humidityVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(HumidityValues.umiarkowane.getName(), HumidityValues.wilgotne.getName(), HumidityValues.suche.getName());
-            } else if (NoValues.no2QualityVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(NoValues.niebezpieczne.getName(), NoValues.normalne.getName(), NoValues.niezdrowe.getName());
-            } else if (PressureValues.pressureVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(PressureValues.normalne.getName(), PressureValues.niskie.getName(), PressureValues.wysokie.getName());
-            } else if (TempValues.tempVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(TempValues.bardzoZimna.getName(), TempValues.zimna.getName(), TempValues.umiarkowana.getName(), TempValues.ciepla.getName(), TempValues.goraca.getName());
-            } else if (WindValues.windVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(WindValues.bardzoSilny.getName(), WindValues.silny.getName(), WindValues.gwaltowny.getName(), WindValues.slaby.getName(), WindValues.umiarkowany.getName());
-            } else if (TimeValues.timeVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(TimeValues.nocna.getName(), TimeValues.poludniowa.getName(), TimeValues.popoludniowa.getName(), TimeValues.poranna.getName(), TimeValues.wieczorna.getName());
-            } else if (UvValues.uvIndexVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(UvValues.wysokie.getName(), UvValues.umiarkowane.getName(), UvValues.ekstremalne.getName(), UvValues.bardzoWysokie.getName(), UvValues.niskie.getName());
-            } else if (VisibilityValues.visibilityVariable.getName().equals(selected)) {
-                sumariser4.getItems().addAll(VisibilityValues.bardzoDobra.getName(), VisibilityValues.dobra.getName(), VisibilityValues.umiarkowana.getName(), VisibilityValues.slaba.getName());
-            } else if ("Brak".equals(selected)) {
-                sumariser4.getItems().addAll("Brak");
-                sumariser4.setValue("Brak");
-            }
-        });
-
-        data5.getItems().addAll(AirValues.airQuality.getName(), CoValues.coQualityVariable.getName(),
-                HumidityValues.humidityVariable.getName(), NoValues.no2QualityVariable.getName(), PressureValues.pressureVariable.getName(),
-                TempValues.tempVariable.getName(), WindValues.windVariable.getName(), TimeValues.timeVariable.getName(),
-                UvValues.uvIndexVariable.getName(), VisibilityValues.visibilityVariable.getName(), "Brak");
-        data5.setValue("Brak");
-        qualificator.setValue("Brak");
-
-        data5.setOnAction(event -> {
-            String selected = data5.getValue();
-            qualificator.getItems().clear();
-
-            if (AirValues.airQuality.getName().equals(selected)) {
-                qualificator.getItems().addAll(AirValues.zla.getName(), AirValues.bardzoZla.getName(), AirValues.dobra.getName(), AirValues.bardzoDobra.getName(), AirValues.umiarkowana.getName());
-            } else if (CoValues.coQualityVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(CoValues.niebezpieczne.getName(), CoValues.niezdrowe.getName(), CoValues.normalne.getName(), CoValues.wysokie.getName());
-            } else if (HumidityValues.humidityVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(HumidityValues.umiarkowane.getName(), HumidityValues.wilgotne.getName(), HumidityValues.suche.getName());
-            } else if (NoValues.no2QualityVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(NoValues.niebezpieczne.getName(), NoValues.normalne.getName(), NoValues.niezdrowe.getName());
-            } else if (PressureValues.pressureVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(PressureValues.normalne.getName(), PressureValues.niskie.getName(), PressureValues.wysokie.getName());
-            } else if (TempValues.tempVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(TempValues.bardzoZimna.getName(), TempValues.zimna.getName(), TempValues.umiarkowana.getName(), TempValues.ciepla.getName(), TempValues.goraca.getName());
-            } else if (WindValues.windVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(WindValues.bardzoSilny.getName(), WindValues.silny.getName(), WindValues.gwaltowny.getName(), WindValues.slaby.getName(), WindValues.umiarkowany.getName());
-            } else if (TimeValues.timeVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(TimeValues.nocna.getName(), TimeValues.poludniowa.getName(), TimeValues.popoludniowa.getName(), TimeValues.poranna.getName(), TimeValues.wieczorna.getName());
-            } else if (UvValues.uvIndexVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(UvValues.wysokie.getName(), UvValues.umiarkowane.getName(), UvValues.ekstremalne.getName(), UvValues.bardzoWysokie.getName(), UvValues.niskie.getName());
-            } else if (VisibilityValues.visibilityVariable.getName().equals(selected)) {
-                qualificator.getItems().addAll(VisibilityValues.bardzoDobra.getName(), VisibilityValues.dobra.getName(), VisibilityValues.umiarkowana.getName(), VisibilityValues.slaba.getName());
-            } else if ("Brak".equals(selected)) {
-                qualificator.getItems().addAll("Brak");
-                qualificator.setValue("Brak");
-            }
-        });
 
     }
 
+    private void initializeQuantifiers() {
+        // Pobierz wszystkie kwantyfikatory z klasy QuantifierValues
+        List<Quantifier> quantifiers = QuantifierValues.getAll();
+
+        // Ustaw listę kwantyfikatorów w ComboBox
+        quantificator.getItems().addAll(quantifiers);
+
+        // Ustaw wyświetlanie nazw kwantyfikatorów w ComboBox
+        quantificator.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Quantifier item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getName());
+            }
+        });
+        quantificator.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Quantifier item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getName());
+            }
+        });
+    }
+
+
+    private void initializeSubjects() {
+        // Lista podmiotów do wyboru
+        List<String> subjects = List.of("Europe", "Africa", "America", "Asia");
+
+        // Ustaw listę podmiotów w ComboBoxach sub1 i sub2
+        sub1.getItems().addAll(subjects);
+        sub2.getItems().addAll(subjects);
+    }
+
+
+    private CheckBoxTreeItem<String> createSummarizersTree() {
+        CheckBoxTreeItem<String> root = new CheckBoxTreeItem<>("Sumaryzatory");
+        CheckBoxTreeItem<String> airQualityNode = new CheckBoxTreeItem<>(AirValues.airQuality.getName());
+
+        airQualityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(AirValues.bardzoDobra.getName()),
+                new CheckBoxTreeItem<>(AirValues.dobra.getName()),
+                new CheckBoxTreeItem<>(AirValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(AirValues.zla.getName()),
+                new CheckBoxTreeItem<>(AirValues.bardzoZla.getName())
+        );
+        CheckBoxTreeItem<String> pressureNode = new CheckBoxTreeItem<>(PressureValues.pressureVariable.getName());
+        pressureNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(PressureValues.niskie.getName()),
+                new CheckBoxTreeItem<>(PressureValues.normalne.getName()),
+                new CheckBoxTreeItem<>(PressureValues.wysokie.getName())
+        );
+
+        CheckBoxTreeItem<String> humidityNode = new CheckBoxTreeItem<>(HumidityValues.humidityVariable.getName());
+        humidityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(HumidityValues.suche.getName()),
+                new CheckBoxTreeItem<>(HumidityValues.umiarkowane.getName()),
+                new CheckBoxTreeItem<>(HumidityValues.wilgotne.getName())
+        );
+
+        CheckBoxTreeItem<String> visibilityNode = new CheckBoxTreeItem<>(VisibilityValues.visibilityVariable.getName());
+        visibilityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(VisibilityValues.slaba.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.dobra.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.bardzoDobra.getName())
+        );
+
+        CheckBoxTreeItem<String> tempNode = new CheckBoxTreeItem<>(TempValues.tempVariable.getName());
+        tempNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(TempValues.bardzoZimna.getName()),
+                new CheckBoxTreeItem<>(TempValues.zimna.getName()),
+                new CheckBoxTreeItem<>(TempValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(TempValues.ciepla.getName()),
+                new CheckBoxTreeItem<>(TempValues.goraca.getName())
+        );
+
+        CheckBoxTreeItem<String> windNode = new CheckBoxTreeItem<>(WindValues.windVariable.getName());
+        windNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(WindValues.slaby.getName()),
+                new CheckBoxTreeItem<>(WindValues.umiarkowany.getName()),
+                new CheckBoxTreeItem<>(WindValues.silny.getName()),
+                new CheckBoxTreeItem<>(WindValues.bardzoSilny.getName()),
+                new CheckBoxTreeItem<>(WindValues.gwaltowny.getName())
+        );
+
+        CheckBoxTreeItem<String> no2Node = new CheckBoxTreeItem<>(NoValues.no2QualityVariable.getName());
+        no2Node.getChildren().addAll(
+                new CheckBoxTreeItem<>(NoValues.normalne.getName()),
+                new CheckBoxTreeItem<>(NoValues.niezdrowe.getName()),
+                new CheckBoxTreeItem<>(NoValues.niebezpieczne.getName())
+        );
+
+        CheckBoxTreeItem<String> coNode = new CheckBoxTreeItem<>(CoValues.coQualityVariable.getName());
+        coNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(CoValues.normalne.getName()),
+                new CheckBoxTreeItem<>(CoValues.wysokie.getName()),
+                new CheckBoxTreeItem<>(CoValues.niezdrowe.getName()),
+                new CheckBoxTreeItem<>(CoValues.niebezpieczne.getName())
+        );
+
+        CheckBoxTreeItem<String> timeNode = new CheckBoxTreeItem<>(TimeValues.timeVariable.getName());
+        timeNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(TimeValues.nocna.getName()),
+                new CheckBoxTreeItem<>(TimeValues.poranna.getName()),
+                new CheckBoxTreeItem<>(TimeValues.poludniowa.getName()),
+                new CheckBoxTreeItem<>(TimeValues.popoludniowa.getName()),
+                new CheckBoxTreeItem<>(TimeValues.wieczorna.getName())
+        );
+
+        CheckBoxTreeItem<String> uvNode = new CheckBoxTreeItem<>(UvValues.uvIndexVariable.getName());
+        uvNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(UvValues.niskie.getName()),
+                new CheckBoxTreeItem<>(UvValues.umiarkowane.getName()),
+                new CheckBoxTreeItem<>(UvValues.wysokie.getName()),
+                new CheckBoxTreeItem<>(UvValues.bardzoWysokie.getName()),
+                new CheckBoxTreeItem<>(UvValues.ekstremalne.getName())
+        );
+
+// Dodaj wszystkie węzły do głównego drzewa
+        root.getChildren().addAll(
+                airQualityNode,
+                pressureNode,
+                humidityNode,
+                visibilityNode,
+                tempNode,
+                windNode,
+                no2Node,
+                coNode,
+                timeNode,
+                uvNode
+        );
+
+        return root;
+
+    }
+
+    private CheckBoxTreeItem<String> createQualifiersTree() {
+        CheckBoxTreeItem<String> root = new CheckBoxTreeItem<>("Kwalifikatory");
+        CheckBoxTreeItem<String> tempNode = new CheckBoxTreeItem<>(TempValues.tempVariable.getName());
+
+        tempNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(TempValues.bardzoZimna.getName()),
+                new CheckBoxTreeItem<>(TempValues.zimna.getName()),
+                new CheckBoxTreeItem<>(TempValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(TempValues.ciepla.getName()),
+                new CheckBoxTreeItem<>(TempValues.goraca.getName())
+        );
+
+        CheckBoxTreeItem<String> airQualityNode = new CheckBoxTreeItem<>(AirValues.airQuality.getName());
+
+        airQualityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(AirValues.bardzoDobra.getName()),
+                new CheckBoxTreeItem<>(AirValues.dobra.getName()),
+                new CheckBoxTreeItem<>(AirValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(AirValues.zla.getName()),
+                new CheckBoxTreeItem<>(AirValues.bardzoZla.getName())
+        );
+        CheckBoxTreeItem<String> pressureNode = new CheckBoxTreeItem<>(PressureValues.pressureVariable.getName());
+        pressureNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(PressureValues.niskie.getName()),
+                new CheckBoxTreeItem<>(PressureValues.normalne.getName()),
+                new CheckBoxTreeItem<>(PressureValues.wysokie.getName())
+        );
+
+        CheckBoxTreeItem<String> humidityNode = new CheckBoxTreeItem<>(HumidityValues.humidityVariable.getName());
+        humidityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(HumidityValues.suche.getName()),
+                new CheckBoxTreeItem<>(HumidityValues.umiarkowane.getName()),
+                new CheckBoxTreeItem<>(HumidityValues.wilgotne.getName())
+        );
+
+        CheckBoxTreeItem<String> visibilityNode = new CheckBoxTreeItem<>(VisibilityValues.visibilityVariable.getName());
+        visibilityNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(VisibilityValues.slaba.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.umiarkowana.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.dobra.getName()),
+                new CheckBoxTreeItem<>(VisibilityValues.bardzoDobra.getName())
+        );
+
+        CheckBoxTreeItem<String> windNode = new CheckBoxTreeItem<>(WindValues.windVariable.getName());
+        windNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(WindValues.slaby.getName()),
+                new CheckBoxTreeItem<>(WindValues.umiarkowany.getName()),
+                new CheckBoxTreeItem<>(WindValues.silny.getName()),
+                new CheckBoxTreeItem<>(WindValues.bardzoSilny.getName()),
+                new CheckBoxTreeItem<>(WindValues.gwaltowny.getName())
+        );
+
+        CheckBoxTreeItem<String> no2Node = new CheckBoxTreeItem<>(NoValues.no2QualityVariable.getName());
+        no2Node.getChildren().addAll(
+                new CheckBoxTreeItem<>(NoValues.normalne.getName()),
+                new CheckBoxTreeItem<>(NoValues.niezdrowe.getName()),
+                new CheckBoxTreeItem<>(NoValues.niebezpieczne.getName())
+        );
+
+        CheckBoxTreeItem<String> coNode = new CheckBoxTreeItem<>(CoValues.coQualityVariable.getName());
+        coNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(CoValues.normalne.getName()),
+                new CheckBoxTreeItem<>(CoValues.wysokie.getName()),
+                new CheckBoxTreeItem<>(CoValues.niezdrowe.getName()),
+                new CheckBoxTreeItem<>(CoValues.niebezpieczne.getName())
+        );
+
+        CheckBoxTreeItem<String> timeNode = new CheckBoxTreeItem<>(TimeValues.timeVariable.getName());
+        timeNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(TimeValues.nocna.getName()),
+                new CheckBoxTreeItem<>(TimeValues.poranna.getName()),
+                new CheckBoxTreeItem<>(TimeValues.poludniowa.getName()),
+                new CheckBoxTreeItem<>(TimeValues.popoludniowa.getName()),
+                new CheckBoxTreeItem<>(TimeValues.wieczorna.getName())
+        );
+
+        CheckBoxTreeItem<String> uvNode = new CheckBoxTreeItem<>(UvValues.uvIndexVariable.getName());
+        uvNode.getChildren().addAll(
+                new CheckBoxTreeItem<>(UvValues.niskie.getName()),
+                new CheckBoxTreeItem<>(UvValues.umiarkowane.getName()),
+                new CheckBoxTreeItem<>(UvValues.wysokie.getName()),
+                new CheckBoxTreeItem<>(UvValues.bardzoWysokie.getName()),
+                new CheckBoxTreeItem<>(UvValues.ekstremalne.getName())
+        );
+
+// Dodaj wszystkie węzły do głównego drzewa
+        root.getChildren().addAll(
+                airQualityNode,
+                pressureNode,
+                humidityNode,
+                visibilityNode,
+                tempNode,
+                windNode,
+                no2Node,
+                coNode,
+                timeNode,
+                uvNode
+        );
+        return root;
+    }
+
+    private Callback<TreeView<String>, TreeCell<String>> createTreeCell() {
+        return tree -> new CheckBoxTreeCell<>();
+    }
+
     @FXML
-    protected void onHelloButtonClick() throws IOException {
-        List<Double> weight = new ArrayList<>();
-        weight.add(Double.parseDouble(t1.getText()));
-        weight.add(Double.parseDouble(t2.getText()));
-        weight.add(Double.parseDouble(t3.getText()));
-        weight.add(Double.parseDouble(t4.getText()));
-        weight.add(Double.parseDouble(t5.getText()));
-        weight.add(Double.parseDouble(t6.getText()));
-        weight.add(Double.parseDouble(t7.getText()));
-        weight.add(Double.parseDouble(t8.getText()));
-        weight.add(Double.parseDouble(t9.getText()));
-        weight.add(Double.parseDouble(t10.getText()));
-        weight.add(Double.parseDouble(t11.getText()));
+    protected void onGenerateSingleSummary() {
+        Quantifier quantifier = quantificator.getValue();
+        List<LinguisticTerm> summarizer = getSelectedSummarizers();
+        List<LinguisticTerm> qualifier = getSelectedQualifiers();
+        List<String> selectedLinguisticVariableNames = summarizersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .anyMatch(CheckBoxTreeItem::isSelected))
+                .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
+                .toList();
 
+        List<String> selectedLinguisticVariableNamesQualifier = summarizersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .anyMatch(CheckBoxTreeItem::isSelected))
+                .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
+                .toList();
 
-
-
-        if (sub1.getValue().equals("Brak") && sub2.getValue().equals("Brak")) {
-            KsrApplication.singleSubjectSummary(data1.getValue(), data2.getValue(), data3.getValue(), data4.getValue(), data5.getValue(), sumariser1.getValue(), sumariser2.getValue(), sumariser3.getValue(), sumariser4.getValue(), qualificator.getValue(), quantificator.getValue(), weight);
-        } else {
-            KsrApplication.twoSubjectSummary(data1.getValue(), data2.getValue(), data3.getValue(), data4.getValue(), data5.getValue(), sumariser1.getValue(), sumariser2.getValue(), sumariser3.getValue(), sumariser4.getValue(), qualificator.getValue(), quantificator.getValue(), sub1.getValue(), sub2.getValue());
+        if (quantifier == null || summarizer.isEmpty()) {
+            summaryOutputArea.setText("Proszę uzupełnić wszystkie pola i wybrać sumaryzator.");
+            return;
         }
 
+        if (summarizer.size() > 4) {
+            summaryOutputArea.setText("Proszę wybrać maksymalnie 4 sumaryzatory.");
+            return;
+        }
+
+        if (qualifier.size() > 1) {
+            summaryOutputArea.setText("Proszę wybrać maksymalnie 1 kwalifikator.");
+            return;
+        }
+
+        if (qualifier.size() == 1) {
+            qualifier.getFirst().setData(addData(selectedLinguisticVariableNamesQualifier.getFirst()));
+
+            for (int i = 0; i < selectedLinguisticVariableNames.size(); i++) {
+                String variableName = selectedLinguisticVariableNames.get(i);
+                List<Double> data = addData(variableName);
+                if (data == null) {
+                    summaryOutputArea.setText("Nie znaleziono danych dla zmiennej: " + variableName);
+                    return;
+                }
+                summarizer.get(i).setData(data);
+            }
+
+            SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+                    quantifier,
+                    summarizer,
+                    qualifier.getFirst()
+            );
+            summaryOutputArea.setText(singleSubjectSummary.summarization());
+            singleSubjectSummaries.add(singleSubjectSummary);
+            singleSubjectSummary.print(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07));
+        } else {
+            for (int i = 0; i < selectedLinguisticVariableNames.size(); i++) {
+                String variableName = selectedLinguisticVariableNames.get(i);
+                List<Double> data = addData(variableName);
+                if (data == null) {
+                    summaryOutputArea.setText("Nie znaleziono danych dla zmiennej: " + variableName);
+                    return;
+                }
+                summarizer.get(i).setData(data);
+            }
+
+            SingleSubjectSummary singleSubjectSummary = new SingleSubjectSummary(
+                    quantifier,
+                    summarizer
+            );
+            summaryOutputArea.setText(singleSubjectSummary.summarization());
+            singleSubjectSummaries.add(singleSubjectSummary);
+            singleSubjectSummary.print(List.of(0.30, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07));
+
+        }
+
+
+
+    }
+
+    private List<Double> addData(String name) {
+        List<Measurements> measurements  = KsrApplication.measurementsRepository.findAll();
+        switch (name) {
+            case "Jakość powietrza":
+                return measurements.stream()
+                        .map(Measurements::getAir_quality_gb_defra_index)// jeśli metoda zwraca int
+                        .toList();
+            case "Ciśnienie":
+                return measurements.stream()
+                        .map(Measurements::getPressure_mb)
+                        .toList();
+            case "Wilgotność powietrza":
+                return measurements.stream()
+                        .map(Measurements::getHumidity)
+                        .toList();
+            case "Stopień widoczności":
+                return measurements.stream()
+                        .map(Measurements::getVisibility_km)
+                        .toList();
+            case "Temperatura":
+                return measurements.stream()
+                        .map(Measurements::getTemperature_celsius)
+                        .toList();
+            case "Wiatr":
+                return measurements.stream()
+                        .map(Measurements::getWind_kph)
+                        .toList();
+
+            case "Zanieczyszczenie NO2":
+                return measurements.stream()
+                        .map(Measurements::getAir_quality_Nitrogen_Dioxide)
+                        .toList();
+
+            case "Pora dnia":
+                return measurements.stream()
+                        .map(Measurements::getLast_updated)
+                        .map(date -> (double) date.getHour() + date.getMinute() / 60.0)
+                        .toList();
+
+            case "Promieniowanie UV":
+                return measurements.stream().map(Measurements::getUv_index).toList();
+
+            case "Zanieczyszczenie CO":
+                return measurements.stream()
+                        .map(Measurements::getAir_quality_Carbon_Monoxide)
+                        .toList();
+        }
+        return null;
+    }
+
+    @FXML
+    protected void onGenerateTwoSubjectSummary() {
+        Quantifier quantifier = quantificator.getValue();
+        String subject1 = sub1.getValue();
+        String subject2 = sub2.getValue();
+        List<LinguisticTerm> summarizer = getSelectedSummarizers();
+        List<LinguisticTerm> qualifier = getSelectedQualifiers();
+        List<String> selectedLinguisticVariableNames = summarizersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .anyMatch(CheckBoxTreeItem::isSelected))
+                .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
+                .toList();
+
+        List<String> selectedLinguisticVariableNamesQualifier = summarizersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .filter(variableNode -> variableNode.getChildren().stream() // sprawdzamy, czy jakiekolwiek dziecko jest zaznaczone
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .anyMatch(CheckBoxTreeItem::isSelected))
+                .map(CheckBoxTreeItem::getValue) // pobieramy nazwę zmiennej lingwistycznej
+                .toList();
+
+        if (subject1 == null || subject2 == null || summarizer == null) {
+            summaryOutputArea.setText("Proszę uzupełnić wszystkie pola i wybrać sumaryzator.");
+            return;
+        }
+
+        if (quantifier == null) {
+            
+        }
+
+        // Generowanie przykładowego podsumowania dwupodmiotowego
+        String summary = String.format("%s %s jest bardziej %s niż %s.", quantifier, subject1, summarizer, subject2);
+        summaryOutputArea.setText(summary);
+    }
+
+    private List<LinguisticTerm> getSelectedSummarizers() {
+        return summarizersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .flatMap(variableNode -> variableNode.getChildren().stream() // Iterujemy nad dziećmi danego węzła
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .filter(CheckBoxTreeItem::isSelected)
+                        .map(childNode -> findLinguisticTermByName(
+                                childNode.getValue(), // Nazwa sumaryzatora
+                                variableNode.getValue() // Nazwa zmiennej lingwistycznej (obiekt nadrzędny)
+                        )))
+                .toList();
+    }
+
+    private List<LinguisticTerm> getSelectedQualifiers() {
+        return qualifiersTreeView.getRoot().getChildren().stream()
+                .map(node -> (CheckBoxTreeItem<String>) node)
+                .flatMap(variableNode -> variableNode.getChildren().stream() // Iterujemy nad dziećmi danego węzła
+                        .map(childNode -> (CheckBoxTreeItem<String>) childNode)
+                        .filter(CheckBoxTreeItem::isSelected)
+                        .map(childNode -> findLinguisticTermByName(
+                                childNode.getValue(), // Nazwa kwalifikatora
+                                variableNode.getValue() // Nazwa zmiennej lingwistycznej (obiekt nadrzędny)
+                        )))
+                .toList();
+    }
+
+
+    private LinguisticTerm findLinguisticTermByName(String nameSummarizer, String linguisticVariable) {
+        switch (linguisticVariable) {
+            case "Jakość powietrza":
+                if (nameSummarizer.equals(AirValues.bardzoDobra.getName())) {
+                    return AirValues.bardzoDobra;
+                } else if (nameSummarizer.equals(AirValues.dobra.getName())) {
+                    return AirValues.dobra;
+                } else if (nameSummarizer.equals(AirValues.umiarkowana.getName())) {
+                    return AirValues.umiarkowana;
+                } else if (nameSummarizer.equals(AirValues.zla.getName())) {
+                    return AirValues.zla;
+                } else if (nameSummarizer.equals(AirValues.bardzoZla.getName())) {
+                    return AirValues.bardzoZla;
+                }
+                break;
+
+            case "Ciśnienie":
+                if (nameSummarizer.equals(PressureValues.niskie.getName())) {
+                    return PressureValues.niskie;
+                } else if (nameSummarizer.equals(PressureValues.normalne.getName())) {
+                    return PressureValues.normalne;
+                } else if (nameSummarizer.equals(PressureValues.wysokie.getName())) {
+                    return PressureValues.wysokie;
+                }
+                break;
+
+            case "Wilgotność powietrza":
+                if (nameSummarizer.equals(HumidityValues.suche.getName())) {
+                    return HumidityValues.suche;
+                } else if (nameSummarizer.equals(HumidityValues.umiarkowane.getName())) {
+                    return HumidityValues.umiarkowane;
+                } else if (nameSummarizer.equals(HumidityValues.wilgotne.getName())) {
+                    return HumidityValues.wilgotne;
+                }
+                break;
+
+            case "Stopień widoczności":
+                if (nameSummarizer.equals(VisibilityValues.slaba.getName())) {
+                    return VisibilityValues.slaba;
+                } else if (nameSummarizer.equals(VisibilityValues.umiarkowana.getName())) {
+                    return VisibilityValues.umiarkowana;
+                } else if (nameSummarizer.equals(VisibilityValues.dobra.getName())) {
+                    return VisibilityValues.dobra;
+                } else if (nameSummarizer.equals(VisibilityValues.bardzoDobra.getName())) {
+                    return VisibilityValues.bardzoDobra;
+                }
+                break;
+
+            case "Temperatura":
+                if (nameSummarizer.equals(TempValues.bardzoZimna.getName())) {
+                    return TempValues.bardzoZimna;
+                } else if (nameSummarizer.equals(TempValues.zimna.getName())) {
+                    return TempValues.zimna;
+                } else if (nameSummarizer.equals(TempValues.umiarkowana.getName())) {
+                    return TempValues.umiarkowana;
+                } else if (nameSummarizer.equals(TempValues.ciepla.getName())) {
+                    return TempValues.ciepla;
+                } else if (nameSummarizer.equals(TempValues.goraca.getName())) {
+                    return TempValues.goraca;
+                }
+                break;
+
+            case "Wiatr":
+                if (nameSummarizer.equals(WindValues.slaby.getName())) {
+                    return WindValues.slaby;
+                } else if (nameSummarizer.equals(WindValues.umiarkowany.getName())) {
+                    return WindValues.umiarkowany;
+                } else if (nameSummarizer.equals(WindValues.silny.getName())) {
+                    return WindValues.silny;
+                } else if (nameSummarizer.equals(WindValues.bardzoSilny.getName())) {
+                    return WindValues.bardzoSilny;
+                } else if (nameSummarizer.equals(WindValues.gwaltowny.getName())) {
+                    return WindValues.gwaltowny;
+                }
+                break;
+
+            case "Zanieczyszczenie NO2":
+                if (nameSummarizer.equals(NoValues.normalne.getName())) {
+                    return NoValues.normalne;
+                } else if (nameSummarizer.equals(NoValues.niezdrowe.getName())) {
+                    return NoValues.niezdrowe;
+                } else if (nameSummarizer.equals(NoValues.niebezpieczne.getName())) {
+                    return NoValues.niebezpieczne;
+                }
+                break;
+
+            case "Pora dnia":
+                if (nameSummarizer.equals(TimeValues.nocna.getName())) {
+                    return TimeValues.nocna;
+                } else if (nameSummarizer.equals(TimeValues.poranna.getName())) {
+                    return TimeValues.poranna;
+                } else if (nameSummarizer.equals(TimeValues.poludniowa.getName())) {
+                    return TimeValues.poludniowa;
+                } else if (nameSummarizer.equals(TimeValues.popoludniowa.getName())) {
+                    return TimeValues.popoludniowa;
+                } else if (nameSummarizer.equals(TimeValues.wieczorna.getName())) {
+                    return TimeValues.wieczorna;
+                }
+                break;
+
+            case "Promieniowanie UV":
+                if (nameSummarizer.equals(UvValues.niskie.getName())) {
+                    return UvValues.niskie;
+                } else if (nameSummarizer.equals(UvValues.umiarkowane.getName())) {
+                    return UvValues.umiarkowane;
+                } else if (nameSummarizer.equals(UvValues.wysokie.getName())) {
+                    return UvValues.wysokie;
+                } else if (nameSummarizer.equals(UvValues.bardzoWysokie.getName())) {
+                    return UvValues.bardzoWysokie;
+                } else if (nameSummarizer.equals(UvValues.ekstremalne.getName())) {
+                    return UvValues.ekstremalne;
+                }
+                break;
+
+            case "Zanieczyszczenie CO":
+                if (nameSummarizer.equals(CoValues.normalne.getName())) {
+                    return CoValues.normalne;
+                } else if (nameSummarizer.equals(CoValues.wysokie.getName())) {
+                    return CoValues.wysokie;
+                } else if (nameSummarizer.equals(CoValues.niezdrowe.getName())) {
+                    return CoValues.niezdrowe;
+                } else if (nameSummarizer.equals(CoValues.niebezpieczne.getName())) {
+                    return CoValues.niebezpieczne;
+                }
+                break;
+        }
+        return null;
+
+    }
+
+
+    @FXML
+    protected void onHelloButtonClick() {
+        summarizersTreeView.getRoot().getChildren().stream()
+                .map(child -> (CheckBoxTreeItem<String>) child)
+                .filter(CheckBoxTreeItem::isSelected)
+                .forEach(selectedItem ->
+                        System.out.println("Wybrany sumaryzator: " + selectedItem.getValue()));
+
+        qualifiersTreeView.getRoot().getChildren().stream()
+                .map(child -> (CheckBoxTreeItem<String>) child)
+                .filter(CheckBoxTreeItem::isSelected)
+                .forEach(selectedItem ->
+                        System.out.println("Wybrany kwalifikator: " + selectedItem.getValue()));
     }
 
     @FXML
     public void onAdminButtonClick(javafx.event.ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ksr/admin-view.fxml"));
-
-            // Pobierz kontrolery z kontekstu Springa
             fxmlLoader.setControllerFactory(JavaFxApplication.getSpringContext()::getBean);
-
-            // Załaduj widok
             Parent adminView = fxmlLoader.load();
 
-            // Pobierz bieżącą scenę i zmień ją na nową
             Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
             stage.setScene(new Scene(adminView));
             stage.setTitle("Panel Admina");
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }

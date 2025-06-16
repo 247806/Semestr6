@@ -9,19 +9,19 @@ public class VisibilityValues {
 
 
     public static LinguisticTerm slaba = new LinguisticTerm(
-            "słaba", new TrapezoidalFunction(0, 0.01, 2, 6)
+            "słaba widoczność", new TrapezoidalFunction(0, 0.01, 2, 6)
     );
 
    public static LinguisticTerm umiarkowana = new LinguisticTerm(
-            "umiarkowana", new TrapezoidalFunction(2, 6, 10, 14)
+            "umiarkowana widoczność", new TrapezoidalFunction(2, 6, 10, 14)
     );
 
 
     public static LinguisticTerm dobra = new LinguisticTerm(
-            "dobra", new TrapezoidalFunction(10, 14, 18, 22)
+            "dobra widoczność", new TrapezoidalFunction(10, 14, 18, 22)
     );
 
     public static LinguisticTerm bardzoDobra = new LinguisticTerm(
-            "bardzo dobra", new TrapezoidalFunction(18, 22, 24, 24.1)
+            "bardzo dobra widoczność", new TrapezoidalFunction(18, 22, 24, 24.1)
     );
 }
