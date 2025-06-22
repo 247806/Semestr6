@@ -9,14 +9,12 @@ import seaborn as sns
 import time
 import numpy as np
 
-# Ustawienia
 img_size = (128, 128)
 batch_size = 32
 dataset_path = 'dataset'
-split_ratio = 0.2  # użytkownik może zmieniać ten procent
+split_ratio = 0.2
 roc_data = []
 
-# Przygotowanie danych
 datagen = ImageDataGenerator(rescale=1. / 255, validation_split=1 - split_ratio)
 
 train_data = datagen.flow_from_directory(
@@ -60,26 +58,23 @@ models_to_test = {
         Dense(32, activation='relu'),
         Dense(1, activation='sigmoid')
     ]),
-    # "Inception": InceptionV3(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3)),
-    # "ResNet50": ResNet50(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3)),
-    # "MobileNetV2": MobileNetV2(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3))
+    "Inception": InceptionV3(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3)),
+    "ResNet50": ResNet50(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3)),
+    "MobileNetV2": MobileNetV2(weights='imagenet', include_top=False, input_shape=(img_size[0], img_size[1], 3))
 }
 
 for name, model in models_to_test.items():
     print(f"\nTrenowanie modelu: {name}")
 
-    # Dla modeli transfer learningu używamy funkcji build_model
     if name != "Simple CNN":
         model = build_model(model)
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    # Czas trenowania
     start_train = time.time()
     model.fit(train_data, epochs=5, validation_data=val_data, verbose=1)
     training_time = time.time() - start_train
 
-    # Czas predykcji
     val_data.reset()
     start_pred = time.time()
     predictions = model.predict(val_data)
@@ -88,19 +83,16 @@ for name, model in models_to_test.items():
     y_pred = (predictions > 0.5).astype(int).flatten()
     y_true = val_data.classes
 
-    # Wyniki
     acc = accuracy_score(y_true, y_pred)
     print(f"\nWyniki dla {name}:")
     print("Dokładność:", acc)
     print(f"Czas trenowania: {training_time:.2f} sekund")
     print(f"Czas predykcji: {prediction_time:.2f} sekund")
 
-    # Raport klasyfikacji
     class_names = list(val_data.class_indices.keys())
     report = classification_report(y_true, y_pred, target_names=class_names, digits=4)
     print("Raport klasyfikacji:\n", report)
 
-    # Macierz pomyłek
     fig_cm, ax_cm = plt.subplots(figsize=(6, 5))
     cm = confusion_matrix(y_true, y_pred)
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
@@ -110,12 +102,10 @@ for name, model in models_to_test.items():
     fig_cm.tight_layout()
     fig_cm.show()
 
-    # ROC - zapis danych
     fpr, tpr, _ = roc_curve(y_true, predictions)
     roc_auc = auc(fpr, tpr)
     roc_data.append((name, fpr, tpr, roc_auc))
 
-# Finalny wykres ROC
 fig_roc, ax_roc = plt.subplots(figsize=(10, 8))
 for name, fpr, tpr, roc_auc in roc_data:
     ax_roc.plot(fpr, tpr, label=f'{name} (AUC = {roc_auc:.2f})')
